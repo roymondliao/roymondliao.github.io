@@ -1,16 +1,693 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts | Academic</title>
-    <link>/post/</link>
-      <atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <title>Posts | Roymond Liao</title>
+    <link>https://roymondliao.github.io/post/</link>
+      <atom:link href="https://roymondliao.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     <description>Posts</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Thu, 03 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>/img/icon-192.png</url>
+      <url>https://roymondliao.github.io/img/icon-192.png</url>
       <title>Posts</title>
-      <link>/post/</link>
+      <link>https://roymondliao.github.io/post/</link>
     </image>
+    
+    <item>
+      <title>Lookahead Optimizer: k steps forward, 1 step back</title>
+      <link>https://roymondliao.github.io/post/2019-10-03_lookahead/</link>
+      <pubDate>Thu, 03 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.github.io/post/2019-10-03_lookahead/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+
+&lt;p&gt;在目前的 optimizer 分為兩個主要發展方向：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Adaptive learning rate, such as AdaGrad and Adam&lt;/li&gt;
+&lt;li&gt;Accelerated schema (momentum), such as Polyak heavyball and Nesterov momentum&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;以上都是透過累積過往梯度下降所得到的結果來達到收斂，然而要獲得好的結果，都需要一些超參數的調整。&lt;/p&gt;
+
+&lt;p&gt;Lookahead method：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;是一種新的優化方法，採用兩個不同的權重，分別為 fast weights 與 slow weights。fast weights 是使用一般常見的 optimizer 當作 inner optimizer 先進行 &lt;code&gt;k&lt;/code&gt; 次的計算後得到的結果與預先保留的 slow weights 進行線性插值(linearly interpolating)來更新權重 ，更新後的 wieight 為新的 slow weights 並推動之前的 fast weights 往前探索，以這樣的方式進行迭代。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;在使用不同的 inner optimizer 下，像是 SGD 或是 Adam，減少了對超參數調整的需求，並且可以以最小的計算需求確保在不同的深度學習任務中加快收斂速度。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;lookahead_figure_1.png&#34; alt=&#34;lookahead_figure_1&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;演算過程 :&lt;/p&gt;
+
+&lt;p&gt;Step 1 : 先設定 $\phi$ 的初始值，以及選定 objective function $L$ &lt;br&gt;
+Step 2 : 確定更新週期 $k$ 值、slow weight 的更新步伐 $\alpha $ 以及 optimizer $A$ &lt;br&gt;
+Step 3 : 更新 fast weight $\theta$ ，$ \space \theta_{t,0} \leftarrow \phi_{t-1}, t=1,2,\dots $ &lt;br&gt;
+Step 4 : 利用 optimizer $A$ 迭代 $k$ 次更新，由 $\theta_{t, i}$ 更新到 $\theta_{t, k}, i=1, 2, \dots, k$ &lt;br&gt;
+Step 5 : 更新 slow weight $\phi_{k} \leftarrow \phi_{k-1} + \alpha\left(\theta_{t, k} - \phi_{t-1}\right)$ &lt;br&gt;
+重複 Step 3 - Step 5 直至收斂。&lt;/p&gt;
+
+&lt;p&gt;其可以想像身處在山脈的頂端，而周邊都是山頭林立，有高有低，其中一座山可通往山腳下，其他都只是在山中繞來繞去，無法走下山。如果親自探索是非常困難，因為在選定一條路線的同時，必須要放棄其他路線，直到最終找到正確的通路，但是如果我們在山頂留下一位夥伴，在其狀況看起來不妙時及時把我們叫回，這樣能幫助我們在尋找出路的時候得到快速的進展，因此全部地形的探索速度將更快，而發生迷路的狀況也更低。&lt;/p&gt;
+
+&lt;h2 id=&#34;method&#34;&gt;Method&lt;/h2&gt;
+
+&lt;p&gt;如同 Algorithm 1 所表示的內循環(inner loop)的 optimizer A 在迭代 $k$ 次後，在 weight space 中，slow weights 的更新為與 fast weights k的線性插值(linearly interpolating)，$\theta - \phi$. 我們將 slow weights learning rate 表示為 $\alpha$, 在 slow weights 更新後，fast weights 會重新設定為 slow weights 的位置。&lt;/p&gt;
+
+&lt;p&gt;Standard optimization method typically require carefully tuned learning rate to prevent &lt;strong&gt;oscillation&lt;/strong&gt; and &lt;strong&gt;slow converagence&lt;/strong&gt;. However, lookahead benefits from a larger learning rate in the inner loop. When oscillation in  the high curvature direction, the fast weights updates make rapid progress along the low curvature direction. The slow weights help smooth out the oscillation throught the parameter interpolation.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Slow weights trajectory&lt;/strong&gt; We can characterize the trajectory of the slow weights as an exponential moving average (EMA) of the final fast weights within each inner-loop, regardless of the inner optimizer. After k inner-loop steps we have:&lt;/p&gt;
+
+&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
+\begin{align}
+\phi_{t+1} &amp;= \phi_{t} + \alpha\left(\theta_{t, k} - \phi_{t}\right) \\
+&amp;= \left(1-\alpha\right)\phi_{t} + \alpha\theta_{t, k} \\
+&amp;= \left(1-\alpha\right)\left(\phi_{t-1} + \alpha\left(\theta_{t-1, k} - \phi_{t-1}\right) \right) +  \alpha\theta_{t, k} \\
+&amp; \vdots \\
+&amp;= \alpha\left[\theta_{t, k} + (1 - \alpha)\theta_{t-1, k} + \dots + (1 - \alpha)^{t-1}\theta_{0, k} \right]  + (1- \alpha)^{t}\theta_{0}
+\end{align}
+\]&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Fast weights trajectory&lt;/strong&gt; Within each inner-loop, the trajectory of the fast weight depends on the choice of underlying optimizer. Given an optimization algorithm A that takes in an objective function $L$ and the current mini-batch training examples $d$, we have the update rule for the fast weights:
+&lt;span  class=&#34;math&#34;&gt;\(
+\theta_{t, i+1} = \theta_{t, i} + A\left(L, \theta_{t, i-1}, d\right)
+\)&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;We have the choice of maintaining, interpolating, or resetting the internal state (e.g. momentum) of the inner optimizer. Every choice improves convergence of the inner optimizer.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Computational complexity&lt;/strong&gt; Lookahead has a constant computational overhead due to parameter copying and basic arithmetic operations that is amortized across the k inner loop updates. The number of operations is $O\left(\frac{k+1}{k}\right)$ times that of the inner optimizer. Lookahead maintains a single additional copy of the number of learnable parameters in the model.&lt;/p&gt;
+
+&lt;h2 id=&#34;empirical-analysis&#34;&gt;Empirical Analysis&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;Robustness to inner optimization algorithm $k$ and $\alpha$&lt;/strong&gt; 在論文中使用 &lt;strong&gt;CIFAR&lt;/strong&gt; 的資料測試，Lookahead 能夠在不同的超參數設定下保有快速收斂的結果。在實驗中固定 slow weight step size $\alpha = 0.5$ 與 $k=5$，inner optimizer 選擇使用 SGD optimizer，測試不同的 learning rate 與 momentum 參數，結果顯示如下:&lt;/p&gt;
+
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;lookahead_figure_8.png&#34; alt=&#34;lookahead_figure_8&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;同時實驗了在超參數固定的狀況下，inner optimizer 的 fast weights 在歷經不同 $k$ 與 $\alpha$ 的設定，結果如下圖:&lt;/p&gt;
+
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;lookahead_figure_9.png&#34; alt=&#34;lookahead_figure_9&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Inner loop and outer loop evalation&lt;/strong&gt; 為了更了解 Lookahead 的在 fast weights 與 slow weights 的更新狀況，透過 test accuracy 的結果來了解 weights 變化的趨勢。如下圖，在每次 inner loop 更新 fast weights 的情況下，對 test accuracy 造成大幅的下降，反映了在每次 inner loop 的更新都具有 high variance 的情況產生。然而，在 slow weights 的更新階段，降低了 variance 的影響，並且慢慢調整 test accuracy 的準確度。&lt;/p&gt;
+
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;lookahead_figure_10.png&#34; alt=&#34;lookahead_figure_10&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;code-implement&#34;&gt;Code implement&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://github.com/bojone/keras_lookahead&#34;&gt;https://github.com/bojone/keras_lookahead&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://github.com/lifeiteng/Optimizers&#34;&gt;https://github.com/lifeiteng/Optimizers&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;reference&#34;&gt;Reference&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://arxiv.org/pdf/1907.08610v1.pdf&#34;&gt;Lookahead Optimizer: k steps forward, 1 step back&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.infoq.cn/article/Q7gBMEHNrd2rkjqV6CM3?utm_source=rss&amp;amp;utm_medium=article&#34;&gt;https://www.infoq.cn/article/Q7gBMEHNrd2rkjqV6CM3?utm_source=rss&amp;amp;utm_medium=article&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.infoq.cn/article/Q7gBMEHNrd2rkjqV6CM3&#34;&gt;https://www.infoq.cn/article/Q7gBMEHNrd2rkjqV6CM3&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Faster R-CNN</title>
+      <link>https://roymondliao.github.io/post/2019-05-14_faster_rcnn/</link>
+      <pubDate>Tue, 14 May 2019 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.github.io/post/2019-05-14_faster_rcnn/</guid>
+      <description>&lt;p&gt;Faster R-CNN 是由 object detection 的大神 &lt;a href=&#34;https://www.rossgirshick.info/&#34;&gt;&lt;strong&gt;&lt;em&gt;Ross Girshick&lt;/em&gt;&lt;/strong&gt;&lt;/a&gt; 於 2015 年所提出的一個非常經典的目標檢測(object detection)的方法，當中提出了 &lt;strong&gt;Region Proposal Networks&lt;/strong&gt; 的方法應用在提取候選區域(reigon proposals) 取代了傳統的 Selective Search 的方式，大幅提升了目標檢測的精準度，也提升了整體計算的速度，另外 &lt;a href=&#34;http://kaiminghe.com/&#34;&gt;&lt;strong&gt;&lt;em&gt;Kaiming He&lt;/em&gt;&lt;/strong&gt;&lt;/a&gt; 博士也是共同作者。&lt;/p&gt;
+
+&lt;p&gt;在介紹 Faster R-CNN 之前需要先了解何為 one stage 與 two stage，目前 object detection 的主流都是以 one stage 為基礎的演算法，建議可以參考下列兩篇很棒的文章:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://medium.com/@chih.sheng.huang821/%E6%B7%B1%E5%BA%A6%E5%AD%B8%E7%BF%92-%E4%BB%80%E9%BA%BC%E6%98%AFone-stage-%E4%BB%80%E9%BA%BC%E6%98%AFtwo-stage-%E7%89%A9%E4%BB%B6%E5%81%B5%E6%B8%AC-fc3ce505390f&#34;&gt;什麼是one stage，什麼是two stage 物件偵測&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://medium.com/@chih.sheng.huang821/%E6%B7%B1%E5%BA%A6%E5%AD%B8%E7%BF%92-%E7%89%A9%E4%BB%B6%E5%81%B5%E6%B8%AC%E4%B8%8A%E7%9A%84%E6%A8%A1%E5%9E%8B%E7%B5%90%E6%A7%8B%E8%AE%8A%E5%8C%96-e23fd928ee59&#34;&gt;物件偵測上的模型結構變化&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Faster R-CNN 主要是由四個部分來完成:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Feature Extractor&lt;/li&gt;
+&lt;li&gt;Region Proposal Network (RPN)&lt;/li&gt;
+&lt;li&gt;Regoin Proposal Filter&lt;/li&gt;
+&lt;li&gt;ROI Pooling&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;下圖為 Faster R-CNN 的簡易架構圖:&lt;/p&gt;
+
+&lt;figure&gt;
+    &lt;center&gt;&lt;img src=&#34;faster_rcnn_figure_2.png&#34;/&gt;&lt;/center&gt;
+  &lt;figcaption&gt;&lt;center&gt;Image credit: original paper&lt;/center&gt;&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;下圖是我參考了許多相關的部落格文章後，覺得在呈現 Faster R-CNN 的架構上最容易讓人了解的一張圖，可以搭配著上圖來對照一下！&lt;/p&gt;
+
+&lt;figure&gt;
+    &lt;center&gt;&lt;img src=&#34;faster_rcnn_arch.png&#34;/&gt;&lt;/center&gt;
+  &lt;figcaption&gt;&lt;center&gt;Image credit: https://zhuanlan.zhihu.com/p/44599606&lt;/center&gt;&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;1-feature-extractor&#34;&gt;1. Feature Extractor&lt;/h2&gt;
+
+&lt;p&gt;透過五層的 conv layer 來取得 feature maps，作為後續的共享的 input。 作者採用了 &lt;strong&gt;ZF Net&lt;/strong&gt; 以及 &lt;strong&gt;VGG-16&lt;/strong&gt; 為主，依據 input size 的不同，最後 feature maps 的 W x H 也有所不同，但 channel 數是相同的。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;ZF Net 取第五層的 Feature maps，output 為 13 x 13 x 256&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;ZFNet.png&#34;/&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;VGG-16 取第五層的 Feature maps，output 為 7 x 7 x 256&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;VGG16.png&#34; width=&#34;750px&#34; height=&#34;300px&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;2-region-proposal-networks&#34;&gt;2. Region Proposal Networks&lt;/h2&gt;
+
+&lt;p&gt;在解析 RPN 的內容前，先來談談 RPN 與 Anchors 之所會被提出來，是來解決什麼樣的問題。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;簡略說明兩個方法面向的問題:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;RPN&lt;/strong&gt; 主要的目的是為了產生只具有 foreground 的候選區域(region proposals)， 所以在 RPN 的輸出會有所謂的 foreground 與 background 的分類機率(此處的foreground 與 background 可以理解成是否含有 objects )。相較原本 Selective Search 用比較相鄰區域的相似度(顏色, 紋理, …等)合併再一起的方式，加快了運算的速度，同時也加強了物件檢測的精準度。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Anchors&lt;/strong&gt; 主要的目的是要來解決由於圖片大小不同，所以導致每張圖片在最後要將結果還原成原圖的座標時，會產生複雜的計算。固定 bounding boxes 的大小，可以加快計算的效率，也可以減少過多不必要的後選區域的產生。&lt;/p&gt;
+
+&lt;p&gt;接下來進入 RPN 生成 region proposals 的解析:&lt;/p&gt;
+
+&lt;figure&gt;
+    &lt;center&gt;&lt;img src=&#34;faster_rcnn_figure_3.png&#34; width=&#34;500px&#34; height=&#34;350px&#34; /&gt;&lt;/center&gt;
+  &lt;figcaption&gt;&lt;center&gt;Image credit: original paper&lt;/center&gt;&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;對最後一層 conv layer 的 feature maps 用一個 n x n 的 spatial window 做 sliding window (stride=1, pad=1)，在論文中 &lt;strong&gt;n=3&lt;/strong&gt; 是因為對於較大的圖片在計算上比較有效率。此處可以將 sliding windows 這個過程想成是做一個 convolution 的過程來理解，output 則會是 ( feature map width, feature map height, channel )。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Sliding windows 的結果 mapping 到 lower-dimensional feature，此處將帶入關鍵的 &lt;strong&gt;anchors&lt;/strong&gt;。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;Anchors&lt;/strong&gt; 是事先設定好的多組 bounding boxes，設定的組成是透過 image 對於 &lt;strong&gt;scale&lt;/strong&gt; 與 &lt;strong&gt;aspect ratio&lt;/strong&gt; 的參數設定來決定的。如下圖的右圖，論文中選擇 3 個 scale x 3 個 aspect ratio，所以共產生 9 個 archors。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;scale: the size of image, ex: $(128^2, 256^2, 512^2)$&lt;/li&gt;
+&lt;li&gt;aspect ratio: width of image / height of image, ex: (1:1, 1:2, 2:1)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;表示在對 feature maps 進行 sliding windows 時，每個 sliding windows 對應原圖區域中的 9 個anchors，而 sliding windows 的中心點就對應 anchors 的中心點位置，藉由中心點與圖片的大小，就可以得到 sliding windows 的位置和原圖位置的映射關係(這邊可以用 receptive field 來理解)，就可以由原圖的位置與 ground truth 計算 &lt;a href=&#34;https://www.pyimagesearch.com/2016/11/07/intersection-over-union-iou-for-object-detection/&#34;&gt;&lt;strong&gt;Intersection over Union(IOU)&lt;/strong&gt;&lt;/a&gt;，並且判斷是否有 objects。&lt;/p&gt;
+
+&lt;p&gt;下面左圖示的紅點就是表示每個 sliding window 的中心點對應原圖的位置，而右圖是在表示 9 種不同大小的 anchor 在原圖的呈現。&lt;/p&gt;
+
+&lt;figure&gt;
+    &lt;img src=&#34;anchors-centers.png&#34; width=&#34;400px&#34; height=&#34;350px&#34; /&gt; &lt;img src=&#34;anchors-boxes.png&#34; width=&#34;370px&#34; height=&#34;350px&#34; /&gt;
+  &lt;figcaption&gt;&lt;center&gt;Image credit: https://tryolabs.com/blog/2018/01/18/faster-r-cnn-down-the-rabbit-hole-of-modern-object-detection/&lt;/center&gt;&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;下圖呈現出當 9 個不同 anchor 映射到 sliding windows 的中心點，在原圖上的呈現，由這樣的步驟可以理解這 9 個 anchor 剛好足夠可以框出圖片上的所有 object。這邊要注意，如果 anchor boxes 超出原圖的邊框就要被忽略掉。&lt;/p&gt;
+
+&lt;figure&gt;
+    &lt;center&gt;&lt;img src=&#34;anchors-progress.png&#34; /&gt;&lt;/center&gt;
+  &lt;figcaption&gt;&lt;center&gt;Image credit: https://tryolabs.com/blog/2018/01/18/faster-r-cnn-down-the-rabbit-hole-of-modern-object-detection/&lt;/center&gt;&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;&lt;p&gt;在上圖可以看到，每個 sliding windows 映射到原圖，原圖上每個 sliding windows 的中心點對應 9 個 anchors，所以將 intermediate layer 所得到的 features 輸入給 兩個 sliding fully-connected layers。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;box-regression layer (reg layer): 輸出 4 x k個 boxes 的 encoding 座標值。&lt;/li&gt;
+&lt;li&gt;box-classification layer (cls layer): 輸出 2 x k 個關於 forground / background 的機率&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;此方法有效的原因:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The anchors 與 ground truth 的 intersection-over-union (IOU) 重疊率很高&lt;/li&gt;
+&lt;li&gt;IOU &amp;gt; 0.7 為 positive，IOU &amp;lt; 0.3 為 negative，介於 0.7 &amp;gt;= IOU &amp;gt;= 0.3 則忽略，期望 positive 的 proposal 包含前景的機率高，negative 包含背景的機率高。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Faster R-CNN 的缺點:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;在單一 scale 的 feature map 做 object localization and Classification，而且還是 scale=1/32 下，在小物件偵測效果相對不佳，有可能在down-scale時小物件的特徵就消失了&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&#34;reference&#34;&gt;Reference&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://tryolabs.com/blog/2018/01/18/faster-r-cnn-down-the-rabbit-hole-of-modern-object-detection/&#34;&gt;https://tryolabs.com/blog/2018/01/18/faster-r-cnn-down-the-rabbit-hole-of-modern-object-detection/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://medium.com/@tanaykarmarkar/region-proposal-network-rpn-backbone-of-faster-r-cnn-4a744a38d7f9&#34;&gt;https://medium.com/@tanaykarmarkar/region-proposal-network-rpn-backbone-of-faster-r-cnn-4a744a38d7f9&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://blog.csdn.net/baderange/article/details/79643478&#34;&gt;https://blog.csdn.net/baderange/article/details/79643478&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://blog.csdn.net/lanran2/article/details/54376126&#34;&gt;https://blog.csdn.net/lanran2/article/details/54376126&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Word2Vec</title>
+      <link>https://roymondliao.github.io/post/2019-05-02_word2vec/</link>
+      <pubDate>Thu, 02 May 2019 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.github.io/post/2019-05-02_word2vec/</guid>
+      <description>&lt;p&gt;最近剛好看到一篇關於 &lt;a href=&#34;https://github.com/priya-dwivedi/Deep-Learning/blob/master/word2vec_skipgram/Skip-Grams-Solution.ipynb&#34;&gt;Skip-gram word2vec&lt;/a&gt;的介紹，內文寫的淺顯易懂，衍生的閱讀也十分詳細，決定動手寫篇記錄下來。&lt;/p&gt;
+
+&lt;p&gt;人對於文字的理解，可以很簡單的就能了解字面的意義，但是對於機器來說，要如何理解文字是一個很困難的問題。
+要如何讓機器來理解文字的意義？ 透過將文字轉換成向量，來讓機器能夠讀的懂，所以其實文字對於機器來說只是數字，而我們在做的就只是數字的遊戲。&lt;/p&gt;
+
+&lt;h2 id=&#34;word-embeddings&#34;&gt;Word embeddings&lt;/h2&gt;
+
+&lt;p&gt;在將字詞轉換成向量的實作中，大家常用的方法肯定是 &lt;strong&gt;one-hot-encoding&lt;/strong&gt;，但是 one-hot-encoding 在計算上卻是非常沒有效率的方式，如果一篇文章中總共有50,000的單詞，用 one-hot-encoding 來表示某個單詞的話，將會變成1與49999個0的向量表示。就如同下圖表示，如果要做 matrix multiplication 的話，那將會浪費許多的計算資源。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#39;one_hot_encoding.png&#39; width=500&gt;&lt;/p&gt;
+
+&lt;p&gt;透過 &lt;strong&gt;Word Embedding&lt;/strong&gt;&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:1&#34;&gt;&lt;a class=&#34;footnote&#34; href=&#34;#fn:1&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; 可以有效的解決上述的問題。 Embedding 可以想成與 full connected layer 一樣，將這個 layer 稱做為 embedding layer ， weight 則稱為 embedding weights。藉由這樣的概念，可以省略掉 multiplication 的過程，直接透過 hidden layer 的 weigth matrix 來當作輸入字詞的 word vector。之所以可以這樣來執行是因為在處理 one-hot-encoding 與 weight matrix 相乘的結果，其實就是 matrix 所對應&amp;quot;詞&amp;quot;的索引值所得到的結果。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#39;lookup_matrix.png&#39; width=500&gt;&lt;/p&gt;
+
+&lt;p&gt;舉例來說： &amp;quot;heart&amp;quot; 的在 one-hot-encoding 的索引位置為958，我們直接拿取 heart 所對應 hidden layer 的值，也就是 embedding weights 的第958列(row)，這樣的過程叫做 &lt;strong&gt;embedding lookup&lt;/strong&gt;，而 hidden layer 的神經元數量則為 &lt;strong&gt;embedding dimension&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#39;tokenize_lookup.png&#39; width=500&gt;&lt;/p&gt;
+
+&lt;p&gt;另一個解釋是在於 word2vec 是一個三層架構，分別是 input layer、hidden layer、output layer，但是在 hidden layer 並沒有非線性的 activation function，由於 input layer 是經由 one-hot-encoding 過的資訊，所以在 hidden layer 所取得的值，其實就是對應輸入層得值；另外一提 output layer 的 activation function 是 sigmoid。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#39;word2vec_weight_matrix_lookup_table.png&#39; width=500&gt;&lt;/p&gt;
+
+&lt;p&gt;原文中最後提到的三個主要重點：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The embedding lookup table is just a weight matrix.&lt;/li&gt;
+&lt;li&gt;The embedding layer is just a hidden layer.&lt;/li&gt;
+&lt;li&gt;The lookup is just a shortcut for the matrix multiplication.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;models&#34;&gt;Models&lt;/h2&gt;
+
+&lt;p&gt;介紹完 word embedding 後，要來介紹 word2vec algorithm 中的兩個 model：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Skip-gram&lt;/li&gt;
+&lt;li&gt;CBOW(Continous Bag-Of-Words)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#39;word2vec_architectures.png&#39; width=500&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;skipgram-model&#34;&gt;Skip-gram model&lt;/h3&gt;
+
+&lt;p&gt;用下列兩張圖來解釋 skip-gram model 的結構，假設model是一個simple logistic regression(softmax)，左邊的圖表示為概念上的架構(conceptual architecture)，右邊的圖則為實作上的架構(implemented architectures)，雖然圖的架構有些微不同，但是實際上是一樣的，並沒有任何的改變。
+首先定義參數：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;V - Vocabulary Size (Number of unique words in the corpora)&lt;/li&gt;
+&lt;li&gt;P - The Projection or the Embedding Layer&lt;/li&gt;
+&lt;li&gt;D - Dimensionality of the Embedding Space&lt;/li&gt;
+&lt;li&gt;b - Size of a single Batch&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#39;skip_gram.png&#39; width=600&gt;&lt;/p&gt;
+
+&lt;p&gt;由左圖可以了解到，Skip-gram model 的 &lt;strong&gt;input(X)&lt;/strong&gt; 為一個單詞，而你的目標，也就是你的  &lt;strong&gt;output(Y)&lt;/strong&gt; 為相鄰的單詞。換句話就是在一句話中，選定句子當中的任意詞作為 input word，而與 input word 相鄰的字詞則為 model 的所要預測的目標(labels)，最後會得到相鄰字詞與 input word 相對應的機率。&lt;/p&gt;
+
+&lt;p&gt;但是上述的想法會出現一個問題，就是你只提供一個字詞的訊息，然而要得到相鄰字詞出現的機率，這是很困難的一件事，效果也不佳。所以這邊提出兩個方法:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;針對&amp;quot;相鄰字詞&amp;quot;這部分，加入了 &lt;strong&gt;window size&lt;/strong&gt; 的參數做調整&lt;/li&gt;
+&lt;li&gt;將輸出所有字詞的方式轉成一對一成對的方式&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;舉例來說：&lt;strong&gt;&amp;quot;The dog barked at the mailman.&amp;quot;&lt;/strong&gt; 這樣一句話，選定 dog 做為 input，設定window size = 2，則 &amp;quot;dag&amp;quot; 下上兩個相鄰字詞為 &lt;strong&gt;[&#39;the&#39;, &#39;barked&#39;, &#39;at&#39;]&lt;/strong&gt; 就會是我們的 output。此外將原本的(input: &#39;dag&#39;, output: &#39;[&#39;the&#39;, &#39;barked&#39;, &#39;at&#39;]) 轉換成 (input: &#39;dag&#39;, output: &#39;the&#39;), (input: &#39;dag&#39;, output: &#39;barked&#39;), (input: &#39;dag&#39;, output: &#39;at&#39;) 這樣一對一的方式。這樣的過程就如同右圖 implemented architectures。&lt;/p&gt;
+
+&lt;p&gt;下圖解釋一個語句的training samples產生:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#39;training_data.png&#39; width=600&gt;&lt;/p&gt;
+
+&lt;p&gt;所以當training samples: (brown, fox)的數量越多時，輸入&lt;code&gt;brown&lt;/code&gt;得到&lt;code&gt;fox&lt;/code&gt;的機率越高。&lt;/p&gt;
+
+&lt;h4 id=&#34;model-details&#34;&gt;Model Details&lt;/h4&gt;
+
+&lt;p&gt;Input layer: 字詞經過 one-hot-encoding 的向量表示。
+hidden layer: no activation function，上述介紹 embedding layer 已經解釋過。
+output layer: use softmax regression classifier，output 的結果介於0與1之間，且加總所有的值和為1。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#39;skip_gram_net_arch.png&#39; width=750&gt;&lt;/p&gt;
+
+&lt;p&gt;假設輸入的 word pair 為(ants, able)，則模型的目標是 &lt;span  class=&#34;math&#34;&gt;\(max P\left(able | ants \right)\)&lt;/span&gt;，同時也需要滿足 &lt;span  class=&#34;math&#34;&gt;\(min P\left(other \space words | ants \right)\)&lt;/span&gt;，這裡利用 log-likehood function 作為目標函數。&lt;/p&gt;
+
+&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
+P\left(able | ants \right) = softmax\left( X_{ants 1\times 10000} \cdot W_{10000 \times 300}\right) 
+\]&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
+Y = sotfmax(Y) =\frac{exp(X_{1 \times 300} \cdot W_{300 \times 1})}{\sum_{i=1}^{10000} exp(X_{1 \times 300}^i \cdot W_{300 \times 1})}
+\]&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;log-likehood function:&lt;/p&gt;
+
+&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
+L(W) = P\left(able \mid ants \right)^{y=able} \times P\left(other \space words | ants \right)^{y=other \space words}
+\]&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;Objective function可以表示如下：&lt;/p&gt;
+
+&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
+\begin{align}
+LogL\left(W\right) 
+&amp; = \{y = target \space word\} \{logP\left(able | ants \right) + logP\left(other \space words | ants \right)\}\\
+&amp; = \sum_{i}^{10000}\{ y = target \space word\}logP\left( word_{i} | ants \right)
+\end{align}
+\]&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;之後就是 Maxmium log-likehood function。
+由上述的介紹，會發現一個問題，這是一個非常巨大的 NN model。假設 word vectors 為300維的向量，具有10,000個字詞時，總共會有 &lt;span  class=&#34;math&#34;&gt;\(300 \times10000 = 3\)&lt;/span&gt; 百萬的 weight 需要訓練!! 這樣的計算 gradient descent 時造成模型的訓練時間會非常的久。&lt;/p&gt;
+
+&lt;p&gt;對於這問題，Word2Vec 的作者在&lt;a href=&#34;https://arxiv.org/pdf/1310.4546.pdf&#34;&gt;paper&lt;/a&gt;第二部分有提出以下的解決方法:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Treating common word pairs or phrases as single words in their model.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Subsampling frequent words&lt;/strong&gt; to decrease the number of training examples.&lt;/li&gt;
+&lt;li&gt;Modifying the optimization objective with a technique they called &lt;strong&gt;Negative Sampling&lt;/strong&gt;, which causes each training sample to update only a small percentage of the model’s weights&lt;/li&gt;
+&lt;li&gt;A computationally efficient approximation of the full softmax is the &lt;strong&gt;hierarchical softmax&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Subsampling 與 Negative Sampling 這兩個實作方法不只加速了模型的訓練速度，同時也提升模型的準確率。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Words pairs and phrases&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;比如說 New York City 在字詞訓練時，會拆成 New、York、City 三個字詞，但是這樣分開來無法表達出原意，所以將&amp;quot;New York City&amp;quot;組合為一個單詞做訓練。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Subsampling frequent words&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;在剛剛透過下圖解釋了相關的原理，但是這會發現兩個問題，一是像是出現(the, fox)這樣的 pair，並沒有告訴我們有用的資訊，並且&amp;quot;the&amp;quot;是常出現的字詞；二是有大量像是&amp;quot;the&amp;quot;這類的字詞出現在文章，要如何有意義地學習&amp;quot;the&amp;quot;字詞表示的意思。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#39;training_data.png&#39; width=600&gt;&lt;/p&gt;
+
+&lt;p&gt;subsamplig 針對這樣的狀況，透過一個機率值來判斷詞是否應該保留。機率值計算公式如下:
+&lt;span  class=&#34;math&#34;&gt;\(
+P\left( w_{i} \right) = \left( \sqrt{\frac{Z(w_{i})}{0.001} + 1} \right) \cdot \frac{0.001}{Z(w_{i})}
+\)&lt;/span&gt;
+其中$P\left( w_{i} \right)$表示$w_{i}$的出現機率，0.001為默認值。具體結果如下圖，字詞出現的頻率越高，相對被採用的機率越低。
+&lt;img src=&#39;subsample_func_plot.png&#39; width=600&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Negative Sampling&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;此方法目的是希望只透過正確的目標字詞來小改動 weight。比如說，ward pair (fox, qiuck)，在這個例子中&amp;quot;qiuck&amp;quot;為目標字詞，所以標記為1，而其他與 fox 無相關的字詞標記為0，就稱之為 negative sampling，這樣的 output 就有像是 one-hot vector，只有正確的目標字詞為1(positive word)，其他為0(negative word)。
+  至於 Negative sampling size 需要多少，底下是Word2Vec的作者給出的建議:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The paper says that selecting 5-20 words works well for smaller datasets, and you can get away with only 2-5 words for large datasets.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;所以假設是以上面描述的狀況，qiuck 則為 postive word，另外加上5個 negative word，output 值為6個值，總共有 &lt;span  class=&#34;math&#34;&gt;\(300 \times 6 = 1800\)&lt;/span&gt; 個 weight 需要更新，這樣只佔了原本300萬的 weight 0.06%而已!&lt;/p&gt;
+
+&lt;p&gt;該如何挑選 negative sampling? 則是透過 &lt;code&gt;unigram distribution&lt;/code&gt; 的機率來挑選， 在C語言實作 word2vec 的程式碼中得到以下公式&lt;/p&gt;
+
+&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
+  P\left( w_{i} \right) = \frac{f\left( w_{i} \right)^{\frac{3}{4}} }{\sum_{j=0}^{n} \left( f\left( w_{j}\right)^{\frac{3}{4}} \right)}
+  \]&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;$\frac{3}{4}$次方的選擇是來至於實驗測試的結果。&lt;/p&gt;
+
+&lt;p&gt;Define Objective function:&lt;/p&gt;
+
+&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\(
+  log \space \sigma \left( v_{I}^{T} \cdot v_{o} \right) - \sum_{i=1}^{k} E_{w_{i} -&gt; P_{v}}[\sigma\left( -v_{w_{i}}^{T}v_{wI} \right)]
+  \)&lt;/span&gt;
+  $ Note \space \sigma(-x) = 1 - \sigma(x)$&lt;/p&gt;
+
+&lt;h1 id=&#34;reference&#34;&gt;Reference&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;An implementation &lt;a href=&#34;http://www.thushv.com/natural_language_processing/word2vec-part-1-nlp-with-deep-learning-with-tensorflow-skip-gram/&#34;&gt;skip-gram of word2vec&lt;/a&gt; from Thushan Ganegedara&lt;/li&gt;
+&lt;li&gt;An implementation &lt;a href=&#34;http://www.thushv.com/natural_language_processing/word2vec-part-2-nlp-with-deep-learning-with-tensorflow-cbow/&#34;&gt;CBOW of word2vec&lt;/a&gt; from Thushan Ganegedara&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/&#34;&gt;Word2Vec Tutorial Part1&lt;/a&gt; and &lt;a href=&#34;http://mccormickml.com/2017/01/11/word2vec-tutorial-part-2-negative-sampling/&#34;&gt;Part2&lt;/a&gt; from Chris McCormick&lt;/li&gt;
+&lt;li&gt;Deep understand with word2vec form &lt;a href=&#34;http://cpmarkchang.logdown.com/posts/773062-neural-network-word2vec-part-1&#34;&gt;Mark Chang&#39;s Blog (Chinese)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://arxiv.org/pdf/1301.3781.pdf&#34;&gt;Efficient Estimation of Word Representations in Vector Space&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf&#34;&gt;Distributed Representations of Words and Phrases and their Compositionality&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;plus-reference&#34;&gt;Plus reference&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/facebookresearch/fastText&#34;&gt;FastText&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;word embedding: 將單詞word映射到另一個空間，其中這個映射具有injective和structure-preserving的特性。
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:1&#34;&gt;&lt;sup&gt;^&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>DropBlock</title>
+      <link>https://roymondliao.github.io/post/2019-04-10_dropblock/</link>
+      <pubDate>Wed, 10 Apr 2019 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.github.io/post/2019-04-10_dropblock/</guid>
+      <description>&lt;p&gt;Dropout 相關方法：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Dropout: 完全隨機丟棄 neuron&lt;/li&gt;
+&lt;li&gt;Sparital Dropout: 按 channel 隨機丟棄&lt;/li&gt;
+&lt;li&gt;Stochastic Depth: 按 res block 隨機丟棄&lt;/li&gt;
+&lt;li&gt;DropBlock: 每個 feature map 上按 spatial square 隨機丟棄&lt;/li&gt;
+&lt;li&gt;Cutout: 在 input layer 按 spatial square 隨機丟棄&lt;/li&gt;
+&lt;li&gt;DropConnect: 只在連接處丟，不丟 neuron&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://mp.weixin.qq.com/s?__biz=MzA3MzI4MjgzMw==&amp;amp;mid=2650751601&amp;amp;idx=5&amp;amp;sn=6ba09bea3acb116eb9f4902af5261e72&amp;amp;chksm=871a860fb06d0f194c4c0452e53d21cc6c537b4e33a5aea4e3c0a067db0c46d41168afabcc0c&amp;amp;scene=21#wechat_redirect&#34;&gt;DropBlock&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Idea&lt;/li&gt;
+&lt;li&gt;一般的 Dropout 都是用在 fully connection layer，而在 convolutional network 上使用 dropout 的意義並不大，該文章則認為因為在每一個 feature maps 的位置都具有一個 &lt;a href=&#34;https://zhuanlan.zhihu.com/p/28492837&#34;&gt;receptive field&lt;/a&gt;，僅對單一像素位置進行 dropout 並不能降低 feature maps 學習特徵範圍，也就是說，network 能夠特過&lt;strong&gt;相鄰位置&lt;/strong&gt;的特徵值去學習，也不會特別加強去學習保留下來的訊息。既然對於單獨的對每個位置進行 dropout 並無法提高 network 本身的泛化能力，那就以區塊的概念來進行 dropout，反而更能讓 network 去學習保留下來的訊息，而加重特徵的權重。&lt;/li&gt;
+&lt;li&gt;Method
+
+&lt;ul&gt;
+&lt;li&gt;不同 feature maps 共享相同的 dropblock mask，在相同的位置丟棄訊息&lt;/li&gt;
+&lt;li&gt;每一層的 feature maps 使用各自的 dropblock mask&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Parameters&lt;/li&gt;
+&lt;li&gt;block size: 控制要讓 value of feature maps 歸為 0 的區塊大小&lt;/li&gt;
+&lt;li&gt;$ \gamma $: 用來控制要丟棄特徵的數量&lt;/li&gt;
+&lt;li&gt;keep_prob: 與 dropout 的參數相同&lt;/li&gt;
+&lt;li&gt;Code implement&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/DHZS/tf-dropblock/blob/master/nets/dropblock.py&#34;&gt;https://github.com/DHZS/tf-dropblock/blob/master/nets/dropblock.py&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/shenmbsw/tensorflow-dropblock/blob/master/dropblock.py&#34;&gt;https://github.com/shenmbsw/tensorflow-dropblock/blob/master/dropblock.py&lt;/a&gt;&lt;br&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Bernoulli distrubtion:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import tensorflow as tf
+tf.reset_default_graph()
+with tf.Graph().as_default() as g: 
+    mean = tf.placeholder(tf.float32, [None])
+    input_shape = tf.placeholder(tf.float32, [None, 4, 4, 3])
+    shape = tf.stack(tf.shape(input_shape))
+    # method 1
+    # 用 uniform distributions 產生值，再透過 sign 轉為 [-1, 1], 最後透過 relu 將 -1 轉換為 0
+    uniform_dist = tf.random_uniform(shape, minval=0, maxval=1, dtype=tf.float32)
+    sign_dist = tf.sign(mean - uniform_dist)
+    bernoulli = tf.nn.relu(sign_dist)
+    # method 2
+    # probs 可以為多個 p, 對應 shape, 產生 n of p 的 bernoulli distributions
+    noise_dist = tf.distributions.Bernoulli(probs=[0.1])
+    mask = noise_dist.sample(shape)
+with tf.Session(graph=g) as sess:
+    tmp_array = np.zeros([4, 4, 3], dtype=np.uint8) 
+    tmp_array[:,:100] = [255, 0, 0] #Orange left side array[:,100:] = [0, 0, 255] #Blue right side
+    batch_array = np.array([tmp_array]*3)
+    uniform, sign, bern = sess.run([uniform_dist, sign_dist, bernoulli], feed_dict={mean: [1.], input_shape:batch_array})    
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;DropBlock implement:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import tensorflow as tf
+from tensorflow.python.keras import backend as K
+class DropBlock(tf.keras.layers.Layer) :
+    def __init__(self, keep_prob, block_size, **kwargs):
+        super(DropBlock, self).__init__(**kwargs)
+        self.keep_prob = float(keep_prob) if isinstance(keep_prob, int) else keep_prob
+        self.block_size = int(block_size)
+
+    def compute_output_shape(self, input_shape):
+        return input_shape
+    
+    def build(self, input_shape):
+        _, self.h, self.w, self.channel = input_shape.as_list()
+        # pad the mask
+        bottom = right = (self.block_size -1) // 2
+        top = left = (self.block_size -1) - bottom
+        self.padding = [[0, 0], [top, bottom], [left, right], [0, 0]]
+        self.set_keep_prob()
+        super(DropBlock, self).build(input_shape)
+        
+    def set_keep_prob(self, keep_prob=None):
+        &amp;quot;&amp;quot;&amp;quot;This method only support Eager Execution&amp;quot;&amp;quot;&amp;quot;
+        if keep_prob is not None:
+            self.keep_prob = keep_prob
+        w, h = tf.to_float(self.w), tf.to_float(self.h)
+        self.gamma = (1. - self.keep_prob) * (w * h) / (self.block_size ** 2) / ((w - self.block_size + 1) * (h - self.block_size + 1))
+
+    def _create_mask(self, input_shape):
+        sampling_mask_shape = tf.stack([input_shape[0], 
+                                        self.h - self.block_size + 1, 
+                                        self.w - self.block_size + 1,
+                                        self.channel])
+        mask = DropBlock._bernoulli(sampling_mask_shape, self.gamma)
+        # 擴充行列，並給予0值，依據 paddings 參數給予的上下左右值來做擴充，mode有三種模式可選，可參考 document
+        mask = tf.pad(tensor=mask, paddings=self.padding, mode=&#39;CONSTANT&#39;) 
+        mask = tf.nn.max_pool(value=mask, 
+                              ksize=[1, self.block_size, self.block_size, 1], 
+                              strides=[1, 1, 1, 1], 
+                              padding=&#39;SAME&#39;)
+        mask = 1 - mask
+        return mask
+        
+    @staticmethod    
+    def _bernoulli(shape, mean):
+        return tf.nn.relu(tf.sign(mean - tf.random_uniform(shape, minval=0, maxval=1, dtype=tf.float32)))
+    
+    # The call function is a built-in function in &#39;tf.keras&#39;.
+    def call(self, inputs, training=None, scale=True, **kwargs):
+        def drop():
+            mask = self._create_mask(tf.shape(inputs))
+            output = inputs * mask
+            output = tf.cond(tf.constant(scale, dtype=tf.bool) if isinstance(scale, bool) else scale,
+                             true_fn=lambda: output * tf.to_float(tf.size(mask)) / tf.reduce_sum(mask),
+                             false_fn=lambda: output)
+            return output
+        
+        if training is None:
+            training = K.learning_phase()
+        output = tf.cond(tf.logical_or(tf.logical_not(training), tf.equal(self.keep_prob, 1.0)),
+                         true_fn=lambda: inputs,
+                         false_fn=drop)
+        return output
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# Testing
+a = tf.placeholder(tf.float32, [None, 5, 5, 3])
+keep_prob = tf.placeholder(tf.float32)
+training = tf.placeholder(tf.bool)
+
+drop_block = DropBlock(keep_prob=keep_prob, block_size=3)
+b = drop_block(inputs=a, training=training)
+
+sess = tf.Session()
+feed_dict = {a: np.ones([2, 5, 5, 3]), keep_prob: 0.8, training: True}
+c = sess.run(b, feed_dict=feed_dict)
+
+print(c[0, :, :, 0])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://mp.weixin.qq.com/s?__biz=MzA3MzI4MjgzMw==&amp;amp;mid=2650752571&amp;amp;idx=1&amp;amp;sn=8417645148afd8eebdb79c91b37a7409&amp;amp;chksm=871a8245b06d0b53115d79f1ce42bc5a03aad5d038fe51c2f237c5848c41c51c5b756aaa8937&amp;amp;scene=21#wechat_redirect&#34;&gt;Targeted Dropout&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Reference:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://cloud.tencent.com/developer/article/1367373&#34;&gt;https://cloud.tencent.com/developer/article/1367373&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>XGBoost</title>
+      <link>https://roymondliao.github.io/post/2019-03-02_xgboost/</link>
+      <pubDate>Sat, 02 Mar 2019 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.github.io/post/2019-03-02_xgboost/</guid>
+      <description>&lt;h2 id=&#34;review-note&#34;&gt;Review note&lt;/h2&gt;
+
+&lt;p&gt;Bagging&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Concept&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Bagging involves creating mulitple copies of the original training data set using the boostrap, fitting a seperate decision tree to each copy, and then combining all of the trees in order to create a single predcitive model. &lt;font color=&#34;#F44336&#34;&gt;Notably, each tree is built on a bootstrap data set, independent of the other trees.&lt;/font&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Algorithm&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Random Forest&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Boosting&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Concept&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Boosting works in a similar way with bagging, except that the trees are grown &lt;font color=&#34;#F44336&#34;&gt;sequentially&lt;/font&gt;. Each tree is grown using information from previous grown trees.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Algorithm&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Adaboost - &lt;a href=&#34;https://en.wikipedia.org/wiki/AdaBoost&#34;&gt;Yoav Freund and Robert Schapire&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;根據樣本的誤差來調整樣本的權重，誤差較大的樣本給予較高的權重，反之亦然。藉此著重訓練分類錯誤的資料，進而來增進模型的準確度。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Gradient boosting - &lt;a href=&#34;https://statweb.stanford.edu/~jhf/&#34;&gt;Friedman, J.H.&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;根據當前模型的殘差來調整權重的大小，其目的是為了降低殘差。通過迭代的方式，使損失函數(loss function)達到最小值(局部最小)。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Method&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;GBDT(Grandien Boosting Decision Tree)&lt;/li&gt;
+&lt;li&gt;XGBoost(eXtreme Gradient Boosting)](&lt;a href=&#34;https://github.com/dmlc/xgboost&#34;&gt;https://github.com/dmlc/xgboost&lt;/a&gt;) - &lt;a href=&#34;http://homes.cs.washington.edu/~tqchen/&#34;&gt;Tianqi Chen&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;LightGBM(Light Gradient Boosting Machine)](&lt;a href=&#34;https://github.com/Microsoft/LightGBM&#34;&gt;https://github.com/Microsoft/LightGBM&lt;/a&gt;) - Microsoft Research Asia&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;advantages-of-xgboost&#34;&gt;Advantages of XGBoost&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;傳統 GBDT 是以 CART 作為分類器的基礎，但是XGBoost還可以支援線性分類器，另外在 objective function 可以加入 L1 regularization 和 L2 regularization 的方式來優化，降低了 model 的 variance，避免 overfitting 的狀況。&lt;/li&gt;
+&lt;li&gt;GBDT 在優化部分只使用到泰勒展開式的一階導數，但 XGBoost 則使用到二階導數，所以在預測準確度上提供更多的訊息。&lt;/li&gt;
+&lt;li&gt;XGBoost 支援平行運算與分布式運算，所以相較傳統的GBDT在計算速度上有大幅的提升。XGBoost 的平行並非是在 tree 的維度做平行化處理，而是在 features 的維度上做平行化處理，因為 tree 的生長是需要前一次迭代的結果的來進行 tree 的生長。&lt;/li&gt;
+&lt;li&gt;對 features 進行預排序的處理，然後保存排序的結構，以利後續再 tree 的分裂上能夠快速的計算每個 features 的 gain 的結果，最終選擇 gain 最大的 feature 進行分裂，這樣的方式就可以平行化處理。&lt;/li&gt;
+&lt;li&gt;加入 shrinkage 和 column subsampling 的優化技術。&lt;/li&gt;
+&lt;li&gt;有效地處理 missing value 的問題。&lt;/li&gt;
+&lt;li&gt;先從頭到尾建立所有可能的 sub trees，再從底到頭的方式進行剪枝(pruning)。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;disadvantages-of-xgboost&#34;&gt;Disadvantages of XGBoost&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;在每次的迭代過程中，都需要掃過整個訓練集合多次。如果把整個訓練集合存到 memory 會限制數據的大小;如果不存到 memory 中，反覆的讀寫訓練集合也會消耗非常多的時間。&lt;/li&gt;
+&lt;li&gt;預排序方法(pre-sorted): 由於需要先針對 feature 內的 value 進行排序並且保存排序的結果，以利於後續的 gain 的計算，但在這個計算上就需要消耗兩倍的 memory 空間，來執行。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;reference&#34;&gt;Reference&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf&#34;&gt;http://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://mlnote.com/2016/10/05/a-guide-to-xgboost-A-Scalable-Tree-Boosting-System/&#34;&gt;http://mlnote.com/2016/10/05/a-guide-to-xgboost-A-Scalable-Tree-Boosting-System/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.zybuluo.com/yxd/note/611571#机器学习的关键元素&#34;&gt;https://www.zybuluo.com/yxd/note/611571#机器学习的关键元素&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Gradient_boosting#Shrinkage&#34;&gt;https://en.wikipedia.org/wiki/Gradient_boosting#Shrinkage&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://zhanpengfang.github.io/418home.html&#34;&gt;http://zhanpengfang.github.io/418home.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;paper&#34;&gt;Paper&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Fridman J.H. (1999). &lt;a href=&#34;http://statweb.stanford.edu/~jhf/ftp/trebst.pdf&#34;&gt;Greedy Function Approximation: A Gradient Boosting Machine&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Tianqi Chen, Carlos Gusetrin (2016). &lt;a href=&#34;http://www.kdd.org/kdd2016/papers/files/rfp0697-chenAemb.pdf&#34;&gt;XGBoost: A Scalable Tree Boosting System&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;doing&#34;&gt;Doing&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.analyticsvidhya.com/blog/2016/03/complete-guide-parameter-tuning-xgboost-with-codes-python/&#34;&gt;https://www.analyticsvidhya.com/blog/2016/03/complete-guide-parameter-tuning-xgboost-with-codes-python/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://adeshpande3.github.io/adeshpande3.github.io/Applying-Machine-Learning-to-March-Madness&#34;&gt;https://adeshpande3.github.io/adeshpande3.github.io/Applying-Machine-Learning-to-March-Madness&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
   </channel>
 </rss>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Machine Learning | Roymond Liao</title>
+    <link>https://roymondliao.github.io/categories/machine-learning/</link>
+      <atom:link href="https://roymondliao.github.io/categories/machine-learning/index.xml" rel="self" type="application/rss+xml" />
+    <description>Machine Learning</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Sat, 02 Mar 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://roymondliao.github.io/img/icon-192.png</url>
+      <title>Machine Learning</title>
+      <link>https://roymondliao.github.io/categories/machine-learning/</link>
+    </image>
+    
+    <item>
+      <title>XGBoost</title>
+      <link>https://roymondliao.github.io/post/2019-03-02_xgboost/</link>
+      <pubDate>Sat, 02 Mar 2019 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.github.io/post/2019-03-02_xgboost/</guid>
+      <description>&lt;h2 id=&#34;review-note&#34;&gt;Review note&lt;/h2&gt;
+
+&lt;p&gt;Bagging&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Concept&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Bagging involves creating mulitple copies of the original training data set using the boostrap, fitting a seperate decision tree to each copy, and then combining all of the trees in order to create a single predcitive model. &lt;font color=&#34;#F44336&#34;&gt;Notably, each tree is built on a bootstrap data set, independent of the other trees.&lt;/font&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Algorithm&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Random Forest&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Boosting&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Concept&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Boosting works in a similar way with bagging, except that the trees are grown &lt;font color=&#34;#F44336&#34;&gt;sequentially&lt;/font&gt;. Each tree is grown using information from previous grown trees.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Algorithm&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Adaboost - &lt;a href=&#34;https://en.wikipedia.org/wiki/AdaBoost&#34;&gt;Yoav Freund and Robert Schapire&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;根據樣本的誤差來調整樣本的權重，誤差較大的樣本給予較高的權重，反之亦然。藉此著重訓練分類錯誤的資料，進而來增進模型的準確度。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Gradient boosting - &lt;a href=&#34;https://statweb.stanford.edu/~jhf/&#34;&gt;Friedman, J.H.&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;根據當前模型的殘差來調整權重的大小，其目的是為了降低殘差。通過迭代的方式，使損失函數(loss function)達到最小值(局部最小)。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Method&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;GBDT(Grandien Boosting Decision Tree)&lt;/li&gt;
+&lt;li&gt;XGBoost(eXtreme Gradient Boosting)](&lt;a href=&#34;https://github.com/dmlc/xgboost&#34;&gt;https://github.com/dmlc/xgboost&lt;/a&gt;) - &lt;a href=&#34;http://homes.cs.washington.edu/~tqchen/&#34;&gt;Tianqi Chen&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;LightGBM(Light Gradient Boosting Machine)](&lt;a href=&#34;https://github.com/Microsoft/LightGBM&#34;&gt;https://github.com/Microsoft/LightGBM&lt;/a&gt;) - Microsoft Research Asia&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;advantages-of-xgboost&#34;&gt;Advantages of XGBoost&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;傳統 GBDT 是以 CART 作為分類器的基礎，但是XGBoost還可以支援線性分類器，另外在 objective function 可以加入 L1 regularization 和 L2 regularization 的方式來優化，降低了 model 的 variance，避免 overfitting 的狀況。&lt;/li&gt;
+&lt;li&gt;GBDT 在優化部分只使用到泰勒展開式的一階導數，但 XGBoost 則使用到二階導數，所以在預測準確度上提供更多的訊息。&lt;/li&gt;
+&lt;li&gt;XGBoost 支援平行運算與分布式運算，所以相較傳統的GBDT在計算速度上有大幅的提升。XGBoost 的平行並非是在 tree 的維度做平行化處理，而是在 features 的維度上做平行化處理，因為 tree 的生長是需要前一次迭代的結果的來進行 tree 的生長。&lt;/li&gt;
+&lt;li&gt;對 features 進行預排序的處理，然後保存排序的結構，以利後續再 tree 的分裂上能夠快速的計算每個 features 的 gain 的結果，最終選擇 gain 最大的 feature 進行分裂，這樣的方式就可以平行化處理。&lt;/li&gt;
+&lt;li&gt;加入 shrinkage 和 column subsampling 的優化技術。&lt;/li&gt;
+&lt;li&gt;有效地處理 missing value 的問題。&lt;/li&gt;
+&lt;li&gt;先從頭到尾建立所有可能的 sub trees，再從底到頭的方式進行剪枝(pruning)。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;disadvantages-of-xgboost&#34;&gt;Disadvantages of XGBoost&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;在每次的迭代過程中，都需要掃過整個訓練集合多次。如果把整個訓練集合存到 memory 會限制數據的大小;如果不存到 memory 中，反覆的讀寫訓練集合也會消耗非常多的時間。&lt;/li&gt;
+&lt;li&gt;預排序方法(pre-sorted): 由於需要先針對 feature 內的 value 進行排序並且保存排序的結果，以利於後續的 gain 的計算，但在這個計算上就需要消耗兩倍的 memory 空間，來執行。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;reference&#34;&gt;Reference&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf&#34;&gt;http://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://mlnote.com/2016/10/05/a-guide-to-xgboost-A-Scalable-Tree-Boosting-System/&#34;&gt;http://mlnote.com/2016/10/05/a-guide-to-xgboost-A-Scalable-Tree-Boosting-System/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.zybuluo.com/yxd/note/611571#机器学习的关键元素&#34;&gt;https://www.zybuluo.com/yxd/note/611571#机器学习的关键元素&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Gradient_boosting#Shrinkage&#34;&gt;https://en.wikipedia.org/wiki/Gradient_boosting#Shrinkage&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://zhanpengfang.github.io/418home.html&#34;&gt;http://zhanpengfang.github.io/418home.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;paper&#34;&gt;Paper&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Fridman J.H. (1999). &lt;a href=&#34;http://statweb.stanford.edu/~jhf/ftp/trebst.pdf&#34;&gt;Greedy Function Approximation: A Gradient Boosting Machine&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Tianqi Chen, Carlos Gusetrin (2016). &lt;a href=&#34;http://www.kdd.org/kdd2016/papers/files/rfp0697-chenAemb.pdf&#34;&gt;XGBoost: A Scalable Tree Boosting System&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;doing&#34;&gt;Doing&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.analyticsvidhya.com/blog/2016/03/complete-guide-parameter-tuning-xgboost-with-codes-python/&#34;&gt;https://www.analyticsvidhya.com/blog/2016/03/complete-guide-parameter-tuning-xgboost-with-codes-python/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://adeshpande3.github.io/adeshpande3.github.io/Applying-Machine-Learning-to-March-Madness&#34;&gt;https://adeshpande3.github.io/adeshpande3.github.io/Applying-Machine-Learning-to-March-Madness&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

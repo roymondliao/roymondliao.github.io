@@ -1,9 +1,9 @@
 {
-  "name": "Academic",
-  "short_name": "Academic",
+  "name": "Roymond Liao",
+  "short_name": "Roymond Liao",
   "lang": "en-us",
-  "theme_color": "#2962ff",
-  "background_color": "#2962ff",
+  "theme_color": "#007D8C",
+  "background_color": "#007D8C",
   "icons": [{
     "src": "../img/icon-192.png",
     "sizes": "192x192",

@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Optimizer | Roymond Liao</title>
+    <link>https://roymondliao.github.io/categories/optimizer/</link>
+      <atom:link href="https://roymondliao.github.io/categories/optimizer/index.xml" rel="self" type="application/rss+xml" />
+    <description>Optimizer</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Thu, 03 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://roymondliao.github.io/img/icon-192.png</url>
+      <title>Optimizer</title>
+      <link>https://roymondliao.github.io/categories/optimizer/</link>
+    </image>
+    
+    <item>
+      <title>Lookahead Optimizer: k steps forward, 1 step back</title>
+      <link>https://roymondliao.github.io/post/2019-10-03_lookahead/</link>
+      <pubDate>Thu, 03 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.github.io/post/2019-10-03_lookahead/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+
+&lt;p&gt;在目前的 optimizer 分為兩個主要發展方向：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Adaptive learning rate, such as AdaGrad and Adam&lt;/li&gt;
+&lt;li&gt;Accelerated schema (momentum), such as Polyak heavyball and Nesterov momentum&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;以上都是透過累積過往梯度下降所得到的結果來達到收斂，然而要獲得好的結果，都需要一些超參數的調整。&lt;/p&gt;
+
+&lt;p&gt;Lookahead method：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;是一種新的優化方法，採用兩個不同的權重，分別為 fast weights 與 slow weights。fast weights 是使用一般常見的 optimizer 當作 inner optimizer 先進行 &lt;code&gt;k&lt;/code&gt; 次的計算後得到的結果與預先保留的 slow weights 進行線性插值(linearly interpolating)來更新權重 ，更新後的 wieight 為新的 slow weights 並推動之前的 fast weights 往前探索，以這樣的方式進行迭代。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;在使用不同的 inner optimizer 下，像是 SGD 或是 Adam，減少了對超參數調整的需求，並且可以以最小的計算需求確保在不同的深度學習任務中加快收斂速度。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;lookahead_figure_1.png&#34; alt=&#34;lookahead_figure_1&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;演算過程 :&lt;/p&gt;
+
+&lt;p&gt;Step 1 : 先設定 $\phi$ 的初始值，以及選定 objective function $L$ &lt;br&gt;
+Step 2 : 確定更新週期 $k$ 值、slow weight 的更新步伐 $\alpha $ 以及 optimizer $A$ &lt;br&gt;
+Step 3 : 更新 fast weight $\theta$ ，$ \space \theta_{t,0} \leftarrow \phi_{t-1}, t=1,2,\dots $ &lt;br&gt;
+Step 4 : 利用 optimizer $A$ 迭代 $k$ 次更新，由 $\theta_{t, i}$ 更新到 $\theta_{t, k}, i=1, 2, \dots, k$ &lt;br&gt;
+Step 5 : 更新 slow weight $\phi_{k} \leftarrow \phi_{k-1} + \alpha\left(\theta_{t, k} - \phi_{t-1}\right)$ &lt;br&gt;
+重複 Step 3 - Step 5 直至收斂。&lt;/p&gt;
+
+&lt;p&gt;其可以想像身處在山脈的頂端，而周邊都是山頭林立，有高有低，其中一座山可通往山腳下，其他都只是在山中繞來繞去，無法走下山。如果親自探索是非常困難，因為在選定一條路線的同時，必須要放棄其他路線，直到最終找到正確的通路，但是如果我們在山頂留下一位夥伴，在其狀況看起來不妙時及時把我們叫回，這樣能幫助我們在尋找出路的時候得到快速的進展，因此全部地形的探索速度將更快，而發生迷路的狀況也更低。&lt;/p&gt;
+
+&lt;h2 id=&#34;method&#34;&gt;Method&lt;/h2&gt;
+
+&lt;p&gt;如同 Algorithm 1 所表示的內循環(inner loop)的 optimizer A 在迭代 $k$ 次後，在 weight space 中，slow weights 的更新為與 fast weights k的線性插值(linearly interpolating)，$\theta - \phi$. 我們將 slow weights learning rate 表示為 $\alpha$, 在 slow weights 更新後，fast weights 會重新設定為 slow weights 的位置。&lt;/p&gt;
+
+&lt;p&gt;Standard optimization method typically require carefully tuned learning rate to prevent &lt;strong&gt;oscillation&lt;/strong&gt; and &lt;strong&gt;slow converagence&lt;/strong&gt;. However, lookahead benefits from a larger learning rate in the inner loop. When oscillation in  the high curvature direction, the fast weights updates make rapid progress along the low curvature direction. The slow weights help smooth out the oscillation throught the parameter interpolation.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Slow weights trajectory&lt;/strong&gt; We can characterize the trajectory of the slow weights as an exponential moving average (EMA) of the final fast weights within each inner-loop, regardless of the inner optimizer. After k inner-loop steps we have:&lt;/p&gt;
+
+&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
+\begin{align}
+\phi_{t+1} &amp;= \phi_{t} + \alpha\left(\theta_{t, k} - \phi_{t}\right) \\
+&amp;= \left(1-\alpha\right)\phi_{t} + \alpha\theta_{t, k} \\
+&amp;= \left(1-\alpha\right)\left(\phi_{t-1} + \alpha\left(\theta_{t-1, k} - \phi_{t-1}\right) \right) +  \alpha\theta_{t, k} \\
+&amp; \vdots \\
+&amp;= \alpha\left[\theta_{t, k} + (1 - \alpha)\theta_{t-1, k} + \dots + (1 - \alpha)^{t-1}\theta_{0, k} \right]  + (1- \alpha)^{t}\theta_{0}
+\end{align}
+\]&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Fast weights trajectory&lt;/strong&gt; Within each inner-loop, the trajectory of the fast weight depends on the choice of underlying optimizer. Given an optimization algorithm A that takes in an objective function $L$ and the current mini-batch training examples $d$, we have the update rule for the fast weights:
+&lt;span  class=&#34;math&#34;&gt;\(
+\theta_{t, i+1} = \theta_{t, i} + A\left(L, \theta_{t, i-1}, d\right)
+\)&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;We have the choice of maintaining, interpolating, or resetting the internal state (e.g. momentum) of the inner optimizer. Every choice improves convergence of the inner optimizer.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Computational complexity&lt;/strong&gt; Lookahead has a constant computational overhead due to parameter copying and basic arithmetic operations that is amortized across the k inner loop updates. The number of operations is $O\left(\frac{k+1}{k}\right)$ times that of the inner optimizer. Lookahead maintains a single additional copy of the number of learnable parameters in the model.&lt;/p&gt;
+
+&lt;h2 id=&#34;empirical-analysis&#34;&gt;Empirical Analysis&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;Robustness to inner optimization algorithm $k$ and $\alpha$&lt;/strong&gt; 在論文中使用 &lt;strong&gt;CIFAR&lt;/strong&gt; 的資料測試，Lookahead 能夠在不同的超參數設定下保有快速收斂的結果。在實驗中固定 slow weight step size $\alpha = 0.5$ 與 $k=5$，inner optimizer 選擇使用 SGD optimizer，測試不同的 learning rate 與 momentum 參數，結果顯示如下:&lt;/p&gt;
+
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;lookahead_figure_8.png&#34; alt=&#34;lookahead_figure_8&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;同時實驗了在超參數固定的狀況下，inner optimizer 的 fast weights 在歷經不同 $k$ 與 $\alpha$ 的設定，結果如下圖:&lt;/p&gt;
+
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;lookahead_figure_9.png&#34; alt=&#34;lookahead_figure_9&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Inner loop and outer loop evalation&lt;/strong&gt; 為了更了解 Lookahead 的在 fast weights 與 slow weights 的更新狀況，透過 test accuracy 的結果來了解 weights 變化的趨勢。如下圖，在每次 inner loop 更新 fast weights 的情況下，對 test accuracy 造成大幅的下降，反映了在每次 inner loop 的更新都具有 high variance 的情況產生。然而，在 slow weights 的更新階段，降低了 variance 的影響，並且慢慢調整 test accuracy 的準確度。&lt;/p&gt;
+
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;lookahead_figure_10.png&#34; alt=&#34;lookahead_figure_10&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;code-implement&#34;&gt;Code implement&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://github.com/bojone/keras_lookahead&#34;&gt;https://github.com/bojone/keras_lookahead&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://github.com/lifeiteng/Optimizers&#34;&gt;https://github.com/lifeiteng/Optimizers&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;reference&#34;&gt;Reference&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://arxiv.org/pdf/1907.08610v1.pdf&#34;&gt;Lookahead Optimizer: k steps forward, 1 step back&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.infoq.cn/article/Q7gBMEHNrd2rkjqV6CM3?utm_source=rss&amp;amp;utm_medium=article&#34;&gt;https://www.infoq.cn/article/Q7gBMEHNrd2rkjqV6CM3?utm_source=rss&amp;amp;utm_medium=article&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.infoq.cn/article/Q7gBMEHNrd2rkjqV6CM3&#34;&gt;https://www.infoq.cn/article/Q7gBMEHNrd2rkjqV6CM3&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>DropBlock</title>
+      <link>https://roymondliao.github.io/post/2019-04-10_dropblock/</link>
+      <pubDate>Wed, 10 Apr 2019 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.github.io/post/2019-04-10_dropblock/</guid>
+      <description>&lt;p&gt;Dropout 相關方法：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Dropout: 完全隨機丟棄 neuron&lt;/li&gt;
+&lt;li&gt;Sparital Dropout: 按 channel 隨機丟棄&lt;/li&gt;
+&lt;li&gt;Stochastic Depth: 按 res block 隨機丟棄&lt;/li&gt;
+&lt;li&gt;DropBlock: 每個 feature map 上按 spatial square 隨機丟棄&lt;/li&gt;
+&lt;li&gt;Cutout: 在 input layer 按 spatial square 隨機丟棄&lt;/li&gt;
+&lt;li&gt;DropConnect: 只在連接處丟，不丟 neuron&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://mp.weixin.qq.com/s?__biz=MzA3MzI4MjgzMw==&amp;amp;mid=2650751601&amp;amp;idx=5&amp;amp;sn=6ba09bea3acb116eb9f4902af5261e72&amp;amp;chksm=871a860fb06d0f194c4c0452e53d21cc6c537b4e33a5aea4e3c0a067db0c46d41168afabcc0c&amp;amp;scene=21#wechat_redirect&#34;&gt;DropBlock&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Idea&lt;/li&gt;
+&lt;li&gt;一般的 Dropout 都是用在 fully connection layer，而在 convolutional network 上使用 dropout 的意義並不大，該文章則認為因為在每一個 feature maps 的位置都具有一個 &lt;a href=&#34;https://zhuanlan.zhihu.com/p/28492837&#34;&gt;receptive field&lt;/a&gt;，僅對單一像素位置進行 dropout 並不能降低 feature maps 學習特徵範圍，也就是說，network 能夠特過&lt;strong&gt;相鄰位置&lt;/strong&gt;的特徵值去學習，也不會特別加強去學習保留下來的訊息。既然對於單獨的對每個位置進行 dropout 並無法提高 network 本身的泛化能力，那就以區塊的概念來進行 dropout，反而更能讓 network 去學習保留下來的訊息，而加重特徵的權重。&lt;/li&gt;
+&lt;li&gt;Method
+
+&lt;ul&gt;
+&lt;li&gt;不同 feature maps 共享相同的 dropblock mask，在相同的位置丟棄訊息&lt;/li&gt;
+&lt;li&gt;每一層的 feature maps 使用各自的 dropblock mask&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Parameters&lt;/li&gt;
+&lt;li&gt;block size: 控制要讓 value of feature maps 歸為 0 的區塊大小&lt;/li&gt;
+&lt;li&gt;$ \gamma $: 用來控制要丟棄特徵的數量&lt;/li&gt;
+&lt;li&gt;keep_prob: 與 dropout 的參數相同&lt;/li&gt;
+&lt;li&gt;Code implement&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/DHZS/tf-dropblock/blob/master/nets/dropblock.py&#34;&gt;https://github.com/DHZS/tf-dropblock/blob/master/nets/dropblock.py&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/shenmbsw/tensorflow-dropblock/blob/master/dropblock.py&#34;&gt;https://github.com/shenmbsw/tensorflow-dropblock/blob/master/dropblock.py&lt;/a&gt;&lt;br&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Bernoulli distrubtion:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import tensorflow as tf
+tf.reset_default_graph()
+with tf.Graph().as_default() as g: 
+    mean = tf.placeholder(tf.float32, [None])
+    input_shape = tf.placeholder(tf.float32, [None, 4, 4, 3])
+    shape = tf.stack(tf.shape(input_shape))
+    # method 1
+    # 用 uniform distributions 產生值，再透過 sign 轉為 [-1, 1], 最後透過 relu 將 -1 轉換為 0
+    uniform_dist = tf.random_uniform(shape, minval=0, maxval=1, dtype=tf.float32)
+    sign_dist = tf.sign(mean - uniform_dist)
+    bernoulli = tf.nn.relu(sign_dist)
+    # method 2
+    # probs 可以為多個 p, 對應 shape, 產生 n of p 的 bernoulli distributions
+    noise_dist = tf.distributions.Bernoulli(probs=[0.1])
+    mask = noise_dist.sample(shape)
+with tf.Session(graph=g) as sess:
+    tmp_array = np.zeros([4, 4, 3], dtype=np.uint8) 
+    tmp_array[:,:100] = [255, 0, 0] #Orange left side array[:,100:] = [0, 0, 255] #Blue right side
+    batch_array = np.array([tmp_array]*3)
+    uniform, sign, bern = sess.run([uniform_dist, sign_dist, bernoulli], feed_dict={mean: [1.], input_shape:batch_array})    
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;DropBlock implement:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import tensorflow as tf
+from tensorflow.python.keras import backend as K
+class DropBlock(tf.keras.layers.Layer) :
+    def __init__(self, keep_prob, block_size, **kwargs):
+        super(DropBlock, self).__init__(**kwargs)
+        self.keep_prob = float(keep_prob) if isinstance(keep_prob, int) else keep_prob
+        self.block_size = int(block_size)
+
+    def compute_output_shape(self, input_shape):
+        return input_shape
+    
+    def build(self, input_shape):
+        _, self.h, self.w, self.channel = input_shape.as_list()
+        # pad the mask
+        bottom = right = (self.block_size -1) // 2
+        top = left = (self.block_size -1) - bottom
+        self.padding = [[0, 0], [top, bottom], [left, right], [0, 0]]
+        self.set_keep_prob()
+        super(DropBlock, self).build(input_shape)
+        
+    def set_keep_prob(self, keep_prob=None):
+        &amp;quot;&amp;quot;&amp;quot;This method only support Eager Execution&amp;quot;&amp;quot;&amp;quot;
+        if keep_prob is not None:
+            self.keep_prob = keep_prob
+        w, h = tf.to_float(self.w), tf.to_float(self.h)
+        self.gamma = (1. - self.keep_prob) * (w * h) / (self.block_size ** 2) / ((w - self.block_size + 1) * (h - self.block_size + 1))
+
+    def _create_mask(self, input_shape):
+        sampling_mask_shape = tf.stack([input_shape[0], 
+                                        self.h - self.block_size + 1, 
+                                        self.w - self.block_size + 1,
+                                        self.channel])
+        mask = DropBlock._bernoulli(sampling_mask_shape, self.gamma)
+        # 擴充行列，並給予0值，依據 paddings 參數給予的上下左右值來做擴充，mode有三種模式可選，可參考 document
+        mask = tf.pad(tensor=mask, paddings=self.padding, mode=&#39;CONSTANT&#39;) 
+        mask = tf.nn.max_pool(value=mask, 
+                              ksize=[1, self.block_size, self.block_size, 1], 
+                              strides=[1, 1, 1, 1], 
+                              padding=&#39;SAME&#39;)
+        mask = 1 - mask
+        return mask
+        
+    @staticmethod    
+    def _bernoulli(shape, mean):
+        return tf.nn.relu(tf.sign(mean - tf.random_uniform(shape, minval=0, maxval=1, dtype=tf.float32)))
+    
+    # The call function is a built-in function in &#39;tf.keras&#39;.
+    def call(self, inputs, training=None, scale=True, **kwargs):
+        def drop():
+            mask = self._create_mask(tf.shape(inputs))
+            output = inputs * mask
+            output = tf.cond(tf.constant(scale, dtype=tf.bool) if isinstance(scale, bool) else scale,
+                             true_fn=lambda: output * tf.to_float(tf.size(mask)) / tf.reduce_sum(mask),
+                             false_fn=lambda: output)
+            return output
+        
+        if training is None:
+            training = K.learning_phase()
+        output = tf.cond(tf.logical_or(tf.logical_not(training), tf.equal(self.keep_prob, 1.0)),
+                         true_fn=lambda: inputs,
+                         false_fn=drop)
+        return output
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# Testing
+a = tf.placeholder(tf.float32, [None, 5, 5, 3])
+keep_prob = tf.placeholder(tf.float32)
+training = tf.placeholder(tf.bool)
+
+drop_block = DropBlock(keep_prob=keep_prob, block_size=3)
+b = drop_block(inputs=a, training=training)
+
+sess = tf.Session()
+feed_dict = {a: np.ones([2, 5, 5, 3]), keep_prob: 0.8, training: True}
+c = sess.run(b, feed_dict=feed_dict)
+
+print(c[0, :, :, 0])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://mp.weixin.qq.com/s?__biz=MzA3MzI4MjgzMw==&amp;amp;mid=2650752571&amp;amp;idx=1&amp;amp;sn=8417645148afd8eebdb79c91b37a7409&amp;amp;chksm=871a8245b06d0b53115d79f1ce42bc5a03aad5d038fe51c2f237c5848c41c51c5b756aaa8937&amp;amp;scene=21#wechat_redirect&#34;&gt;Targeted Dropout&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Reference:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://cloud.tencent.com/developer/article/1367373&#34;&gt;https://cloud.tencent.com/developer/article/1367373&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
