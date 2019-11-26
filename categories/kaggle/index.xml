@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kaggle | Roymond Liao</title>
+    <link>https://roymondliao.github.io/categories/kaggle/</link>
+      <atom:link href="https://roymondliao.github.io/categories/kaggle/index.xml" rel="self" type="application/rss+xml" />
+    <description>Kaggle</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Mon, 18 Nov 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://roymondliao.github.io/img/icon-192.png</url>
+      <title>Kaggle</title>
+      <link>https://roymondliao.github.io/categories/kaggle/</link>
+    </image>
+    
+    <item>
+      <title>Adversarial validation</title>
+      <link>https://roymondliao.github.io/post/2019-11-18_adversarial_validation/</link>
+      <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.github.io/post/2019-11-18_adversarial_validation/</guid>
+      <description>&lt;p&gt;在重新回顧 Kaggle 近期的 IEEE-CIS Fraud Detection 的比賽中，發現有人提到一個 Features selection 的方法 &lt;code&gt;Adversarial validation&lt;/code&gt;。&lt;/p&gt;
+
+&lt;h1 id=&#34;problem&#34;&gt;Problem&lt;/h1&gt;
+
+&lt;p&gt;在 model building 時常常都會遇到 training set 與 testing set 的分佈存在明顯的差異的，而在分佈不相同的狀況下，即使我們使用 Kfold 的方法來驗證 model，也不會得到較好的結果，因為在驗證所取得的 validation set 也會與 testing set 有著分佈上的差異。&lt;/p&gt;
+
+&lt;p&gt;在現實的處理方法，可以透過重新收集數據或是一些處理手段，來取得 training 與 testing set 分佈相同的，但在資料的比賽中， training set 與 testing set 都是給定好的數據，並無法做其他跟改，而面對這樣的狀況， Adversarial validation 就是一個很好來處理這樣的問題。&lt;/p&gt;
+
+&lt;h1 id=&#34;mothed&#34;&gt;Mothed&lt;/h1&gt;
+
+&lt;p&gt;其實 Adversarial validation 的概念非常簡單，只需要幾個步驟：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;將 training set 與 testing set 合併，並標注新的 target column &lt;code&gt;is_train&lt;/code&gt; ($training = 1, testing = 0$)&lt;/li&gt;
+&lt;li&gt;建立一個 classifier&lt;/li&gt;
+&lt;li&gt;將 training set 的預測機率按照 descending 的方式排序&lt;/li&gt;
+&lt;li&gt;取 Top $n\%$ 的數據當作 validation set&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;藉由這樣的方式所取得的 validation set 在分佈上就與 testing set 相似，如果 model 在 validation set 上取得好的預測結果，那相對地也能反映在 testing set。&lt;/p&gt;
+
+&lt;h1 id=&#34;understanding&#34;&gt;Understanding&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Model 的 AUC 大約等於 0.5，表示 training 與 testing set 來自相同的分佈&lt;/li&gt;
+&lt;li&gt;Model 的 AUC 非常高時，表示 training 與 testing set 來自不相同的分佈，可以明顯地分開&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;refenece&#34;&gt;Refenece&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;http://fastml.com/adversarial-validation-part-one/&#34;&gt;http://fastml.com/adversarial-validation-part-one/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://fastml.com/adversarial-validation-part-two/&#34;&gt;http://fastml.com/adversarial-validation-part-two/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://blog.csdn.net/weixin_43896398/article/details/84762922&#34;&gt;https://blog.csdn.net/weixin_43896398/article/details/84762922&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
