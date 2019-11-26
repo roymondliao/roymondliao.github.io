@@ -17,13 +17,13 @@
       <link>https://roymondliao.github.io/post/2019-11-18_adversarial_validation/</link>
       <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
       <guid>https://roymondliao.github.io/post/2019-11-18_adversarial_validation/</guid>
-      <description>&lt;p&gt;在重新回顧 Kaggle 近期的 IEEE-CIS Fraud Detection 的比賽中，發現有人提到一個 Features selection 的方法 &lt;code&gt;Adversarial validation&lt;/code&gt;。&lt;/p&gt;
+      <description>&lt;p&gt;在重新回顧 Kaggle 近期的 IEEE-CIS Fraud Detection 的比賽中，發現有人提到一個 Features selection 的方法 &lt;strong&gt;Adversarial validation&lt;/strong&gt;。&lt;/p&gt;
 
 &lt;h1 id=&#34;problem&#34;&gt;Problem&lt;/h1&gt;
 
-&lt;p&gt;在 model building 時常常都會遇到 training set 與 testing set 的分佈存在明顯的差異的，而在分佈不相同的狀況下，即使我們使用 Kfold 的方法來驗證 model，也不會得到較好的結果，因為在驗證所取得的 validation set 也會與 testing set 有著分佈上的差異。&lt;/p&gt;
+&lt;p&gt;在建立模型時常常都會遇到 training set 與 testing set 的分佈存在明顯的差異的，而在分佈不相同的狀況下，即使我們使用 Kfold 的方法來驗證 model，也不會得到較好的結果，因為在驗證所取得的 validation set 也會與 testing set 有著分佈上的差異。&lt;/p&gt;
 
-&lt;p&gt;在現實的處理方法，可以透過重新收集數據或是一些處理手段，來取得 training 與 testing set 分佈相同的，但在資料的比賽中， training set 與 testing set 都是給定好的數據，並無法做其他跟改，而面對這樣的狀況， Adversarial validation 就是一個很好來處理這樣的問題。&lt;/p&gt;
+&lt;p&gt;在現實的處理方法，可以透過重新收集數據或是一些處理手段，來取得 training set 與 testing set 分佈相同的，但在資料的比賽中， training set 與 testing set 都是給定好的數據，並無法做其他跟改，而面對這樣的狀況， Adversarial validation 就是一個很好來處理這樣的問題。&lt;/p&gt;
 
 &lt;h1 id=&#34;mothed&#34;&gt;Mothed&lt;/h1&gt;
 
@@ -36,14 +36,75 @@
 &lt;li&gt;取 Top $n\%$ 的數據當作 validation set&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;藉由這樣的方式所取得的 validation set 在分佈上就與 testing set 相似，如果 model 在 validation set 上取得好的預測結果，那相對地也能反映在 testing set。&lt;/p&gt;
+&lt;p&gt;藉由這樣的方式所取得的 validation set 在分佈上就與 testing set 相似，如果 model 在 validation 上取得好的預測結果，那相對地也能反映在 testing set。&lt;/p&gt;
 
 &lt;h1 id=&#34;understanding&#34;&gt;Understanding&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Model 的 AUC 大約等於 0.5，表示 training 與 testing set 來自相同的分佈&lt;/li&gt;
-&lt;li&gt;Model 的 AUC 非常高時，表示 training 與 testing set 來自不相同的分佈，可以明顯地分開&lt;/li&gt;
+&lt;li&gt;Model 的 AUC 大約等於 0.5，表示 training set 與 testing set 來自相同的分佈&lt;/li&gt;
+&lt;li&gt;Model 的 AUC 非常高時，表示 training set 與 testing set 來自不相同的分佈，可以明顯地分開&lt;/li&gt;
 &lt;/ul&gt;
+
+&lt;h1 id=&#34;other&#34;&gt;Other&lt;/h1&gt;
+
+&lt;p&gt;這邊提一下另一個 trick 的 features selection 方法，稱為 &lt;strong&gt;time consistency&lt;/strong&gt;。在 IEEE-CIS Fraud Detection 比賽第一名的隊伍中，&lt;a href=&#34;https://www.kaggle.com/cdeotte&#34;&gt;Chris Deotte&lt;/a&gt; 提出用了這個方法來去除掉對模型沒有影響力的 features。&lt;/p&gt;
+
+&lt;h3 id=&#34;problem-1&#34;&gt;Problem&lt;/h3&gt;
+
+&lt;p&gt;不管在現實的資料或是比賽的資料，部分資料都有可能因為時間的改變而分佈有所改變，這是我們在建立模型上不太希望發生的事情。因為如果 features 會因為時間的因素而分佈有明顯變化的話，在建模的過程中，受時間影響的 features 可能就會傷害模型本身，可能在時間相近的資料驗證有好的表現，但當預測時間間隔較長的資料時就會發生 overfitting。在處理上述的情況，我們期望 features 的分佈是穩定的，不希望因為時間的影響而有所改變，所以可以使用 time consistency 的方法來剔除這些受時間影響的 features。&lt;/p&gt;
+
+&lt;h3 id=&#34;mothed-1&#34;&gt;Mothed&lt;/h3&gt;
+
+&lt;p&gt;Time consistency 的步驟，這邊以 IEEE-CIS Fraud Detection 的比賽資料為例：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;將 training set 依據&lt;code&gt;月&lt;/code&gt;為單位切分資料&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;training data 與 validation data 策略，這邊的策略可以自由調整改變，以下只舉幾個例子&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;選擇前 n 個月的資料為 training data，最後一個月的資料為 validation data&lt;/li&gt;
+&lt;li&gt;選擇前 n 個月的資料為 training data，中間跳過 m 個月份，最後一個月的資料為 validation data&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;選擇一個 feature，進行模型建立，分別查看模型的 AUC 在 training 與 validation 是否有差異&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;understanding-1&#34;&gt;Understanding&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;如果 training 的 AUC 與 validation 的 AUC 差不多，表示這 feature 不受時間的變化影響&lt;/li&gt;
+&lt;li&gt;如果 training 的 AUC 與 validation 的 AUC 有明顯差異，表示這 feature 時間的變化影響，會影響模型本身，可以考慮移除&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;code&#34;&gt;Code&lt;/h3&gt;
+
+&lt;p&gt;以下是 Chris Deotte 所提供的簡單的程式碼：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# ADD MONTH FEATURE
+import datetime
+START_DATE = datetime.datetime.strptime(&#39;2017-11-30&#39;, &#39;%Y-%m-%d&#39;)
+train[&#39;DT_M&#39;] = train[&#39;TransactionDT&#39;].apply(lambda x: (START_DATE + datetime.timedelta(seconds = x)))
+train[&#39;DT_M&#39;] = (train[&#39;DT_M&#39;].dt.year-2017)*12 + train[&#39;DT_M&#39;].dt.month 
+
+# SPLIT DATA INTO FIRST MONTH AND LAST MONTH
+train = train[train.DT_M==12].copy()
+validate = train[train.DT_M==17].copy()
+
+# TRAIN AND VALIDATE
+lgbm = lgb.LGBMClassifier(n_estimators=500, objective=&#39;binary&#39;, num_leaves=8, learning_rate=0.02)
+h = lgbm.fit(train[[col]], 
+             train.isFraud, 
+             eval_metric=&#39;auc&#39;, 
+             eval_names=[&#39;train&#39;, &#39;valid&#39;],
+             eval_set=[(train[[col]],train.isFraud),(validate[[col]],validate.isFraud)],
+             verbose=10)
+auc_train = np.round(h._best_score[&#39;train&#39;][&#39;auc&#39;], 4)
+auc_val = np.round(h._best_score[&#39;valid&#39;][&#39;auc&#39;], 4)
+print(&#39;Best score in trian:{}, valid:{}&#39;.format(auc_train, auc_val))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Btw，最近有看到一個驗證的方法叫做 &lt;code&gt;Double Cross-Validation&lt;/code&gt;，這邊紀錄一下，有機會再來講講這方法的概念與應用。&lt;/p&gt;
 
 &lt;h1 id=&#34;refenece&#34;&gt;Refenece&lt;/h1&gt;
 
@@ -51,6 +112,7 @@
 &lt;li&gt;&lt;a href=&#34;http://fastml.com/adversarial-validation-part-one/&#34;&gt;http://fastml.com/adversarial-validation-part-one/&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://fastml.com/adversarial-validation-part-two/&#34;&gt;http://fastml.com/adversarial-validation-part-two/&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://blog.csdn.net/weixin_43896398/article/details/84762922&#34;&gt;https://blog.csdn.net/weixin_43896398/article/details/84762922&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.kaggle.com/c/ieee-fraud-detection/discussion/111308&#34;&gt;https://www.kaggle.com/c/ieee-fraud-detection/discussion/111308&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 </description>
     </item>
