@@ -32,7 +32,7 @@
 Problem 在建立模型時常常都會遇到 training set 與 testing set 的分佈存在明顯的差異的，而在分佈不相同的狀況下，即使我們使用 Kfold 的方法來驗證 model，也不會得到較好的結果，因為在驗證所取得的 validation set 也會與 testing set 有著分佈上的差異。
 在現實的處理方法，可以透過重新收集數據或是一些處理手段，來取得 training set 與 testing set 分佈相同的，但在資料的比賽中， training set 與 testing set 都是給定好的數據，並無法做其他跟改，而面對這樣的狀況， Adversarial validation 就是一個很好來處理這樣的問題。
 Mothed 其實 Adversarial validation 的概念非常簡單，只需要幾個步驟：
- 將 training set 與 testing set 合併，並標注新的 target column is_train ($training = 1, testing = 0$) 建立一個 classifier 將 training set 的預測機率按照 descending 的方式排序 取 Top $n\%$ 的數據當作 validation set  藉由這樣的方式所取得的 validation set 在分佈上就與 testing set 相似，如果 model 在 validation 上取得好的預測結果，那相對地也能反映在 testing set。">
+ 將 training set 與 testing set 合併，並標注新的 target column is_train ($training = 1, testing = 0$) 建立一個 classifier 將 training set 的預測機率按照 Ascending 的方式排序，由小排到大。 取 Top $n\%$ 的數據當作 validation set  藉由這樣的方式所取得的 validation set 在分佈上就與 testing set 相似，如果 model 在 validation 上取得好的預測結果，那相對地也能反映在 testing set。">
 
   
   <link rel="alternate" hreflang="en-us" href="https://roymondliao.github.io/post/2019-11-18_adversarial_validation/">
@@ -154,7 +154,7 @@ Mothed 其實 Adversarial validation 的概念非常簡單，只需要幾個步�
 Problem 在建立模型時常常都會遇到 training set 與 testing set 的分佈存在明顯的差異的，而在分佈不相同的狀況下，即使我們使用 Kfold 的方法來驗證 model，也不會得到較好的結果，因為在驗證所取得的 validation set 也會與 testing set 有著分佈上的差異。
 在現實的處理方法，可以透過重新收集數據或是一些處理手段，來取得 training set 與 testing set 分佈相同的，但在資料的比賽中， training set 與 testing set 都是給定好的數據，並無法做其他跟改，而面對這樣的狀況， Adversarial validation 就是一個很好來處理這樣的問題。
 Mothed 其實 Adversarial validation 的概念非常簡單，只需要幾個步驟：
- 將 training set 與 testing set 合併，並標注新的 target column is_train ($training = 1, testing = 0$) 建立一個 classifier 將 training set 的預測機率按照 descending 的方式排序 取 Top $n\%$ 的數據當作 validation set  藉由這樣的方式所取得的 validation set 在分佈上就與 testing set 相似，如果 model 在 validation 上取得好的預測結果，那相對地也能反映在 testing set。"><meta property="og:image" content="https://roymondliao.github.io/post/2019-11-18_adversarial_validation/featured.jpg">
+ 將 training set 與 testing set 合併，並標注新的 target column is_train ($training = 1, testing = 0$) 建立一個 classifier 將 training set 的預測機率按照 Ascending 的方式排序，由小排到大。 取 Top $n\%$ 的數據當作 validation set  藉由這樣的方式所取得的 validation set 在分佈上就與 testing set 相似，如果 model 在 validation 上取得好的預測結果，那相對地也能反映在 testing set。"><meta property="og:image" content="https://roymondliao.github.io/post/2019-11-18_adversarial_validation/featured.jpg">
   <meta property="twitter:image" content="https://roymondliao.github.io/post/2019-11-18_adversarial_validation/featured.jpg"><meta property="og:locale" content="en-us">
   
     
@@ -210,7 +210,7 @@ Mothed 其實 Adversarial validation 的概念非常簡單，只需要幾個步�
       "url": "https://roymondliao.github.io/img/icon-512.png"
     }
   },
-  "description": "在重新回顧 Kaggle 近期的 IEEE-CIS Fraud Detection 的比賽中，發現有人提到一個 Features selection 的方法 Adversarial validation。\nProblem 在建立模型時常常都會遇到 training set 與 testing set 的分佈存在明顯的差異的，而在分佈不相同的狀況下，即使我們使用 Kfold 的方法來驗證 model，也不會得到較好的結果，因為在驗證所取得的 validation set 也會與 testing set 有著分佈上的差異。\n在現實的處理方法，可以透過重新收集數據或是一些處理手段，來取得 training set 與 testing set 分佈相同的，但在資料的比賽中， training set 與 testing set 都是給定好的數據，並無法做其他跟改，而面對這樣的狀況， Adversarial validation 就是一個很好來處理這樣的問題。\nMothed 其實 Adversarial validation 的概念非常簡單，只需要幾個步驟：\n 將 training set 與 testing set 合併，並標注新的 target column is_train ($training = 1, testing = 0$) 建立一個 classifier 將 training set 的預測機率按照 descending 的方式排序 取 Top $n\\%$ 的數據當作 validation set  藉由這樣的方式所取得的 validation set 在分佈上就與 testing set 相似，如果 model 在 validation 上取得好的預測結果，那相對地也能反映在 testing set。"
+  "description": "在重新回顧 Kaggle 近期的 IEEE-CIS Fraud Detection 的比賽中，發現有人提到一個 Features selection 的方法 Adversarial validation。\nProblem 在建立模型時常常都會遇到 training set 與 testing set 的分佈存在明顯的差異的，而在分佈不相同的狀況下，即使我們使用 Kfold 的方法來驗證 model，也不會得到較好的結果，因為在驗證所取得的 validation set 也會與 testing set 有著分佈上的差異。\n在現實的處理方法，可以透過重新收集數據或是一些處理手段，來取得 training set 與 testing set 分佈相同的，但在資料的比賽中， training set 與 testing set 都是給定好的數據，並無法做其他跟改，而面對這樣的狀況， Adversarial validation 就是一個很好來處理這樣的問題。\nMothed 其實 Adversarial validation 的概念非常簡單，只需要幾個步驟：\n 將 training set 與 testing set 合併，並標注新的 target column is_train ($training = 1, testing = 0$) 建立一個 classifier 將 training set 的預測機率按照 Ascending 的方式排序，由小排到大。 取 Top $n\\%$ 的數據當作 validation set  藉由這樣的方式所取得的 validation set 在分佈上就與 testing set 相似，如果 model 在 validation 上取得好的預測結果，那相對地也能反映在 testing set。"
 }
 </script>
 
@@ -571,13 +571,15 @@ Mothed 其實 Adversarial validation 的概念非常簡單，只需要幾個步�
 <ol>
 <li>將 training set 與 testing set 合併，並標注新的 target column <code>is_train</code> ($training = 1, testing = 0$)</li>
 <li>建立一個 classifier</li>
-<li>將 training set 的預測機率按照 descending 的方式排序</li>
+<li>將 training set 的預測機率按照 Ascending 的方式排序，由小排到大。</li>
 <li>取 Top $n\%$ 的數據當作 validation set</li>
 </ol>
 
 <p>藉由這樣的方式所取得的 validation set 在分佈上就與 testing set 相似，如果 model 在 validation 上取得好的預測結果，那相對地也能反映在 testing set。</p>
 
 <h1 id="understanding">Understanding</h1>
+
+<p>依據 $(2)$ 建模的結果：</p>
 
 <ul>
 <li>Model 的 AUC 大約等於 0.5，表示 training set 與 testing set 來自相同的分佈</li>

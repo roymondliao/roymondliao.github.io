@@ -32,13 +32,15 @@
 &lt;ol&gt;
 &lt;li&gt;將 training set 與 testing set 合併，並標注新的 target column &lt;code&gt;is_train&lt;/code&gt; ($training = 1, testing = 0$)&lt;/li&gt;
 &lt;li&gt;建立一個 classifier&lt;/li&gt;
-&lt;li&gt;將 training set 的預測機率按照 descending 的方式排序&lt;/li&gt;
+&lt;li&gt;將 training set 的預測機率按照 Ascending 的方式排序，由小排到大。&lt;/li&gt;
 &lt;li&gt;取 Top $n\%$ 的數據當作 validation set&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;藉由這樣的方式所取得的 validation set 在分佈上就與 testing set 相似，如果 model 在 validation 上取得好的預測結果，那相對地也能反映在 testing set。&lt;/p&gt;
 
 &lt;h1 id=&#34;understanding&#34;&gt;Understanding&lt;/h1&gt;
+
+&lt;p&gt;依據 $(2)$ 建模的結果：&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Model 的 AUC 大約等於 0.5，表示 training set 與 testing set 來自相同的分佈&lt;/li&gt;
