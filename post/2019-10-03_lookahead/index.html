@@ -146,10 +146,9 @@ Step 1 : 先設定 $\phi$ 的初始值，以及選定 objective function $L$ Ste
   
   
     
-    
   
   
-  <meta property="twitter:card" content="summary">
+  <meta property="twitter:card" content="summary_large_image">
   
   <meta property="og:site_name" content="Roymond Liao">
   <meta property="og:url" content="https://roymondliao.github.io/post/2019-10-03_lookahead/">
@@ -161,8 +160,8 @@ Lookahead method：
  在使用不同的 inner optimizer 下，像是 SGD 或是 Adam，減少了對超參數調整的需求，並且可以以最小的計算需求確保在不同的深度學習任務中加快收斂速度。
   
 演算過程 :
-Step 1 : 先設定 $\phi$ 的初始值，以及選定 objective function $L$ Step 2 : 確定更新週期 $k$ 值、slow weight 的更新步伐 $\alpha $ 以及 optimizer $A$ Step 3 : 更新 fast weight $\theta$ ，$ \space \theta_{t,0} \leftarrow \phi_{t-1}, t=1,2,\dots $ Step 4 : 利用 optimizer $A$ 迭代 $k$ 次更新，由 $\theta_{t, i}$ 更新到 $\theta_{t, k}, i=1, 2, \dots, k$ Step 5 : 更新 slow weight $\phi_{k} \leftarrow \phi_{k-1} &#43; \alpha\left(\theta_{t, k} - \phi_{t-1}\right)$ 重複 Step 3 - Step 5 直至收斂。"><meta property="og:image" content="https://roymondliao.github.io/img/icon-192.png">
-  <meta property="twitter:image" content="https://roymondliao.github.io/img/icon-192.png"><meta property="og:locale" content="en-us">
+Step 1 : 先設定 $\phi$ 的初始值，以及選定 objective function $L$ Step 2 : 確定更新週期 $k$ 值、slow weight 的更新步伐 $\alpha $ 以及 optimizer $A$ Step 3 : 更新 fast weight $\theta$ ，$ \space \theta_{t,0} \leftarrow \phi_{t-1}, t=1,2,\dots $ Step 4 : 利用 optimizer $A$ 迭代 $k$ 次更新，由 $\theta_{t, i}$ 更新到 $\theta_{t, k}, i=1, 2, \dots, k$ Step 5 : 更新 slow weight $\phi_{k} \leftarrow \phi_{k-1} &#43; \alpha\left(\theta_{t, k} - \phi_{t-1}\right)$ 重複 Step 3 - Step 5 直至收斂。"><meta property="og:image" content="https://roymondliao.github.io/post/2019-10-03_lookahead/featured.jpg">
+  <meta property="twitter:image" content="https://roymondliao.github.io/post/2019-10-03_lookahead/featured.jpg"><meta property="og:locale" content="en-us">
   
     
       <meta property="article:published_time" content="2019-10-03T00:00:00&#43;00:00">
@@ -196,6 +195,10 @@ Step 1 : 先設定 $\phi$ 的初始值，以及選定 objective function $L$ Ste
     "@id": "https://roymondliao.github.io/post/2019-10-03_lookahead/"
   },
   "headline": "Lookahead Optimizer: k steps forward, 1 step back",
+  
+  "image": [
+    "https://roymondliao.github.io/post/2019-10-03_lookahead/featured.jpg"
+  ],
   
   "datePublished": "2019-10-03T00:00:00Z",
   "dateModified": "2019-10-03T00:00:00Z",
@@ -454,18 +457,26 @@ Step 1 : 先設定 $\phi$ 的初始值，以及選定 objective function $L$ Ste
 
 
 
-  
+
+
+
+
+
+
+
 
   
   
+    
   
+
+
 <div class="article-container pt-3">
   <h1>Lookahead Optimizer: k steps forward, 1 step back</h1>
 
   
 
   
-    
 
 
 <div class="article-metadata">
@@ -521,22 +532,29 @@ Step 1 : 先設定 $\phi$ 的初始值，以及選定 objective function $L$ Ste
 
 </div>
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+<div class="article-header container featured-image-wrapper mt-4 mb-4" style="max-width: 1200px; max-height: 800px;">
+  <div style="position: relative">
+    <img src="/post/2019-10-03_lookahead/featured_hu3d03a01dcc18bc5be0e67db3d8d209a6_2831576_1200x0_resize_q90_lanczos.jpg" alt="" class="featured-image">
+    <span class="article-header-caption"><a href="https://unsplash.com/photos/aebPbwAWjDs" target="_blank">Photo by Andrew Neel on Unsplash</a></span>
+  </div>
 </div>
 
 

@@ -5,12 +5,28 @@
     <link>https://roymondliao.github.io/categories/</link>
       <atom:link href="https://roymondliao.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     <description>Categories</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Mon, 18 Nov 2019 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Mon, 16 Dec 2019 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://roymondliao.github.io/img/icon-192.png</url>
       <title>Categories</title>
       <link>https://roymondliao.github.io/categories/</link>
     </image>
+    
+    <item>
+      <title>Deep Learning</title>
+      <link>https://roymondliao.github.io/categories/deep-learning/</link>
+      <pubDate>Mon, 16 Dec 2019 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.github.io/categories/deep-learning/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>NLP</title>
+      <link>https://roymondliao.github.io/categories/nlp/</link>
+      <pubDate>Mon, 16 Dec 2019 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.github.io/categories/nlp/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Kaggle</title>
@@ -29,26 +45,10 @@
     </item>
     
     <item>
-      <title>Deep Learning</title>
-      <link>https://roymondliao.github.io/categories/deep-learning/</link>
-      <pubDate>Tue, 14 May 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/categories/deep-learning/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>Object Detection</title>
       <link>https://roymondliao.github.io/categories/object-detection/</link>
       <pubDate>Tue, 14 May 2019 00:00:00 +0000</pubDate>
       <guid>https://roymondliao.github.io/categories/object-detection/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>NLP</title>
-      <link>https://roymondliao.github.io/categories/nlp/</link>
-      <pubDate>Thu, 02 May 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/categories/nlp/</guid>
       <description></description>
     </item>
     
