@@ -13,10 +13,26 @@
     </image>
     
     <item>
-      <title>Attention</title>
-      <link>https://roymondliao.github.io/tags/attention/</link>
+      <title>Beam search</title>
+      <link>https://roymondliao.github.io/tags/beam-search/</link>
       <pubDate>Mon, 16 Dec 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/tags/attention/</guid>
+      <guid>https://roymondliao.github.io/tags/beam-search/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Seq2Seq</title>
+      <link>https://roymondliao.github.io/tags/seq2seq/</link>
+      <pubDate>Mon, 16 Dec 2019 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.github.io/tags/seq2seq/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Teacher forcing</title>
+      <link>https://roymondliao.github.io/tags/teacher-forcing/</link>
+      <pubDate>Mon, 16 Dec 2019 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.github.io/tags/teacher-forcing/</guid>
       <description></description>
     </item>
     

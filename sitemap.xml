@@ -8,12 +8,12 @@
   </url>
   
   <url>
-    <loc>https://roymondliao.github.io/tags/attention/</loc>
+    <loc>https://roymondliao.github.io/authors/</loc>
     <lastmod>2020-01-02T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://roymondliao.github.io/authors/</loc>
+    <loc>https://roymondliao.github.io/tags/beam-search/</loc>
     <lastmod>2020-01-02T00:00:00+00:00</lastmod>
   </url>
   
@@ -48,7 +48,17 @@
   </url>
   
   <url>
+    <loc>https://roymondliao.github.io/tags/seq2seq/</loc>
+    <lastmod>2020-01-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://roymondliao.github.io/tags/</loc>
+    <lastmod>2020-01-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://roymondliao.github.io/tags/teacher-forcing/</loc>
     <lastmod>2020-01-02T00:00:00+00:00</lastmod>
   </url>
   
@@ -108,12 +118,12 @@
   </url>
   
   <url>
-    <loc>https://roymondliao.github.io/tags/object-detection/</loc>
+    <loc>https://roymondliao.github.io/categories/object-detection/</loc>
     <lastmod>2019-05-14T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://roymondliao.github.io/categories/object-detection/</loc>
+    <loc>https://roymondliao.github.io/tags/object-detection/</loc>
     <lastmod>2019-05-14T00:00:00+00:00</lastmod>
   </url>
   

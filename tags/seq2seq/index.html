@@ -31,7 +31,7 @@
   <meta name="description" content="Machine Learning Engineer / Deep Learning Engineer / Data Scientist">
 
   
-  <link rel="alternate" hreflang="en-us" href="https://roymondliao.github.io/categories/nlp/">
+  <link rel="alternate" hreflang="en-us" href="https://roymondliao.github.io/tags/seq2seq/">
 
   
 
@@ -127,14 +127,14 @@
 
 
   
-  <link rel="alternate" href="/categories/nlp/index.xml" type="application/rss+xml" title="Roymond Liao">
+  <link rel="alternate" href="/tags/seq2seq/index.xml" type="application/rss+xml" title="Roymond Liao">
   
 
   <link rel="manifest" href="/index.webmanifest">
   <link rel="icon" type="image/png" href="/img/icon-32.png">
   <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
 
-  <link rel="canonical" href="https://roymondliao.github.io/categories/nlp/">
+  <link rel="canonical" href="https://roymondliao.github.io/tags/seq2seq/">
 
   
   
@@ -147,8 +147,8 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Roymond Liao">
-  <meta property="og:url" content="https://roymondliao.github.io/categories/nlp/">
-  <meta property="og:title" content="NLP | Roymond Liao">
+  <meta property="og:url" content="https://roymondliao.github.io/tags/seq2seq/">
+  <meta property="og:title" content="Seq2Seq | Roymond Liao">
   <meta property="og:description" content="Machine Learning Engineer / Deep Learning Engineer / Data Scientist"><meta property="og:image" content="https://roymondliao.github.io/img/icon-192.png">
   <meta property="twitter:image" content="https://roymondliao.github.io/img/icon-192.png"><meta property="og:locale" content="en-us">
   
@@ -169,7 +169,7 @@
 
 
 
-  <title>NLP | Roymond Liao</title>
+  <title>Seq2Seq | Roymond Liao</title>
 
 </head>
 
@@ -398,7 +398,7 @@
     
   
 <div class="universal-wrapper pt-3">
-  <h1>NLP</h1>
+  <h1>Seq2Seq</h1>
 
   
 
@@ -420,19 +420,6 @@
 主持人 Rachael Atman 本身是 Kaggle 的 Data Scientist，她的導讀我覺得是流暢的，但她自己本身有說過並非是 NLP 領域的專家，所以在 kaggle reading group 裡閱讀的論文也有可能是她完全沒接觸過的，整個 channel 帶給你的就是一個啟發，讓你覺得有人跟你一起閱讀的感覺，然後過程中也些人會在 channel 的 chat room 提出一些看法或是連結，Rachael 本身也會提出自己的見解，可以多方面參考。
 在跟完整個 Attention Is All You Need 的影片後，還是有太多細節是不清楚的，因為自己本身也不是這個領域的，所以開始追論文中所提到的一些關鍵名詞，就開始從 $seq2seq \rightarrow attention \rightarrow self-attention$。這中間 有太多知識需要記錄下來，所以將論文的內容分成三部曲，來記錄閱讀下來的點點滴滴:
  Part 1: Sequence to sequence model 起源 Part 2: Attention 與 Self-attention 的理解 Part 3: Transformer 的架構探討與深入理解  要談論 Attention Is All You Need 這篇 paper 就必須從 seq2seq 講起，seq2seq 全名為 Sequence to Sequence[1]，是一個 Encoder - Decoder 架構的模型，在 2014 年被提出，被廣泛的應用於 Machine Translation, Text Summarization, Conversational Modeling, Image Captioning, and more.
-      
-    </div>
-  </div>
-  
-  <div>
-    <h2><a href="/post/2019-05-02_word2vec/">Word2Vec</a></h2>
-    <div class="article-style">
-      
-      最近剛好看到一篇關於 Skip-gram word2vec的介紹，內文寫的淺顯易懂，衍生的閱讀也十分詳細，決定動手寫篇記錄下來。
-人對於文字的理解，可以很簡單的就能了解字面的意義，但是對於機器來說，要如何理解文字是一個很困難的問題。 要如何讓機器來理解文字的意義？ 透過將文字轉換成向量，來讓機器能夠讀的懂，所以其實文字對於機器來說只是數字，而我們在做的就只是數字的遊戲。
-Word embeddings 在將字詞轉換成向量的實作中，大家常用的方法肯定是 one-hot-encoding，但是 one-hot-encoding 在計算上卻是非常沒有效率的方式，如果一篇文章中總共有50,000的單詞，用 one-hot-encoding 來表示某個單詞的話，將會變成1與49999個0的向量表示。就如同下圖表示，如果要做 matrix multiplication 的話，那將會浪費許多的計算資源。
-透過 Word Embedding1 可以有效的解決上述的問題。 Embedding 可以想成與 full connected layer 一樣，將這個 layer 稱做為 embedding layer ， weight 則稱為 embedding weights。藉由這樣的概念，可以省略掉 multiplication 的過程，直接透過 hidden layer 的 weigth matrix 來當作輸入字詞的 word vector。之所以可以這樣來執行是因為在處理 one-hot-encoding 與 weight matrix 相乘的結果，其實就是 matrix 所對應&quot;詞&quot;的索引值所得到的結果。
-舉例來說： &quot;heart&quot; 的在 one-hot-encoding 的索引位置為958，我們直接拿取 heart 所對應 hidden layer 的值，也就是 embedding weights 的第958列(row)，這樣的過程叫做 embedding lookup，而 hidden layer 的神經元數量則為 embedding dimension。
       
     </div>
   </div>
