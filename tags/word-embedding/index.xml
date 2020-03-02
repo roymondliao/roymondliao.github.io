@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Word Embedding | Roymond Liao</title>
-    <link>https://roymondliao.github.io/tags/word-embedding/</link>
-      <atom:link href="https://roymondliao.github.io/tags/word-embedding/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://roymondliao.netlify.com/tags/word-embedding/</link>
+      <atom:link href="https://roymondliao.netlify.com/tags/word-embedding/index.xml" rel="self" type="application/rss+xml" />
     <description>Word Embedding</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Thu, 02 May 2019 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://roymondliao.github.io/img/icon-192.png</url>
+      <url>https://roymondliao.netlify.com/img/icon-192.png</url>
       <title>Word Embedding</title>
-      <link>https://roymondliao.github.io/tags/word-embedding/</link>
+      <link>https://roymondliao.netlify.com/tags/word-embedding/</link>
     </image>
     
     <item>
       <title>Word2Vec</title>
-      <link>https://roymondliao.github.io/post/2019-05-02_word2vec/</link>
+      <link>https://roymondliao.netlify.com/post/2019-05-02_word2vec/</link>
       <pubDate>Thu, 02 May 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/post/2019-05-02_word2vec/</guid>
+      <guid>https://roymondliao.netlify.com/post/2019-05-02_word2vec/</guid>
       <description>&lt;p&gt;最近剛好看到一篇關於 &lt;a href=&#34;https://github.com/priya-dwivedi/Deep-Learning/blob/master/word2vec_skipgram/Skip-Grams-Solution.ipynb&#34;&gt;Skip-gram word2vec&lt;/a&gt;的介紹，內文寫的淺顯易懂，衍生的閱讀也十分詳細，決定動手寫篇記錄下來。&lt;/p&gt;
 
 &lt;p&gt;人對於文字的理解，可以很簡單的就能了解字面的意義，但是對於機器來說，要如何理解文字是一個很困難的問題。

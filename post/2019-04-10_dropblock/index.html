@@ -32,7 +32,7 @@
  Dropout: 完全隨機丟棄 neuron Sparital Dropout: 按 channel 隨機丟棄 Stochastic Depth: 按 res block 隨機丟棄 DropBlock: 每個 feature map 上按 spatial square 隨機丟棄 Cutout: 在 input layer 按 spatial square 隨機丟棄 DropConnect: 只在連接處丟，不丟 neuron DropBlock  Idea 一般的 Dropout 都是用在 fully connection layer，而在 convolutional network 上使用 dropout 的意義並不大，該文章則認為因為在每一個 feature maps 的位置都具有一個 receptive field，僅對單一像素位置進行 dropout 並不能降低 feature maps 學習特徵範圍，也就是說，network 能夠特過相鄰位置的特徵值去學習，也不會特別加強去學習保留下來的訊息。既然對於單獨的對每個位置進行 dropout 並無法提高 network 本身的泛化能力，那就以區塊的概念來進行 dropout，反而更能讓 network 去學習保留下來的訊息，而加重特徵的權重。 Method  不同 feature maps 共享相同的 dropblock mask，在相同的位置丟棄訊息 每一層的 feature maps 使用各自的 dropblock mask  Parameters block size: 控制要讓 value of feature maps 歸為 0 的區塊大小 $ \gamma $: 用來控制要丟棄特徵的數量 keep_prob: 與 dropout 的參數相同 Code implement https://github.">
 
   
-  <link rel="alternate" hreflang="en-us" href="https://roymondliao.github.io/post/2019-04-10_dropblock/">
+  <link rel="alternate" hreflang="en-us" href="https://roymondliao.netlify.com/post/2019-04-10_dropblock/">
 
   
 
@@ -133,7 +133,7 @@
   <link rel="icon" type="image/png" href="/img/icon-32.png">
   <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
 
-  <link rel="canonical" href="https://roymondliao.github.io/post/2019-04-10_dropblock/">
+  <link rel="canonical" href="https://roymondliao.netlify.com/post/2019-04-10_dropblock/">
 
   
   
@@ -146,11 +146,11 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Roymond Liao">
-  <meta property="og:url" content="https://roymondliao.github.io/post/2019-04-10_dropblock/">
+  <meta property="og:url" content="https://roymondliao.netlify.com/post/2019-04-10_dropblock/">
   <meta property="og:title" content="DropBlock | Roymond Liao">
   <meta property="og:description" content="Dropout 相關方法：
- Dropout: 完全隨機丟棄 neuron Sparital Dropout: 按 channel 隨機丟棄 Stochastic Depth: 按 res block 隨機丟棄 DropBlock: 每個 feature map 上按 spatial square 隨機丟棄 Cutout: 在 input layer 按 spatial square 隨機丟棄 DropConnect: 只在連接處丟，不丟 neuron DropBlock  Idea 一般的 Dropout 都是用在 fully connection layer，而在 convolutional network 上使用 dropout 的意義並不大，該文章則認為因為在每一個 feature maps 的位置都具有一個 receptive field，僅對單一像素位置進行 dropout 並不能降低 feature maps 學習特徵範圍，也就是說，network 能夠特過相鄰位置的特徵值去學習，也不會特別加強去學習保留下來的訊息。既然對於單獨的對每個位置進行 dropout 並無法提高 network 本身的泛化能力，那就以區塊的概念來進行 dropout，反而更能讓 network 去學習保留下來的訊息，而加重特徵的權重。 Method  不同 feature maps 共享相同的 dropblock mask，在相同的位置丟棄訊息 每一層的 feature maps 使用各自的 dropblock mask  Parameters block size: 控制要讓 value of feature maps 歸為 0 的區塊大小 $ \gamma $: 用來控制要丟棄特徵的數量 keep_prob: 與 dropout 的參數相同 Code implement https://github."><meta property="og:image" content="https://roymondliao.github.io/img/icon-192.png">
-  <meta property="twitter:image" content="https://roymondliao.github.io/img/icon-192.png"><meta property="og:locale" content="en-us">
+ Dropout: 完全隨機丟棄 neuron Sparital Dropout: 按 channel 隨機丟棄 Stochastic Depth: 按 res block 隨機丟棄 DropBlock: 每個 feature map 上按 spatial square 隨機丟棄 Cutout: 在 input layer 按 spatial square 隨機丟棄 DropConnect: 只在連接處丟，不丟 neuron DropBlock  Idea 一般的 Dropout 都是用在 fully connection layer，而在 convolutional network 上使用 dropout 的意義並不大，該文章則認為因為在每一個 feature maps 的位置都具有一個 receptive field，僅對單一像素位置進行 dropout 並不能降低 feature maps 學習特徵範圍，也就是說，network 能夠特過相鄰位置的特徵值去學習，也不會特別加強去學習保留下來的訊息。既然對於單獨的對每個位置進行 dropout 並無法提高 network 本身的泛化能力，那就以區塊的概念來進行 dropout，反而更能讓 network 去學習保留下來的訊息，而加重特徵的權重。 Method  不同 feature maps 共享相同的 dropblock mask，在相同的位置丟棄訊息 每一層的 feature maps 使用各自的 dropblock mask  Parameters block size: 控制要讓 value of feature maps 歸為 0 的區塊大小 $ \gamma $: 用來控制要丟棄特徵的數量 keep_prob: 與 dropout 的參數相同 Code implement https://github."><meta property="og:image" content="https://roymondliao.netlify.com/img/icon-192.png">
+  <meta property="twitter:image" content="https://roymondliao.netlify.com/img/icon-192.png"><meta property="og:locale" content="en-us">
   
     
       <meta property="article:published_time" content="2019-04-10T00:00:00&#43;00:00">
@@ -181,7 +181,7 @@
   "@type": "BlogPosting",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "https://roymondliao.github.io/post/2019-04-10_dropblock/"
+    "@id": "https://roymondliao.netlify.com/post/2019-04-10_dropblock/"
   },
   "headline": "DropBlock",
   
@@ -198,7 +198,7 @@
     "name": "Roymond Liao",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://roymondliao.github.io/img/icon-512.png"
+      "url": "https://roymondliao.netlify.com/img/icon-512.png"
     }
   },
   "description": "Dropout 相關方法：\n Dropout: 完全隨機丟棄 neuron Sparital Dropout: 按 channel 隨機丟棄 Stochastic Depth: 按 res block 隨機丟棄 DropBlock: 每個 feature map 上按 spatial square 隨機丟棄 Cutout: 在 input layer 按 spatial square 隨機丟棄 DropConnect: 只在連接處丟，不丟 neuron DropBlock  Idea 一般的 Dropout 都是用在 fully connection layer，而在 convolutional network 上使用 dropout 的意義並不大，該文章則認為因為在每一個 feature maps 的位置都具有一個 receptive field，僅對單一像素位置進行 dropout 並不能降低 feature maps 學習特徵範圍，也就是說，network 能夠特過相鄰位置的特徵值去學習，也不會特別加強去學習保留下來的訊息。既然對於單獨的對每個位置進行 dropout 並無法提高 network 本身的泛化能力，那就以區塊的概念來進行 dropout，反而更能讓 network 去學習保留下來的訊息，而加重特徵的權重。 Method  不同 feature maps 共享相同的 dropblock mask，在相同的位置丟棄訊息 每一層的 feature maps 使用各自的 dropblock mask  Parameters block size: 控制要讓 value of feature maps 歸為 0 的區塊大小 $ \\gamma $: 用來控制要丟棄特徵的數量 keep_prob: 與 dropout 的參數相同 Code implement https://github."

@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Adversarial Validation | Roymond Liao</title>
-    <link>https://roymondliao.github.io/tags/adversarial-validation/</link>
-      <atom:link href="https://roymondliao.github.io/tags/adversarial-validation/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://roymondliao.netlify.com/tags/adversarial-validation/</link>
+      <atom:link href="https://roymondliao.netlify.com/tags/adversarial-validation/index.xml" rel="self" type="application/rss+xml" />
     <description>Adversarial Validation</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Mon, 18 Nov 2019 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://roymondliao.github.io/img/icon-192.png</url>
+      <url>https://roymondliao.netlify.com/img/icon-192.png</url>
       <title>Adversarial Validation</title>
-      <link>https://roymondliao.github.io/tags/adversarial-validation/</link>
+      <link>https://roymondliao.netlify.com/tags/adversarial-validation/</link>
     </image>
     
     <item>
       <title>Adversarial validation</title>
-      <link>https://roymondliao.github.io/post/2019-11-18_adversarial_validation/</link>
+      <link>https://roymondliao.netlify.com/post/2019-11-18_adversarial_validation/</link>
       <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/post/2019-11-18_adversarial_validation/</guid>
+      <guid>https://roymondliao.netlify.com/post/2019-11-18_adversarial_validation/</guid>
       <description>&lt;p&gt;在重新回顧 Kaggle 近期的 IEEE-CIS Fraud Detection 的比賽中，發現有人提到一個 Features selection 的方法 &lt;strong&gt;Adversarial validation&lt;/strong&gt;。&lt;/p&gt;
 
 &lt;h1 id=&#34;problem&#34;&gt;Problem&lt;/h1&gt;

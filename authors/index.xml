@@ -2,29 +2,29 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Authors | Roymond Liao</title>
-    <link>https://roymondliao.github.io/authors/</link>
-      <atom:link href="https://roymondliao.github.io/authors/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://roymondliao.netlify.com/authors/</link>
+      <atom:link href="https://roymondliao.netlify.com/authors/index.xml" rel="self" type="application/rss+xml" />
     <description>Authors</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Mon, 16 Dec 2019 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Fri, 28 Feb 2020 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://roymondliao.github.io/img/icon-192.png</url>
+      <url>https://roymondliao.netlify.com/img/icon-192.png</url>
       <title>Authors</title>
-      <link>https://roymondliao.github.io/authors/</link>
+      <link>https://roymondliao.netlify.com/authors/</link>
     </image>
     
     <item>
       <title>Roymond Liao</title>
-      <link>https://roymondliao.github.io/authors/roymond-liao/</link>
-      <pubDate>Mon, 16 Dec 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/authors/roymond-liao/</guid>
+      <link>https://roymondliao.netlify.com/authors/roymond-liao/</link>
+      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.netlify.com/authors/roymond-liao/</guid>
       <description></description>
     </item>
     
     <item>
       <title></title>
-      <link>https://roymondliao.github.io/authors/admin/</link>
+      <link>https://roymondliao.netlify.com/authors/admin/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/authors/admin/</guid>
+      <guid>https://roymondliao.netlify.com/authors/admin/</guid>
       <description>&lt;p&gt;Yuyu are being a Data Engineer at Gogolook Inc. He has four years of experience in the field of data science. The main languages use Python and R. Also, has the passion for data analysis, machine learning and deep learning and through the process of understanding theory and practice with relevant research is used to solve various problems in products.&lt;/p&gt;
 
 &lt;p&gt;In addition, willing to learning the various tools in data engineering and system architecture, towards the field of data science to continue to learn and expand the knowledge.&lt;/p&gt;

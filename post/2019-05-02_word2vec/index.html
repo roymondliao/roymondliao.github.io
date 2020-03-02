@@ -35,7 +35,7 @@ Word embeddings 在將字詞轉換成向量的實作中，大家常用的方法�
 舉例來說： &quot;heart&quot; 的在 one-hot-encoding 的索引位置為958，我們直接拿取 heart 所對應 hidden layer 的值，也就是 embedding weights 的第958列(row)，這樣的過程叫做 embedding lookup，而 hidden layer 的神經元數量則為 embedding dimension。">
 
   
-  <link rel="alternate" hreflang="en-us" href="https://roymondliao.github.io/post/2019-05-02_word2vec/">
+  <link rel="alternate" hreflang="en-us" href="https://roymondliao.netlify.com/post/2019-05-02_word2vec/">
 
   
 
@@ -136,7 +136,7 @@ Word embeddings 在將字詞轉換成向量的實作中，大家常用的方法�
   <link rel="icon" type="image/png" href="/img/icon-32.png">
   <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
 
-  <link rel="canonical" href="https://roymondliao.github.io/post/2019-05-02_word2vec/">
+  <link rel="canonical" href="https://roymondliao.netlify.com/post/2019-05-02_word2vec/">
 
   
   
@@ -148,14 +148,14 @@ Word embeddings 在將字詞轉換成向量的實作中，大家常用的方法�
   <meta property="twitter:card" content="summary_large_image">
   
   <meta property="og:site_name" content="Roymond Liao">
-  <meta property="og:url" content="https://roymondliao.github.io/post/2019-05-02_word2vec/">
+  <meta property="og:url" content="https://roymondliao.netlify.com/post/2019-05-02_word2vec/">
   <meta property="og:title" content="Word2Vec | Roymond Liao">
   <meta property="og:description" content="最近剛好看到一篇關於 Skip-gram word2vec的介紹，內文寫的淺顯易懂，衍生的閱讀也十分詳細，決定動手寫篇記錄下來。
 人對於文字的理解，可以很簡單的就能了解字面的意義，但是對於機器來說，要如何理解文字是一個很困難的問題。 要如何讓機器來理解文字的意義？ 透過將文字轉換成向量，來讓機器能夠讀的懂，所以其實文字對於機器來說只是數字，而我們在做的就只是數字的遊戲。
 Word embeddings 在將字詞轉換成向量的實作中，大家常用的方法肯定是 one-hot-encoding，但是 one-hot-encoding 在計算上卻是非常沒有效率的方式，如果一篇文章中總共有50,000的單詞，用 one-hot-encoding 來表示某個單詞的話，將會變成1與49999個0的向量表示。就如同下圖表示，如果要做 matrix multiplication 的話，那將會浪費許多的計算資源。
 透過 Word Embedding1 可以有效的解決上述的問題。 Embedding 可以想成與 full connected layer 一樣，將這個 layer 稱做為 embedding layer ， weight 則稱為 embedding weights。藉由這樣的概念，可以省略掉 multiplication 的過程，直接透過 hidden layer 的 weigth matrix 來當作輸入字詞的 word vector。之所以可以這樣來執行是因為在處理 one-hot-encoding 與 weight matrix 相乘的結果，其實就是 matrix 所對應&quot;詞&quot;的索引值所得到的結果。
-舉例來說： &quot;heart&quot; 的在 one-hot-encoding 的索引位置為958，我們直接拿取 heart 所對應 hidden layer 的值，也就是 embedding weights 的第958列(row)，這樣的過程叫做 embedding lookup，而 hidden layer 的神經元數量則為 embedding dimension。"><meta property="og:image" content="https://roymondliao.github.io/post/2019-05-02_word2vec/featured.jpg">
-  <meta property="twitter:image" content="https://roymondliao.github.io/post/2019-05-02_word2vec/featured.jpg"><meta property="og:locale" content="en-us">
+舉例來說： &quot;heart&quot; 的在 one-hot-encoding 的索引位置為958，我們直接拿取 heart 所對應 hidden layer 的值，也就是 embedding weights 的第958列(row)，這樣的過程叫做 embedding lookup，而 hidden layer 的神經元數量則為 embedding dimension。"><meta property="og:image" content="https://roymondliao.netlify.com/post/2019-05-02_word2vec/featured.jpg">
+  <meta property="twitter:image" content="https://roymondliao.netlify.com/post/2019-05-02_word2vec/featured.jpg"><meta property="og:locale" content="en-us">
   
     
       <meta property="article:published_time" content="2019-05-02T00:00:00&#43;00:00">
@@ -186,12 +186,12 @@ Word embeddings 在將字詞轉換成向量的實作中，大家常用的方法�
   "@type": "BlogPosting",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "https://roymondliao.github.io/post/2019-05-02_word2vec/"
+    "@id": "https://roymondliao.netlify.com/post/2019-05-02_word2vec/"
   },
   "headline": "Word2Vec",
   
   "image": [
-    "https://roymondliao.github.io/post/2019-05-02_word2vec/featured.jpg"
+    "https://roymondliao.netlify.com/post/2019-05-02_word2vec/featured.jpg"
   ],
   
   "datePublished": "2019-05-02T00:00:00Z",
@@ -207,7 +207,7 @@ Word embeddings 在將字詞轉換成向量的實作中，大家常用的方法�
     "name": "Roymond Liao",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://roymondliao.github.io/img/icon-512.png"
+      "url": "https://roymondliao.netlify.com/img/icon-512.png"
     }
   },
   "description": "最近剛好看到一篇關於 Skip-gram word2vec的介紹，內文寫的淺顯易懂，衍生的閱讀也十分詳細，決定動手寫篇記錄下來。\n人對於文字的理解，可以很簡單的就能了解字面的意義，但是對於機器來說，要如何理解文字是一個很困難的問題。 要如何讓機器來理解文字的意義？ 透過將文字轉換成向量，來讓機器能夠讀的懂，所以其實文字對於機器來說只是數字，而我們在做的就只是數字的遊戲。\nWord embeddings 在將字詞轉換成向量的實作中，大家常用的方法肯定是 one-hot-encoding，但是 one-hot-encoding 在計算上卻是非常沒有效率的方式，如果一篇文章中總共有50,000的單詞，用 one-hot-encoding 來表示某個單詞的話，將會變成1與49999個0的向量表示。就如同下圖表示，如果要做 matrix multiplication 的話，那將會浪費許多的計算資源。\n透過 Word Embedding1 可以有效的解決上述的問題。 Embedding 可以想成與 full connected layer 一樣，將這個 layer 稱做為 embedding layer ， weight 則稱為 embedding weights。藉由這樣的概念，可以省略掉 multiplication 的過程，直接透過 hidden layer 的 weigth matrix 來當作輸入字詞的 word vector。之所以可以這樣來執行是因為在處理 one-hot-encoding 與 weight matrix 相乘的結果，其實就是 matrix 所對應\u0026quot;詞\u0026quot;的索引值所得到的結果。\n舉例來說： \u0026quot;heart\u0026quot; 的在 one-hot-encoding 的索引位置為958，我們直接拿取 heart 所對應 hidden layer 的值，也就是 embedding weights 的第958列(row)，這樣的過程叫做 embedding lookup，而 hidden layer 的神經元數量則為 embedding dimension。"

@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Optimizer | Roymond Liao</title>
-    <link>https://roymondliao.github.io/categories/optimizer/</link>
-      <atom:link href="https://roymondliao.github.io/categories/optimizer/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://roymondliao.netlify.com/categories/optimizer/</link>
+      <atom:link href="https://roymondliao.netlify.com/categories/optimizer/index.xml" rel="self" type="application/rss+xml" />
     <description>Optimizer</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Thu, 03 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://roymondliao.github.io/img/icon-192.png</url>
+      <url>https://roymondliao.netlify.com/img/icon-192.png</url>
       <title>Optimizer</title>
-      <link>https://roymondliao.github.io/categories/optimizer/</link>
+      <link>https://roymondliao.netlify.com/categories/optimizer/</link>
     </image>
     
     <item>
       <title>Lookahead Optimizer: k steps forward, 1 step back</title>
-      <link>https://roymondliao.github.io/post/2019-10-03_lookahead/</link>
+      <link>https://roymondliao.netlify.com/post/2019-10-03_lookahead/</link>
       <pubDate>Thu, 03 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/post/2019-10-03_lookahead/</guid>
+      <guid>https://roymondliao.netlify.com/post/2019-10-03_lookahead/</guid>
       <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
 
 &lt;p&gt;在目前的 optimizer 分為兩個主要發展方向：&lt;/p&gt;
@@ -110,9 +110,9 @@ Step 5 : 更新 slow weight $\phi_{k} \leftarrow \phi_{k-1} + \alpha\left(\theta
     
     <item>
       <title>DropBlock</title>
-      <link>https://roymondliao.github.io/post/2019-04-10_dropblock/</link>
+      <link>https://roymondliao.netlify.com/post/2019-04-10_dropblock/</link>
       <pubDate>Wed, 10 Apr 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/post/2019-04-10_dropblock/</guid>
+      <guid>https://roymondliao.netlify.com/post/2019-04-10_dropblock/</guid>
       <description>&lt;p&gt;Dropout 相關方法：&lt;/p&gt;
 
 &lt;ul&gt;

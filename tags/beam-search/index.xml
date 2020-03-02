@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Beam search | Roymond Liao</title>
-    <link>https://roymondliao.github.io/tags/beam-search/</link>
-      <atom:link href="https://roymondliao.github.io/tags/beam-search/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://roymondliao.netlify.com/tags/beam-search/</link>
+      <atom:link href="https://roymondliao.netlify.com/tags/beam-search/index.xml" rel="self" type="application/rss+xml" />
     <description>Beam search</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Mon, 16 Dec 2019 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://roymondliao.github.io/img/icon-192.png</url>
+      <url>https://roymondliao.netlify.com/img/icon-192.png</url>
       <title>Beam search</title>
-      <link>https://roymondliao.github.io/tags/beam-search/</link>
+      <link>https://roymondliao.netlify.com/tags/beam-search/</link>
     </image>
     
     <item>
-      <title>Transformer Part 1</title>
-      <link>https://roymondliao.github.io/post/2019-12-16_transformer_part1/</link>
+      <title>Transformer Part 1 - Seq2Seq</title>
+      <link>https://roymondliao.netlify.com/post/2019-12-16_transformer_part1/</link>
       <pubDate>Mon, 16 Dec 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/post/2019-12-16_transformer_part1/</guid>
+      <guid>https://roymondliao.netlify.com/post/2019-12-16_transformer_part1/</guid>
       <description>&lt;p&gt;一開始接觸 &lt;code&gt;Attention Is All You Need&lt;/code&gt; 這篇論文是從 &lt;a href=&#34;https://www.youtube.com/playlist?list=PLqFaTIg4myu8t5ycqvp7I07jTjol3RCl9&#34;&gt;Kaggle Reading Group&lt;/a&gt; 這個 channel 開始，非常推薦可以跟著一起讀!!&lt;/p&gt;
 
 &lt;p&gt;主持人 &lt;a href=&#34;https://www.kaggle.com/rtatman&#34;&gt;Rachael Atman&lt;/a&gt; 本身是 Kaggle 的 Data Scientist，她的導讀我覺得是流暢的，但她自己本身有說過並非是 NLP 領域的專家，所以在 kaggle reading group 裡閱讀的論文也有可能是她完全沒接觸過的，整個 channel 帶給你的就是一個啟發，讓你覺得有人跟你一起閱讀的感覺，然後過程中也些人會在 channel 的 chat room 提出一些看法或是連結，Rachael 本身也會提出自己的見解，可以多方面參考。&lt;/p&gt;
@@ -140,7 +140,7 @@
 \begin{align}
 \hat{y_t} = argmax\space p_{\theta}(y | \hat{y}_{1:(t-1)}) 
 \end{align}
-  \]&lt;/span&gt;&lt;/p&gt;
+\]&lt;/span&gt;&lt;/p&gt;
 
 &lt;p&gt;其中 &lt;span  class=&#34;math&#34;&gt;\(\hat{y}_{1:(t-1)} = \hat{y}_1,\dots,\hat{y}_{t-1}\)&lt;/span&gt; 為前面 $t-1$ 步所生成的字詞。以一個簡單的概念來思考，每一步的 output 都是該步所得到的最大條件機率，那這樣的 greedy search 所得到的結果對於我們的目標並非是最優的，得到的是每個字詞的最大條件機率，而並非是整個句子的最大條件機率，所以這樣的狀況下你所得的的翻譯可能不會是最適合的。&lt;/p&gt;
 

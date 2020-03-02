@@ -2,109 +2,133 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags | Roymond Liao</title>
-    <link>https://roymondliao.github.io/tags/</link>
-      <atom:link href="https://roymondliao.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://roymondliao.netlify.com/tags/</link>
+      <atom:link href="https://roymondliao.netlify.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <description>Tags</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Mon, 16 Dec 2019 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Fri, 28 Feb 2020 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://roymondliao.github.io/img/icon-192.png</url>
+      <url>https://roymondliao.netlify.com/img/icon-192.png</url>
       <title>Tags</title>
-      <link>https://roymondliao.github.io/tags/</link>
+      <link>https://roymondliao.netlify.com/tags/</link>
     </image>
     
     <item>
+      <title>Attention</title>
+      <link>https://roymondliao.netlify.com/tags/attention/</link>
+      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.netlify.com/tags/attention/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Attention Mechanism</title>
+      <link>https://roymondliao.netlify.com/tags/attention-mechanism/</link>
+      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.netlify.com/tags/attention-mechanism/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Attention model</title>
+      <link>https://roymondliao.netlify.com/tags/attention-model/</link>
+      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.netlify.com/tags/attention-model/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Beam search</title>
-      <link>https://roymondliao.github.io/tags/beam-search/</link>
+      <link>https://roymondliao.netlify.com/tags/beam-search/</link>
       <pubDate>Mon, 16 Dec 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/tags/beam-search/</guid>
+      <guid>https://roymondliao.netlify.com/tags/beam-search/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Seq2Seq</title>
-      <link>https://roymondliao.github.io/tags/seq2seq/</link>
+      <link>https://roymondliao.netlify.com/tags/seq2seq/</link>
       <pubDate>Mon, 16 Dec 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/tags/seq2seq/</guid>
+      <guid>https://roymondliao.netlify.com/tags/seq2seq/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Teacher forcing</title>
-      <link>https://roymondliao.github.io/tags/teacher-forcing/</link>
+      <link>https://roymondliao.netlify.com/tags/teacher-forcing/</link>
       <pubDate>Mon, 16 Dec 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/tags/teacher-forcing/</guid>
+      <guid>https://roymondliao.netlify.com/tags/teacher-forcing/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Adversarial Validation</title>
-      <link>https://roymondliao.github.io/tags/adversarial-validation/</link>
+      <link>https://roymondliao.netlify.com/tags/adversarial-validation/</link>
       <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/tags/adversarial-validation/</guid>
+      <guid>https://roymondliao.netlify.com/tags/adversarial-validation/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Features Selection</title>
-      <link>https://roymondliao.github.io/tags/features-selection/</link>
+      <link>https://roymondliao.netlify.com/tags/features-selection/</link>
       <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/tags/features-selection/</guid>
+      <guid>https://roymondliao.netlify.com/tags/features-selection/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Time Consistency</title>
-      <link>https://roymondliao.github.io/tags/time-consistency/</link>
+      <link>https://roymondliao.netlify.com/tags/time-consistency/</link>
       <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/tags/time-consistency/</guid>
+      <guid>https://roymondliao.netlify.com/tags/time-consistency/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Optimizer</title>
-      <link>https://roymondliao.github.io/tags/optimizer/</link>
+      <link>https://roymondliao.netlify.com/tags/optimizer/</link>
       <pubDate>Thu, 03 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/tags/optimizer/</guid>
+      <guid>https://roymondliao.netlify.com/tags/optimizer/</guid>
       <description></description>
     </item>
     
     <item>
       <title>CV</title>
-      <link>https://roymondliao.github.io/tags/cv/</link>
+      <link>https://roymondliao.netlify.com/tags/cv/</link>
       <pubDate>Tue, 14 May 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/tags/cv/</guid>
+      <guid>https://roymondliao.netlify.com/tags/cv/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Object Detection</title>
-      <link>https://roymondliao.github.io/tags/object-detection/</link>
+      <link>https://roymondliao.netlify.com/tags/object-detection/</link>
       <pubDate>Tue, 14 May 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/tags/object-detection/</guid>
+      <guid>https://roymondliao.netlify.com/tags/object-detection/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Word Embedding</title>
-      <link>https://roymondliao.github.io/tags/word-embedding/</link>
+      <link>https://roymondliao.netlify.com/tags/word-embedding/</link>
       <pubDate>Thu, 02 May 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/tags/word-embedding/</guid>
+      <guid>https://roymondliao.netlify.com/tags/word-embedding/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Machine Learning</title>
-      <link>https://roymondliao.github.io/tags/machine-learning/</link>
+      <link>https://roymondliao.netlify.com/tags/machine-learning/</link>
       <pubDate>Sat, 02 Mar 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/tags/machine-learning/</guid>
+      <guid>https://roymondliao.netlify.com/tags/machine-learning/</guid>
       <description></description>
     </item>
     
     <item>
       <title>XGBoost</title>
-      <link>https://roymondliao.github.io/tags/xgboost/</link>
+      <link>https://roymondliao.netlify.com/tags/xgboost/</link>
       <pubDate>Sat, 02 Mar 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/tags/xgboost/</guid>
+      <guid>https://roymondliao.netlify.com/tags/xgboost/</guid>
       <description></description>
     </item>
     
