@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>XGBoost | Roymond Liao</title>
-    <link>https://roymondliao.netlify.com/tags/xgboost/</link>
-      <atom:link href="https://roymondliao.netlify.com/tags/xgboost/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://roymondliao.github.io/tags/xgboost/</link>
+      <atom:link href="https://roymondliao.github.io/tags/xgboost/index.xml" rel="self" type="application/rss+xml" />
     <description>XGBoost</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Sat, 02 Mar 2019 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://roymondliao.netlify.com/img/icon-192.png</url>
+      <url>https://roymondliao.github.io/img/icon-192.png</url>
       <title>XGBoost</title>
-      <link>https://roymondliao.netlify.com/tags/xgboost/</link>
+      <link>https://roymondliao.github.io/tags/xgboost/</link>
     </image>
     
     <item>
       <title>XGBoost</title>
-      <link>https://roymondliao.netlify.com/post/2019-03-02_xgboost/</link>
+      <link>https://roymondliao.github.io/post/2019-03-02_xgboost/</link>
       <pubDate>Sat, 02 Mar 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/post/2019-03-02_xgboost/</guid>
+      <guid>https://roymondliao.github.io/post/2019-03-02_xgboost/</guid>
       <description>&lt;h2 id=&#34;review-note&#34;&gt;Review note&lt;/h2&gt;
 
 &lt;p&gt;Bagging&lt;/p&gt;

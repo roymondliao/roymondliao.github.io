@@ -38,7 +38,7 @@ Lookahead method：
 Step 1 : 先設定 $\phi$ 的初始值，以及選定 objective function $L$ Step 2 : 確定更新週期 $k$ 值、slow weight 的更新步伐 $\alpha $ 以及 optimizer $A$ Step 3 : 更新 fast weight $\theta$ ，$ \space \theta_{t,0} \leftarrow \phi_{t-1}, t=1,2,\dots $ Step 4 : 利用 optimizer $A$ 迭代 $k$ 次更新，由 $\theta_{t, i}$ 更新到 $\theta_{t, k}, i=1, 2, \dots, k$ Step 5 : 更新 slow weight $\phi_{k} \leftarrow \phi_{k-1} &#43; \alpha\left(\theta_{t, k} - \phi_{t-1}\right)$ 重複 Step 3 - Step 5 直至收斂。">
 
   
-  <link rel="alternate" hreflang="en-us" href="https://roymondliao.netlify.com/post/2019-10-03_lookahead/">
+  <link rel="alternate" hreflang="en-us" href="https://roymondliao.github.io/post/2019-10-03_lookahead/">
 
   
 
@@ -139,7 +139,7 @@ Step 1 : 先設定 $\phi$ 的初始值，以及選定 objective function $L$ Ste
   <link rel="icon" type="image/png" href="/img/icon-32.png">
   <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
 
-  <link rel="canonical" href="https://roymondliao.netlify.com/post/2019-10-03_lookahead/">
+  <link rel="canonical" href="https://roymondliao.github.io/post/2019-10-03_lookahead/">
 
   
   
@@ -151,7 +151,7 @@ Step 1 : 先設定 $\phi$ 的初始值，以及選定 objective function $L$ Ste
   <meta property="twitter:card" content="summary_large_image">
   
   <meta property="og:site_name" content="Roymond Liao">
-  <meta property="og:url" content="https://roymondliao.netlify.com/post/2019-10-03_lookahead/">
+  <meta property="og:url" content="https://roymondliao.github.io/post/2019-10-03_lookahead/">
   <meta property="og:title" content="Lookahead Optimizer: k steps forward, 1 step back | Roymond Liao">
   <meta property="og:description" content="Introduction 在目前的 optimizer 分為兩個主要發展方向：
  Adaptive learning rate, such as AdaGrad and Adam Accelerated schema (momentum), such as Polyak heavyball and Nesterov momentum  以上都是透過累積過往梯度下降所得到的結果來達到收斂，然而要獲得好的結果，都需要一些超參數的調整。
@@ -160,8 +160,8 @@ Lookahead method：
  在使用不同的 inner optimizer 下，像是 SGD 或是 Adam，減少了對超參數調整的需求，並且可以以最小的計算需求確保在不同的深度學習任務中加快收斂速度。
   
 演算過程 :
-Step 1 : 先設定 $\phi$ 的初始值，以及選定 objective function $L$ Step 2 : 確定更新週期 $k$ 值、slow weight 的更新步伐 $\alpha $ 以及 optimizer $A$ Step 3 : 更新 fast weight $\theta$ ，$ \space \theta_{t,0} \leftarrow \phi_{t-1}, t=1,2,\dots $ Step 4 : 利用 optimizer $A$ 迭代 $k$ 次更新，由 $\theta_{t, i}$ 更新到 $\theta_{t, k}, i=1, 2, \dots, k$ Step 5 : 更新 slow weight $\phi_{k} \leftarrow \phi_{k-1} &#43; \alpha\left(\theta_{t, k} - \phi_{t-1}\right)$ 重複 Step 3 - Step 5 直至收斂。"><meta property="og:image" content="https://roymondliao.netlify.com/post/2019-10-03_lookahead/featured.jpg">
-  <meta property="twitter:image" content="https://roymondliao.netlify.com/post/2019-10-03_lookahead/featured.jpg"><meta property="og:locale" content="en-us">
+Step 1 : 先設定 $\phi$ 的初始值，以及選定 objective function $L$ Step 2 : 確定更新週期 $k$ 值、slow weight 的更新步伐 $\alpha $ 以及 optimizer $A$ Step 3 : 更新 fast weight $\theta$ ，$ \space \theta_{t,0} \leftarrow \phi_{t-1}, t=1,2,\dots $ Step 4 : 利用 optimizer $A$ 迭代 $k$ 次更新，由 $\theta_{t, i}$ 更新到 $\theta_{t, k}, i=1, 2, \dots, k$ Step 5 : 更新 slow weight $\phi_{k} \leftarrow \phi_{k-1} &#43; \alpha\left(\theta_{t, k} - \phi_{t-1}\right)$ 重複 Step 3 - Step 5 直至收斂。"><meta property="og:image" content="https://roymondliao.github.io/post/2019-10-03_lookahead/featured.jpg">
+  <meta property="twitter:image" content="https://roymondliao.github.io/post/2019-10-03_lookahead/featured.jpg"><meta property="og:locale" content="en-us">
   
     
       <meta property="article:published_time" content="2019-10-03T00:00:00&#43;00:00">
@@ -192,12 +192,12 @@ Step 1 : 先設定 $\phi$ 的初始值，以及選定 objective function $L$ Ste
   "@type": "BlogPosting",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "https://roymondliao.netlify.com/post/2019-10-03_lookahead/"
+    "@id": "https://roymondliao.github.io/post/2019-10-03_lookahead/"
   },
   "headline": "Lookahead Optimizer: k steps forward, 1 step back",
   
   "image": [
-    "https://roymondliao.netlify.com/post/2019-10-03_lookahead/featured.jpg"
+    "https://roymondliao.github.io/post/2019-10-03_lookahead/featured.jpg"
   ],
   
   "datePublished": "2019-10-03T00:00:00Z",
@@ -213,7 +213,7 @@ Step 1 : 先設定 $\phi$ 的初始值，以及選定 objective function $L$ Ste
     "name": "Roymond Liao",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://roymondliao.netlify.com/img/icon-512.png"
+      "url": "https://roymondliao.github.io/img/icon-512.png"
     }
   },
   "description": "Introduction 在目前的 optimizer 分為兩個主要發展方向：\n Adaptive learning rate, such as AdaGrad and Adam Accelerated schema (momentum), such as Polyak heavyball and Nesterov momentum  以上都是透過累積過往梯度下降所得到的結果來達到收斂，然而要獲得好的結果，都需要一些超參數的調整。\nLookahead method：\n 是一種新的優化方法，採用兩個不同的權重，分別為 fast weights 與 slow weights。fast weights 是使用一般常見的 optimizer 當作 inner optimizer 先進行 k 次的計算後得到的結果與預先保留的 slow weights 進行線性插值(linearly interpolating)來更新權重 ，更新後的 wieight 為新的 slow weights 並推動之前的 fast weights 往前探索，以這樣的方式進行迭代。\n 在使用不同的 inner optimizer 下，像是 SGD 或是 Adam，減少了對超參數調整的需求，並且可以以最小的計算需求確保在不同的深度學習任務中加快收斂速度。\n  \n演算過程 :\nStep 1 : 先設定 $\\phi$ 的初始值，以及選定 objective function $L$ Step 2 : 確定更新週期 $k$ 值、slow weight 的更新步伐 $\\alpha $ 以及 optimizer $A$ Step 3 : 更新 fast weight $\\theta$ ，$ \\space \\theta_{t,0} \\leftarrow \\phi_{t-1}, t=1,2,\\dots $ Step 4 : 利用 optimizer $A$ 迭代 $k$ 次更新，由 $\\theta_{t, i}$ 更新到 $\\theta_{t, k}, i=1, 2, \\dots, k$ Step 5 : 更新 slow weight $\\phi_{k} \\leftarrow \\phi_{k-1} + \\alpha\\left(\\theta_{t, k} - \\phi_{t-1}\\right)$ 重複 Step 3 - Step 5 直至收斂。"
@@ -553,7 +553,7 @@ Step 1 : 先設定 $\phi$ 的初始值，以及選定 objective function $L$ Ste
 <div class="article-header container featured-image-wrapper mt-4 mb-4" style="max-width: 1200px; max-height: 800px;">
   <div style="position: relative">
     <img src="/post/2019-10-03_lookahead/featured_hu3d03a01dcc18bc5be0e67db3d8d209a6_2831576_1200x0_resize_q90_lanczos.jpg" alt="" class="featured-image">
-    <span class="article-header-caption"><a href="https://unsplash.com/photos/aebPbwAWjDs" target="_blank">Photo by Andrew Neel on Unsplash</a></span>
+    <span class="article-header-caption"><a href="https://unsplash.com/photos/aebPbwAWjDs">Photo by Andrew Neel on Unsplash</a></span>
   </div>
 </div>
 
@@ -892,7 +892,7 @@ Step 5 : 更新 slow weight $\phi_{k} \leftarrow \phi_{k-1} + \alpha\left(\theta
   
 
   <p class="powered-by">
-    &copy; 2019 - &copy; 2020 &middot; 
+    © 2019 - © 2020 &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

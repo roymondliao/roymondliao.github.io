@@ -2,162 +2,105 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Roymond Liao</title>
-    <link>https://roymondliao.netlify.com/authors/roymond-liao/</link>
-      <atom:link href="https://roymondliao.netlify.com/authors/roymond-liao/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://roymondliao.github.io/authors/roymond-liao/</link>
+      <atom:link href="https://roymondliao.github.io/authors/roymond-liao/index.xml" rel="self" type="application/rss+xml" />
     <description>Roymond Liao</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Fri, 28 Feb 2020 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://roymondliao.netlify.com/img/icon-192.png</url>
+      <url>https://roymondliao.github.io/img/icon-192.png</url>
       <title>Roymond Liao</title>
-      <link>https://roymondliao.netlify.com/authors/roymond-liao/</link>
+      <link>https://roymondliao.github.io/authors/roymond-liao/</link>
     </image>
     
     <item>
       <title>Transformer Part 2 - Attention</title>
-      <link>https://roymondliao.netlify.com/post/2019-12-16_transformer_part2/</link>
+      <link>https://roymondliao.github.io/post/2019-12-16_transformer_part2/</link>
       <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/post/2019-12-16_transformer_part2/</guid>
+      <guid>https://roymondliao.github.io/post/2019-12-16_transformer_part2/</guid>
       <description>&lt;h1 id=&#34;attention-mechanism&#34;&gt;Attention Mechanism&lt;/h1&gt;
-
-&lt;p&gt;&lt;strong&gt;Attention&lt;/strong&gt; 的概念在 2014 年被 Bahdanau et al. [Paper 1.] 所提出，解決了 encoder-decoder 架構的模型在 decoder 必須依賴一個固定向量長度的 context vector 的問題。實際上 attention mechanism 也符合人類在生活上的應用，例如：當你在閱讀一篇文章時，會從上下文的關鍵字詞來推論句子所以表達的意思，又或者像是在聆聽演講時，會捕捉講者的關鍵字，來了解講者所要描述的內容，這都是人類在注意力上的行為表現。&lt;/p&gt;
-
+&lt;p&gt;&lt;strong&gt;Attention&lt;/strong&gt; 的概念在 2014 年被 Bahdanau et al. [Paper 1] 所提出，解決了 encoder-decoder 架構的模型在 decoder 必須依賴一個固定向量長度的 context vector 的問題。實際上 attention mechanism 也符合人類在生活上的應用，例如：當你在閱讀一篇文章時，會從上下文的關鍵字詞來推論句子所以表達的意思，又或者像是在聆聽演講時，會捕捉講者的關鍵字，來了解講者所要描述的內容，這都是人類在注意力上的行為表現。&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;用比較簡單的講法來說， attention mechanism 可以幫助模型對輸入 sequence 的每個部分賦予不同的權重， 然後抽出更加關鍵的重要訊息，使模型可以做出更加準確的判斷。&lt;/p&gt;
 &lt;/blockquote&gt;
-
-&lt;p&gt;複習一下在之前介紹的 Seq2Seq model 中，decoder 要預測在給定 context vector 與先前預測字詞 &lt;span  class=&#34;math&#34;&gt;\({y_1, \cdots, y_{t-1}}\)&lt;/span&gt; 的條件下字詞 $y_{t}$ 的機率，所以 decoder  的定義是在有序的條件下所有預測字詞的聯合機率：&lt;/p&gt;
-
-&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
+&lt;p&gt;複習一下在之前介紹的 Seq2Seq model 中，decoder 要預測在給定 context vector 與先前預測字詞 $${y_1, \cdots, y_{t-1}}$$ 的條件下字詞 $y_{t}$ 的機率，所以 decoder  的定義是在有序的條件下所有預測字詞的聯合機率：&lt;/p&gt;
+&lt;p&gt;$$
 \begin{align}
-p(\mathrm{y}) &amp; = \prod_{t=1}^T p(y_t | \{y_1, \cdots, y_{t-1}\}, c) \tag 1 \\
-\mathrm{y} &amp; = (y_1, \cdots, y_T)
+p(\mathrm{y}) &amp;amp; = \prod_{t=1}^T p(y_t | {y_1, \cdots, y_{t-1}}, c) \tag 1 \&lt;br&gt;
+\mathrm{y} &amp;amp; = (y_1, \cdots, y_T)
 \end{align}
-\]&lt;/span&gt;&lt;/p&gt;
-
+$$&lt;/p&gt;
 &lt;p&gt;在第 $t$ 個字詞，字詞 $y_t$ 的條件機率：&lt;/p&gt;
-
-&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
+&lt;p&gt;$$
 \begin{align}
-p(y_t | \{y_1, \cdots, y_{t-1}\}, c) = g(y_{t-1}, s_t, c) \tag 2
+p(y_t | {y_1, \cdots, y_{t-1}}, c) = g(y_{t-1}, s_t, c) \tag 2
 \end{align}
-\]&lt;/span&gt;&lt;/p&gt;
-
+$$&lt;/p&gt;
 &lt;p&gt;當中 $g$ 唯一個 nonlinear function，$s_t$ 為 hidden state，c 為 context vector。&lt;/p&gt;
-
 &lt;p&gt;而在 Attention model 中，作者將 decoder 預測下一個字詞的的條件機率重新定義為：&lt;/p&gt;
-
-&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
+&lt;p&gt;$$
 \begin{align}
-p(y_i | \{y_1, \cdots, y_{i-1}\}, \mathrm{x}) = g(y_{i-1}, s_t, c_i) \tag 3
+p(y_i | {y_1, \cdots, y_{i-1}}, \mathrm{x}) = g(y_{i-1}, s_t, c_i) \tag 3
 \end{align}
-\]&lt;/span&gt;&lt;/p&gt;
-
+$$&lt;/p&gt;
 &lt;p&gt;當中 $s_i$ 表示 RNN 在 $i$ 時間的 hiddent state。&lt;/p&gt;
-
-&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
+&lt;p&gt;$$
 \begin{align}
 s_i = f\left(s_{i-1}, y_{i-1}, c_i\right) \tag 4
 \end{align}
-\]&lt;/span&gt;&lt;/p&gt;
-
+$$&lt;/p&gt;
 &lt;p&gt;將式子 (3) 與 (2) 相比就可以發現，每一個預測字詞 $y_i$ 對於 context vector 的取得，由原本都是固定的 C  轉變成 每個字詞預測都會取得不同的 $C_i$。&lt;/p&gt;
-
 &lt;p&gt;Bahdanau Attention model 的架構如圖一：&lt;/p&gt;
-
-&lt;figure class=&#34;image&#34;&gt;
-&lt;center&gt;
-  &lt;img src=&#34;./attention_bahdanau.png&#34; style=&#34;zoom:60%&#34; /&gt;
-  &lt;figcaption&gt;
-  圖一(Image credit:[Paper 1.])
-  &lt;/figcaption&gt;
-&lt;/center&gt;
-&lt;/figure&gt;
-
-&lt;p&gt;Context vector $c_i$ 是取決於 sequence of annotations &lt;span  class=&#34;math&#34;&gt;\((h_1, h_2, \cdots, h_{T_x})\)&lt;/span&gt; 的訊息，annotation $h_i$ 包含了在第 $i$ 步下， input sequence 輸入到 econder 的訊息。計算方法是透過序列權重加總 annotation $h_i$，公式如下：&lt;/p&gt;
-
-&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;Context vector $c_i$ 是取決於 sequence of annotations $$(h_1, h_2, \cdots, h_{T_x})$$ 的訊息，annotation $h_i$ 包含了在第 $i$ 步下， input sequence 輸入到 econder 的訊息。計算方法是透過序列權重加總 annotation $h_i$，公式如下：&lt;/p&gt;
+&lt;p&gt;$$
 \begin{equation}
 c_i = \displaystyle\sum_{j=1}^{T_x}\alpha_{ij}h_j \tag5
 \end{equation}
-\]&lt;/span&gt;&lt;/p&gt;
-
+$$&lt;/p&gt;
 &lt;p&gt;其中 $i$ 表示 decoder 在第 $i$ 個字詞，$j$ 表示 encoder 中第 $j$ 個詞。&lt;/p&gt;
-
 &lt;p&gt;$\alpha_{ij} $ 則稱之為 attention distribution，可以用來衡量 input sequence 中的每個文字對 output sequence 中的每個文字所帶來重要性的程度，計算方式如下
 ：
-&lt;span  class=&#34;math&#34;&gt;\(
+$$
 \begin{align}
-\alpha_{ij} &amp; = softmax(e_{ij}) \\
-&amp; = \frac{exp(e_{ij})}{\sum_{k=1}^{T_x}exp(e_{ik})} \tag6 \\
+\alpha_{ij} &amp;amp; = softmax(e_{ij}) \&lt;br&gt;
+&amp;amp; = \frac{exp(e_{ij})}{\sum_{k=1}^{T_x}exp(e_{ik})} \tag6 \&lt;br&gt;
 \end{align}
-\)&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
+$$&lt;/p&gt;
+&lt;p&gt;$$
 e_{ij} = a(s_{i-1}, h_j) \tag7
-\]&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;計算 attention  score $e_{ij}$ 中 $a$ 表示為 alignment model (對齊模型)，是衡量 input sequence 在位置 $j$ 與 output sequence 位置 $i$ 這兩者之間的關係&lt;/strong&gt;。
+$$&lt;/p&gt;
+&lt;p&gt;**計算 attention  score $e_{ij}$ 中 $a$ 表示為 alignment model (對齊模型)，是衡量 input sequence 在位置 $j$ 與 output sequence 位置 $i$ 這兩者之間的關係**。
 這邊作者為了解決在計算上需要 $T_{x} \times T_{y}$ 的計算量，所以採用了 singlelayer multilayer perceptron 的方式來減少計算量，其計算公式：&lt;/p&gt;
-
-&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
+&lt;p&gt;$$
 \begin{align}
 a(s_{i-1}, h_j) = v_a^Ttanh(W_aS_{i-1} + U_ah_j) \tag8
 \end{align}
-\]&lt;/span&gt;&lt;/p&gt;
-
+$$&lt;/p&gt;
 &lt;p&gt;其中 $W_a \in R^{n\times n}，U_a \in R^{n \times 2n}，v_a \in R^n$ 都是 weight。&lt;/p&gt;
-
 &lt;p&gt;另外作者在此採用了 BiRNN(Bi-directional RNN) 的 forward 與 backward 的架構，由圖一可以得知&lt;/p&gt;
-
 &lt;ul&gt;
-&lt;li&gt;Forward hidden state 為 &lt;span  class=&#34;math&#34;&gt;\((\overrightarrow{h_1}, \cdots, \overrightarrow{h_{T_x}})\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;Backward hidden state 為 &lt;span  class=&#34;math&#34;&gt;\((\overleftarrow{h_1}, \cdots, \overleftarrow{h_{T_x}})\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;Concatenate forward 與 backward 的 hidden state，所以 annotation $h_j$ 為 &lt;span  class=&#34;math&#34;&gt;\(\left[\overrightarrow{h_j^T};\overleftarrow{h_j^T}\right]^T\)&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;Forward hidden state 為 $$(\overrightarrow{h_1}, \cdots, \overrightarrow{h_{T_x}})$$&lt;/li&gt;
+&lt;li&gt;Backward hidden state 為 $$(\overleftarrow{h_1}, \cdots, \overleftarrow{h_{T_x}})$$&lt;/li&gt;
+&lt;li&gt;Concatenate forward 與 backward 的 hidden state，所以 annotation $h_j$ 為 $$\left[\overrightarrow{h_j^T};\overleftarrow{h_j^T}\right]^T$$&lt;/li&gt;
 &lt;/ul&gt;
-
 &lt;p&gt;這樣的方式更能理解句子所要表達的意思，並得到更好的預測結果。&lt;/p&gt;
-
 &lt;blockquote&gt;
 &lt;p&gt;例如以下兩個句子的比較：&lt;/p&gt;
-
+&lt;/blockquote&gt;
 &lt;ol&gt;
 &lt;li&gt;我喜歡蘋果，因為它很好吃。&lt;/li&gt;
 &lt;li&gt;我喜歡蘋果，因為它很潮。&lt;/li&gt;
 &lt;/ol&gt;
-&lt;/blockquote&gt;
-
 &lt;p&gt;下圖為 Bahdanau Attention model 的解析可以與圖一對照理解，這樣更能了解圖一的結構：&lt;/p&gt;
-
 &lt;blockquote&gt;
 &lt;p&gt;需要注意的一點是在最一開始的 decoder hidden state $S_0$ 是採用 encoder 最後一層的 output&lt;/p&gt;
 &lt;/blockquote&gt;
-
-&lt;figure class=&#34;image&#34;&gt;
-&lt;center&gt;
-  &lt;img src=&#34;./attention_bahdanau_example.png&#34; style=&#34;zoom:100%&#34; /&gt;
-  &lt;figcaption&gt;
-  圖二
-  &lt;/figcaption&gt;
-&lt;/center&gt;
-&lt;/figure&gt;
-
+&lt;!-- raw HTML omitted --&gt;
 &lt;p&gt;下圖為論文中英文翻譯成法語的 attention distribution：&lt;/p&gt;
-
-&lt;figure class=&#34;image&#34;&gt;
-&lt;center&gt;
-  &lt;img src=&#34;./attention_bahdanau_output.png&#34; style=&#34;zoom:90%&#34; /&gt;
-  &lt;figcaption&gt;
-  圖三(Image credit:[Paper 1.])
-  &lt;/figcaption&gt;
-&lt;/center&gt;
-&lt;/figure&gt;
-
+&lt;!-- raw HTML omitted --&gt;
 &lt;p&gt;在上圖中 $[European \space Economic \space Area]$ 翻譯成$ [zone \space \acute{a}conomique \space europ\acute{e}enne] $ 的注意力分數上，模型成功地專注在對應的字詞上。&lt;/p&gt;
-
 &lt;h1 id=&#34;attention-mechanism-family&#34;&gt;Attention Mechanism Family&lt;/h1&gt;
-
 &lt;p&gt;Attention score function:&lt;/p&gt;
-
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -165,70 +108,166 @@ a(s_{i-1}, h_j) = v_a^Ttanh(W_aS_{i-1} + U_ah_j) \tag8
 &lt;th&gt;Attention score function&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
-
 &lt;tbody&gt;
 &lt;tr&gt;
 &lt;td&gt;Dot-product&lt;/td&gt;
 &lt;td&gt;$e_{ij} = S_i^Th_j$&lt;/td&gt;
 &lt;/tr&gt;
-
 &lt;tr&gt;
 &lt;td&gt;General&lt;/td&gt;
 &lt;td&gt;$e_{ij} = S_i^TWh_j$&lt;/td&gt;
 &lt;/tr&gt;
-
 &lt;tr&gt;
 &lt;td&gt;Additive&lt;/td&gt;
 &lt;td&gt;$e_{ij} = v^Ttanh(WS_{i-1} + Uh_j) $&lt;/td&gt;
 &lt;/tr&gt;
-
 &lt;tr&gt;
 &lt;td&gt;Scaled Dot-product&lt;/td&gt;
 &lt;td&gt;$e_{ij} = \frac{S_i^Th_j}{\sqrt{d}}$&lt;/td&gt;
 &lt;/tr&gt;
-
 &lt;tr&gt;
 &lt;td&gt;&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-
-&lt;h3 id=&#34;soft-attention--hard-attention&#34;&gt;Soft Attention &amp;amp; Hard Attention&lt;/h3&gt;
-
+&lt;h3 id=&#34;hard-attention--soft-attention&#34;&gt;Hard Attention &amp;amp; Soft Attention&lt;/h3&gt;
+&lt;p&gt;Xu et al. [Paper 2] 對於圖像標題(caption)的生成研究中提出了 hard attention 與 soft attention 的方法，作者希望透過 attention mechanism 的方法能夠讓 caption 的生成從圖像中獲得更多有幫助的訊息。下圖為作者所提出的模型架構：&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;&lt;strong&gt;模型結構&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Encoder&lt;/p&gt;
+&lt;p&gt;在 encoder 端模型使用 CNN 來提取 low-level 的卷積層特徵，每一個特徵都對應圖像的一個區域&lt;/p&gt;
+&lt;p&gt;$$
+a = {a_1, \dots, a_L}, a_i \in R^D
+$$
+總共有 $L$ 個特徵，特徵向量維度為 $D$。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Decoder&lt;/p&gt;
+&lt;p&gt;採用 LSTM 模型來生成字詞，而因應圖片的內容不同，所以標題的長度是不相同的，作者將標題 $y$ encoded 成一個 one-hot encoding 的方式來表示
+$$
+y = {y_1, \dots, y_C}, y_i \in R^K
+$$
+K 為字詞的數量，C 為標題的長度。&lt;/p&gt;
+&lt;h1 id=&#34;endpmatrix&#34;&gt;利用 affine transformation 的方式  $$T_{s, t} : R^s \rightarrow R^t$$ 來表達 LSTM 的公式：
+$$
+\begin{pmatrix}
+i_t \&lt;br&gt;
+f_t \&lt;br&gt;
+o_t \&lt;br&gt;
+g_t
+\end{pmatrix}&lt;/h1&gt;
+&lt;p&gt;\begin{pmatrix}
+\sigma \&lt;br&gt;
+\sigma \&lt;br&gt;
+\sigma \&lt;br&gt;
+tanh
+\end{pmatrix}
+T_{D+m+n, n}
+\begin{pmatrix}
+Ey_{t-1} \&lt;br&gt;
+h_{t-1} \&lt;br&gt;
+\hat{Z_t}
+\end{pmatrix}  \tag1 \&lt;br&gt;
+$$&lt;/p&gt;
+&lt;p&gt;$$
+\begin{align}
+c_t &amp;amp; = f_t \odot c_{t-1} + i_t \odot g_t \tag2 \&lt;br&gt;
+h_t &amp;amp; = o_t \odot tanh(c_t) \tag3
+\end{align}
+$$&lt;/p&gt;
+&lt;p&gt;其中&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$$i_t$$ : input gate&lt;/li&gt;
+&lt;li&gt;$$f_t$$ : forget gate&lt;/li&gt;
+&lt;li&gt;$$o_t$$ : ouput gate&lt;/li&gt;
+&lt;li&gt;$$g_t$$ : canaidate cell&lt;/li&gt;
+&lt;li&gt;$$c_t$$ : memory cell&lt;/li&gt;
+&lt;li&gt;$$h_t$$ : hidden state&lt;/li&gt;
+&lt;li&gt;$$Ey_{t-1}$$ 是詞 $$y_{t-1}$$ 的 embedding vector，$$E \in R^{m \times k}$$ 為 embedding matrix&lt;/li&gt;
+&lt;li&gt;$$\hat{Z} \in R^D$$ 是 context vector，代表捕捉特定區域視覺訊息的上下文向量，與時間 $t$ 有關，所以是一個動態變化的量&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;特別注意的是作者在給定 memory state 與 hidden state 的初始值的計算方式使用了兩個獨立的多層感知器(MLP)，其輸入是各個圖像區域特徵的平均，計算公式如下：
+$$
+c_0 = f_{init, c}( \frac{1}{L} \sum_{i}^L a_i) \&lt;br&gt;
+h_0 = f_{init, h}( \frac{1}{L} \sum_{i}^L a_i) \&lt;br&gt;
+$$
+以及作者為了計算在 $t$ 時間下所關注的 context vector $\hat{Z_t}$ 定義了 attention machansim $\phi$ 為在 $t$ 時間，對於每個區域 $i$ 計算出一個權重 $$\alpha_{ti}$$ 來表示產生字詞 $y_t$ 需要關注哪個圖像區域  annotation vectors $a_i, i=1, \dots, L$ 的訊息。權重 $$\alpha_i$$ 的產生是透過輸入 attention vector $a_i$ 與前一個時間的 hidden state  $h_{t-1}$ 經由 attention model $f_{att}$ 計算所產生。&lt;/p&gt;
+&lt;p&gt;$$
+\begin{align}
+e_{ti} = f_{att}(a_i, h_{t-1}) \tag4 \&lt;br&gt;
+\alpha_{ti} = \frac{exp(e_{ti})}{\sum_{k=1}^{L}exp{e_{tk}}} \tag5 \&lt;br&gt;
+\hat{Z_t} = \phi({a_i}, {\alpha_{ti}}) \tag6
+\end{align}
+$$&lt;/p&gt;
+&lt;p&gt;有了上述的資訊，在生成下一個 $t$ 時間的字詞機率可以定義為：
+$$
+p(y_t | a, y_1, y_2, \dots, y_{t-1}) \propto exp(L_o(Ey_{t-1} + L_hh_t + L_z\hat{Z_t})) \tag7
+$$
+其中 $$L_o \in R^{K \times m}, L_h \in R^{m \times n}, L_z \in R^{m \times D}$$。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;對於函數 $\phi$ 作者提出了兩種 attention  machansim，對應於將權重附加到圖像區域的兩個不同策略。&lt;/p&gt;
+&lt;h4 id=&#34;hard-attention-stochastic-hard-attention&#34;&gt;Hard attention (Stochastic Hard Attention)&lt;/h4&gt;
+&lt;p&gt;在 hard attention 中定義區域變數(location variables) $s_{t, i}$ 為在 t 時間下，模型決定要關注的圖像區域，用 one-hot 的方式來表示，要關注的區域 $i$ 為 1，否則為 0。&lt;/p&gt;
+&lt;p&gt;$s_{t, i}$ 被定為一個淺在變數(latent variables)，並且以 multinoulli distriubtion 作為參數 $\alpha_{t, i}$ 的分佈，而 $\hat{Z_t}$ 則被視為一個隨機變數，公式如下：
+$$
+p(s_{t, i} = 1 | s_{j, t}, a) = \alpha_{t, i} \tag8\&lt;br&gt;
+$$&lt;/p&gt;
+&lt;p&gt;$$
+\hat{Z_t} = \sum_{i} s_{t, i}a_i \tag9
+$$&lt;/p&gt;
+&lt;p&gt;定義新的 objective functipn $L_s$ 為 marginal log-likelihood $\text{log }p(y|a)$ 的下界(lower bound)
+$$
+\begin{align}
+L_s &amp;amp; = \sum_s p(s|a)\text{log }p(y|s,a) \&lt;br&gt;
+&amp;amp; \leq \text{log } \sum_s p(s|a)p(y|s,a) \&lt;br&gt;
+&amp;amp; = \text{log }p(y|a)
+\end{align}
+$$
+在後續的 $L_s$ 推導求解的過程，作者利用了&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Monte Carlo 方法來估計梯度，利用 moving average 的方式來減小梯度的變異數&lt;/li&gt;
+&lt;li&gt;加入了 multinouilli distriubtion 的 entropy term $H[s]$&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;透過這兩個方法提升隨機算法的學習，作者在文中也提到，最終的公式其實等價於 &lt;strong&gt;Reinforce learing&lt;/strong&gt;。作者在論文中有列出推導的公式，有興趣的可以直接參考論文。&lt;/p&gt;
+&lt;h4 id=&#34;soft-attention-deterministic-soft-attention&#34;&gt;Soft attention (Deterministic Soft Attention)&lt;/h4&gt;
+&lt;p&gt;Soft attention 所關注的圖像區域並不像 hard attention 在特定時間只關注特定的區域，在 soft attention 中則是每一個區域都關注，只是關注的程度不同。透過對每個圖像區域 $a_{i}$ 與對應的 weight $\alpha_{t,i}$ ，$\hat{Z}_t$ 就可以直接對權重做加總求和，公式如下：
+$$
+\mathbb{E}_{p(s_t|a)}[\hat{Z_t}] = \sum_{i=1}^L \alpha_{t,i}a_i
+$$
+這計算方式是參考前面所介紹的 Bahdanau attention 而來。&lt;/p&gt;
+&lt;p&gt;作者&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Attention 要實現的就是在 decoder 的不同時刻可以關注不同的圖像區域，進而可以生成更合理的詞。&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;h3 id=&#34;global-attention--local-attention&#34;&gt;Global Attention &amp;amp; Local Attention&lt;/h3&gt;
-
 &lt;p&gt;attenion value and query 的理解不要被公式混淆，而是從 attention 的概念去了解，query 就是&lt;/p&gt;
-
 &lt;h2 id=&#34;refenece&#34;&gt;Refenece&lt;/h2&gt;
-
 &lt;p&gt;Paper:&lt;/p&gt;
-
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://arxiv.org/pdf/1409.0473.pdf&#34;&gt;Dzmitry Bahdanau, KyungHyun Cho Yoshua Bengio, NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO ALIGN AND TRANSLATE(2015)&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://arxiv.org/pdf/1502.03044.pdf&#34;&gt;Kelvin Xu, Jimmy Ba, Ryan Kiros, Kyunghyun Cho, Aaron Courville, Ruslan Salakhudinov, Rich Zemel, and Yoshua Bengio, Show, Attend and Tell: Neural Image Caption Generation with Visual Attention(2015)&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://arxiv.org/pdf/1508.04025.pdf&#34;&gt;Thang Luong, Hieu Pham, Christopher D. Manning, Effective Approaches to Attention-based Neural Machine Translation(2015)&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://arxiv.org/abs/1904.02874&#34;&gt;Sneha Chaudhari, Gungor Polatkan , Rohan Ramanath , Varun Mithal, An Attentive Survey of Attention Models(2019)&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
-
 &lt;p&gt;Illustrate:&lt;/p&gt;
-
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/37601161h&#34;&gt;https://zhuanlan.zhihu.com/p/37601161h&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/31547842&#34;&gt;https://zhuanlan.zhihu.com/p/31547842&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://blog.floydhub.com/attention-mechanism/#bahdanau-atth&#34;&gt;https://blog.floydhub.com/attention-mechanism/#bahdanau-atth&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://web.stanford.edu/class/cs224n/slides/cs224n-2019-lecture08-nmt.pdf&#34;&gt;https://web.stanford.edu/class/cs224n/slides/cs224n-2019-lecture08-nmt.pdf&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.cnblogs.com/Determined22/p/6914926.html&#34;&gt;https://www.cnblogs.com/Determined22/p/6914926.html&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
-
 &lt;p&gt;Tutorial:&lt;/p&gt;
-
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/tensorflow/nmt#background-on-the-attention-mechanism&#34;&gt;Neural Machine Translation (seq2seq) Tutorial&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.tensorflow.org/tutorials/text/transformerG&#34;&gt;https://www.tensorflow.org/tutorials/text/transformerG&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://nlp.seas.harvard.edu/2018/04/03/attention.html&#34;&gt;Guide annotating the paper with PyTorch implementation&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
-
 &lt;p&gt;Visualization:&lt;/p&gt;
-
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/jessevig/bertviz&#34;&gt;https://github.com/jessevig/bertviz&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
@@ -237,9 +276,9 @@ a(s_{i-1}, h_j) = v_a^Ttanh(W_aS_{i-1} + U_ah_j) \tag8
     
     <item>
       <title>Transformer Part 1 - Seq2Seq</title>
-      <link>https://roymondliao.netlify.com/post/2019-12-16_transformer_part1/</link>
+      <link>https://roymondliao.github.io/post/2019-12-16_transformer_part1/</link>
       <pubDate>Mon, 16 Dec 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/post/2019-12-16_transformer_part1/</guid>
+      <guid>https://roymondliao.github.io/post/2019-12-16_transformer_part1/</guid>
       <description>&lt;p&gt;一開始接觸 &lt;code&gt;Attention Is All You Need&lt;/code&gt; 這篇論文是從 &lt;a href=&#34;https://www.youtube.com/playlist?list=PLqFaTIg4myu8t5ycqvp7I07jTjol3RCl9&#34;&gt;Kaggle Reading Group&lt;/a&gt; 這個 channel 開始，非常推薦可以跟著一起讀!!&lt;/p&gt;
 
 &lt;p&gt;主持人 &lt;a href=&#34;https://www.kaggle.com/rtatman&#34;&gt;Rachael Atman&lt;/a&gt; 本身是 Kaggle 的 Data Scientist，她的導讀我覺得是流暢的，但她自己本身有說過並非是 NLP 領域的專家，所以在 kaggle reading group 裡閱讀的論文也有可能是她完全沒接觸過的，整個 channel 帶給你的就是一個啟發，讓你覺得有人跟你一起閱讀的感覺，然後過程中也些人會在 channel 的 chat room 提出一些看法或是連結，Rachael 本身也會提出自己的見解，可以多方面參考。&lt;/p&gt;
@@ -447,9 +486,9 @@ a(s_{i-1}, h_j) = v_a^Ttanh(W_aS_{i-1} + U_ah_j) \tag8
     
     <item>
       <title>Adversarial validation</title>
-      <link>https://roymondliao.netlify.com/post/2019-11-18_adversarial_validation/</link>
+      <link>https://roymondliao.github.io/post/2019-11-18_adversarial_validation/</link>
       <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/post/2019-11-18_adversarial_validation/</guid>
+      <guid>https://roymondliao.github.io/post/2019-11-18_adversarial_validation/</guid>
       <description>&lt;p&gt;在重新回顧 Kaggle 近期的 IEEE-CIS Fraud Detection 的比賽中，發現有人提到一個 Features selection 的方法 &lt;strong&gt;Adversarial validation&lt;/strong&gt;。&lt;/p&gt;
 
 &lt;h1 id=&#34;problem&#34;&gt;Problem&lt;/h1&gt;
@@ -515,30 +554,27 @@ a(s_{i-1}, h_j) = v_a^Ttanh(W_aS_{i-1} + U_ah_j) \tag8
 &lt;h3 id=&#34;code&#34;&gt;Code&lt;/h3&gt;
 
 &lt;p&gt;以下是 Chris Deotte 所提供的簡單的程式碼：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# ADD MONTH FEATURE&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; datetime
+START_DATE &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;strptime(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;2017-11-30&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;%Y-%m-&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;%d&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&lt;/span&gt;)
+train[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;DT_M&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; train[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;TransactionDT&amp;#39;&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;apply(&lt;span style=&#34;color:#66d9ef&#34;&gt;lambda&lt;/span&gt; x: (START_DATE &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;timedelta(seconds &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; x)))
+train[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;DT_M&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (train[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;DT_M&amp;#39;&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;dt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;year&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;2017&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;12&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; train[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;DT_M&amp;#39;&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;dt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;month 
 
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# ADD MONTH FEATURE
-import datetime
-START_DATE = datetime.datetime.strptime(&#39;2017-11-30&#39;, &#39;%Y-%m-%d&#39;)
-train[&#39;DT_M&#39;] = train[&#39;TransactionDT&#39;].apply(lambda x: (START_DATE + datetime.timedelta(seconds = x)))
-train[&#39;DT_M&#39;] = (train[&#39;DT_M&#39;].dt.year-2017)*12 + train[&#39;DT_M&#39;].dt.month 
+&lt;span style=&#34;color:#75715e&#34;&gt;# SPLIT DATA INTO FIRST MONTH AND LAST MONTH&lt;/span&gt;
+train &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; train[train&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;DT_M&lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;12&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;copy()
+validate &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; train[train&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;DT_M&lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;17&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;copy()
 
-# SPLIT DATA INTO FIRST MONTH AND LAST MONTH
-train = train[train.DT_M==12].copy()
-validate = train[train.DT_M==17].copy()
-
-# TRAIN AND VALIDATE
-lgbm = lgb.LGBMClassifier(n_estimators=500, objective=&#39;binary&#39;, num_leaves=8, learning_rate=0.02)
-h = lgbm.fit(train[[col]], 
-             train.isFraud, 
-             eval_metric=&#39;auc&#39;, 
-             eval_names=[&#39;train&#39;, &#39;valid&#39;],
-             eval_set=[(train[[col]],train.isFraud),(validate[[col]],validate.isFraud)],
-             verbose=10)
-auc_train = np.round(h._best_score[&#39;train&#39;][&#39;auc&#39;], 4)
-auc_val = np.round(h._best_score[&#39;valid&#39;][&#39;auc&#39;], 4)
-print(&#39;Best score in trian:{}, valid:{}&#39;.format(auc_train, auc_val))
-&lt;/code&gt;&lt;/pre&gt;
-
+&lt;span style=&#34;color:#75715e&#34;&gt;# TRAIN AND VALIDATE&lt;/span&gt;
+lgbm &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; lgb&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;LGBMClassifier(n_estimators&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;500&lt;/span&gt;, objective&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;binary&amp;#39;&lt;/span&gt;, num_leaves&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;8&lt;/span&gt;, learning_rate&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0.02&lt;/span&gt;)
+h &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; lgbm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;fit(train[[col]], 
+             train&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;isFraud, 
+             eval_metric&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;auc&amp;#39;&lt;/span&gt;, 
+             eval_names&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;train&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;valid&amp;#39;&lt;/span&gt;],
+             eval_set&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[(train[[col]],train&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;isFraud),(validate[[col]],validate&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;isFraud)],
+             verbose&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;)
+auc_train &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; np&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;round(h&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_best_score[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;train&amp;#39;&lt;/span&gt;][&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;auc&amp;#39;&lt;/span&gt;], &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;)
+auc_val &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; np&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;round(h&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_best_score[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;valid&amp;#39;&lt;/span&gt;][&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;auc&amp;#39;&lt;/span&gt;], &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;)
+&lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Best score in trian:{}, valid:{}&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;format(auc_train, auc_val))&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Btw，最近有看到一個驗證的方法叫做 &lt;code&gt;Double Cross-Validation&lt;/code&gt;，這邊紀錄一下，有機會再來講講這方法的概念與應用。&lt;/p&gt;
 
 &lt;h1 id=&#34;refenece&#34;&gt;Refenece&lt;/h1&gt;
@@ -554,9 +590,9 @@ print(&#39;Best score in trian:{}, valid:{}&#39;.format(auc_train, auc_val))
     
     <item>
       <title>Lookahead Optimizer: k steps forward, 1 step back</title>
-      <link>https://roymondliao.netlify.com/post/2019-10-03_lookahead/</link>
+      <link>https://roymondliao.github.io/post/2019-10-03_lookahead/</link>
       <pubDate>Thu, 03 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/post/2019-10-03_lookahead/</guid>
+      <guid>https://roymondliao.github.io/post/2019-10-03_lookahead/</guid>
       <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
 
 &lt;p&gt;在目前的 optimizer 分為兩個主要發展方向：&lt;/p&gt;
@@ -650,9 +686,9 @@ Step 5 : 更新 slow weight $\phi_{k} \leftarrow \phi_{k-1} + \alpha\left(\theta
     
     <item>
       <title>Faster R-CNN</title>
-      <link>https://roymondliao.netlify.com/post/2019-05-14_faster_rcnn/</link>
+      <link>https://roymondliao.github.io/post/2019-05-14_faster_rcnn/</link>
       <pubDate>Tue, 14 May 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/post/2019-05-14_faster_rcnn/</guid>
+      <guid>https://roymondliao.github.io/post/2019-05-14_faster_rcnn/</guid>
       <description>&lt;p&gt;Faster R-CNN 是由 object detection 的大神 &lt;a href=&#34;https://www.rossgirshick.info/&#34;&gt;&lt;strong&gt;&lt;em&gt;Ross Girshick&lt;/em&gt;&lt;/strong&gt;&lt;/a&gt; 於 2015 年所提出的一個非常經典的目標檢測(object detection)的方法，當中提出了 &lt;strong&gt;Region Proposal Networks&lt;/strong&gt; 的方法應用在提取候選區域(reigon proposals) 取代了傳統的 Selective Search 的方式，大幅提升了目標檢測的精準度，也提升了整體計算的速度，另外 &lt;a href=&#34;http://kaiminghe.com/&#34;&gt;&lt;strong&gt;&lt;em&gt;Kaiming He&lt;/em&gt;&lt;/strong&gt;&lt;/a&gt; 博士也是共同作者。&lt;/p&gt;
 
 &lt;p&gt;在介紹 Faster R-CNN 之前需要先了解何為 one stage 與 two stage，目前 object detection 的主流都是以 one stage 為基礎的演算法，建議可以參考下列兩篇很棒的文章:&lt;/p&gt;
@@ -778,9 +814,9 @@ Step 5 : 更新 slow weight $\phi_{k} \leftarrow \phi_{k-1} + \alpha\left(\theta
     
     <item>
       <title>Word2Vec</title>
-      <link>https://roymondliao.netlify.com/post/2019-05-02_word2vec/</link>
+      <link>https://roymondliao.github.io/post/2019-05-02_word2vec/</link>
       <pubDate>Thu, 02 May 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/post/2019-05-02_word2vec/</guid>
+      <guid>https://roymondliao.github.io/post/2019-05-02_word2vec/</guid>
       <description>&lt;p&gt;最近剛好看到一篇關於 &lt;a href=&#34;https://github.com/priya-dwivedi/Deep-Learning/blob/master/word2vec_skipgram/Skip-Grams-Solution.ipynb&#34;&gt;Skip-gram word2vec&lt;/a&gt;的介紹，內文寫的淺顯易懂，衍生的閱讀也十分詳細，決定動手寫篇記錄下來。&lt;/p&gt;
 
 &lt;p&gt;人對於文字的理解，可以很簡單的就能了解字面的意義，但是對於機器來說，要如何理解文字是一個很困難的問題。
@@ -981,9 +1017,9 @@ P\left( w_{i} \right) = \left( \sqrt{\frac{Z(w_{i})}{0.001} + 1} \right) \cdot \
     
     <item>
       <title>DropBlock</title>
-      <link>https://roymondliao.netlify.com/post/2019-04-10_dropblock/</link>
+      <link>https://roymondliao.github.io/post/2019-04-10_dropblock/</link>
       <pubDate>Wed, 10 Apr 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/post/2019-04-10_dropblock/</guid>
+      <guid>https://roymondliao.github.io/post/2019-04-10_dropblock/</guid>
       <description>&lt;p&gt;Dropout 相關方法：&lt;/p&gt;
 
 &lt;ul&gt;
@@ -1015,110 +1051,101 @@ P\left( w_{i} \right) = \left( \sqrt{\frac{Z(w_{i})}{0.001} + 1} \right) \cdot \
 &lt;/ul&gt;
 
 &lt;p&gt;Bernoulli distrubtion:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import tensorflow as tf
-tf.reset_default_graph()
-with tf.Graph().as_default() as g: 
-    mean = tf.placeholder(tf.float32, [None])
-    input_shape = tf.placeholder(tf.float32, [None, 4, 4, 3])
-    shape = tf.stack(tf.shape(input_shape))
-    # method 1
-    # 用 uniform distributions 產生值，再透過 sign 轉為 [-1, 1], 最後透過 relu 將 -1 轉換為 0
-    uniform_dist = tf.random_uniform(shape, minval=0, maxval=1, dtype=tf.float32)
-    sign_dist = tf.sign(mean - uniform_dist)
-    bernoulli = tf.nn.relu(sign_dist)
-    # method 2
-    # probs 可以為多個 p, 對應 shape, 產生 n of p 的 bernoulli distributions
-    noise_dist = tf.distributions.Bernoulli(probs=[0.1])
-    mask = noise_dist.sample(shape)
-with tf.Session(graph=g) as sess:
-    tmp_array = np.zeros([4, 4, 3], dtype=np.uint8) 
-    tmp_array[:,:100] = [255, 0, 0] #Orange left side array[:,100:] = [0, 0, 255] #Blue right side
-    batch_array = np.array([tmp_array]*3)
-    uniform, sign, bern = sess.run([uniform_dist, sign_dist, bernoulli], feed_dict={mean: [1.], input_shape:batch_array})    
-&lt;/code&gt;&lt;/pre&gt;
-
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; tensorflow &lt;span style=&#34;color:#f92672&#34;&gt;as&lt;/span&gt; tf
+tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;reset_default_graph()
+&lt;span style=&#34;color:#66d9ef&#34;&gt;with&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Graph()&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;as_default() &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; g: 
+    mean &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;placeholder(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;float32, [None])
+    input_shape &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;placeholder(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;float32, [None, &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;])
+    shape &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;stack(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;shape(input_shape))
+    &lt;span style=&#34;color:#75715e&#34;&gt;# method 1&lt;/span&gt;
+    &lt;span style=&#34;color:#75715e&#34;&gt;# 用 uniform distributions 產生值，再透過 sign 轉為 [-1, 1], 最後透過 relu 將 -1 轉換為 0&lt;/span&gt;
+    uniform_dist &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;random_uniform(shape, minval&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, maxval&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, dtype&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;float32)
+    sign_dist &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sign(mean &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; uniform_dist)
+    bernoulli &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;nn&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;relu(sign_dist)
+    &lt;span style=&#34;color:#75715e&#34;&gt;# method 2&lt;/span&gt;
+    &lt;span style=&#34;color:#75715e&#34;&gt;# probs 可以為多個 p, 對應 shape, 產生 n of p 的 bernoulli distributions&lt;/span&gt;
+    noise_dist &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;distributions&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Bernoulli(probs&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;0.1&lt;/span&gt;])
+    mask &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; noise_dist&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sample(shape)
+&lt;span style=&#34;color:#66d9ef&#34;&gt;with&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Session(graph&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;g) &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; sess:
+    tmp_array &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; np&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;zeros([&lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;], dtype&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;np&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;uint8) 
+    tmp_array[:,:&lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [&lt;span style=&#34;color:#ae81ff&#34;&gt;255&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;] &lt;span style=&#34;color:#75715e&#34;&gt;#Orange left side array[:,100:] = [0, 0, 255] #Blue right side&lt;/span&gt;
+    batch_array &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; np&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;array([tmp_array]&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;)
+    uniform, sign, bern &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; sess&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;run([uniform_dist, sign_dist, bernoulli], feed_dict&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;{mean: [&lt;span style=&#34;color:#ae81ff&#34;&gt;1.&lt;/span&gt;], input_shape:batch_array})    &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;DropBlock implement:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; tensorflow &lt;span style=&#34;color:#f92672&#34;&gt;as&lt;/span&gt; tf
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; tensorflow.python.keras &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; backend &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; K
+&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;DropBlock&lt;/span&gt;(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;keras&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;layers&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Layer) :
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, keep_prob, block_size, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kwargs):
+        super(DropBlock, self)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;__init__(&lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kwargs)
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;keep_prob &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; float(keep_prob) &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; isinstance(keep_prob, int) &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; keep_prob
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; int(block_size)
 
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import tensorflow as tf
-from tensorflow.python.keras import backend as K
-class DropBlock(tf.keras.layers.Layer) :
-    def __init__(self, keep_prob, block_size, **kwargs):
-        super(DropBlock, self).__init__(**kwargs)
-        self.keep_prob = float(keep_prob) if isinstance(keep_prob, int) else keep_prob
-        self.block_size = int(block_size)
-
-    def compute_output_shape(self, input_shape):
-        return input_shape
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;compute_output_shape&lt;/span&gt;(self, input_shape):
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; input_shape
     
-    def build(self, input_shape):
-        _, self.h, self.w, self.channel = input_shape.as_list()
-        # pad the mask
-        bottom = right = (self.block_size -1) // 2
-        top = left = (self.block_size -1) - bottom
-        self.padding = [[0, 0], [top, bottom], [left, right], [0, 0]]
-        self.set_keep_prob()
-        super(DropBlock, self).build(input_shape)
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;build&lt;/span&gt;(self, input_shape):
+        _, self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;h, self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;w, self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;channel &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; input_shape&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;as_list()
+        &lt;span style=&#34;color:#75715e&#34;&gt;# pad the mask&lt;/span&gt;
+        bottom &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; right &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;//&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+        top &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; left &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; bottom
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;padding &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;], [top, bottom], [left, right], [&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;]]
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;set_keep_prob()
+        super(DropBlock, self)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;build(input_shape)
         
-    def set_keep_prob(self, keep_prob=None):
-        &amp;quot;&amp;quot;&amp;quot;This method only support Eager Execution&amp;quot;&amp;quot;&amp;quot;
-        if keep_prob is not None:
-            self.keep_prob = keep_prob
-        w, h = tf.to_float(self.w), tf.to_float(self.h)
-        self.gamma = (1. - self.keep_prob) * (w * h) / (self.block_size ** 2) / ((w - self.block_size + 1) * (h - self.block_size + 1))
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;set_keep_prob&lt;/span&gt;(self, keep_prob&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None):
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34;This method only support Eager Execution&amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; keep_prob &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;not&lt;/span&gt; None:
+            self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;keep_prob &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; keep_prob
+        w, h &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;to_float(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;w), tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;to_float(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;h)
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;gamma &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (&lt;span style=&#34;color:#ae81ff&#34;&gt;1.&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;keep_prob) &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; (w &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; h) &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt; (self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt; ((w &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; (h &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;))
 
-    def _create_mask(self, input_shape):
-        sampling_mask_shape = tf.stack([input_shape[0], 
-                                        self.h - self.block_size + 1, 
-                                        self.w - self.block_size + 1,
-                                        self.channel])
-        mask = DropBlock._bernoulli(sampling_mask_shape, self.gamma)
-        # 擴充行列，並給予0值，依據 paddings 參數給予的上下左右值來做擴充，mode有三種模式可選，可參考 document
-        mask = tf.pad(tensor=mask, paddings=self.padding, mode=&#39;CONSTANT&#39;) 
-        mask = tf.nn.max_pool(value=mask, 
-                              ksize=[1, self.block_size, self.block_size, 1], 
-                              strides=[1, 1, 1, 1], 
-                              padding=&#39;SAME&#39;)
-        mask = 1 - mask
-        return mask
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;_create_mask&lt;/span&gt;(self, input_shape):
+        sampling_mask_shape &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;stack([input_shape[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;], 
+                                        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;h &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, 
+                                        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;w &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;,
+                                        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;channel])
+        mask &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; DropBlock&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_bernoulli(sampling_mask_shape, self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;gamma)
+        &lt;span style=&#34;color:#75715e&#34;&gt;# 擴充行列，並給予0值，依據 paddings 參數給予的上下左右值來做擴充，mode有三種模式可選，可參考 document&lt;/span&gt;
+        mask &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;pad(tensor&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;mask, paddings&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;padding, mode&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;CONSTANT&amp;#39;&lt;/span&gt;) 
+        mask &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;nn&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;max_pool(value&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;mask, 
+                              ksize&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size, self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;], 
+                              strides&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;], 
+                              padding&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;SAME&amp;#39;&lt;/span&gt;)
+        mask &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; mask
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; mask
         
-    @staticmethod    
-    def _bernoulli(shape, mean):
-        return tf.nn.relu(tf.sign(mean - tf.random_uniform(shape, minval=0, maxval=1, dtype=tf.float32)))
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;@staticmethod&lt;/span&gt;    
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;_bernoulli&lt;/span&gt;(shape, mean):
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;nn&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;relu(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sign(mean &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;random_uniform(shape, minval&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, maxval&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, dtype&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;float32)))
     
-    # The call function is a built-in function in &#39;tf.keras&#39;.
-    def call(self, inputs, training=None, scale=True, **kwargs):
-        def drop():
-            mask = self._create_mask(tf.shape(inputs))
-            output = inputs * mask
-            output = tf.cond(tf.constant(scale, dtype=tf.bool) if isinstance(scale, bool) else scale,
-                             true_fn=lambda: output * tf.to_float(tf.size(mask)) / tf.reduce_sum(mask),
-                             false_fn=lambda: output)
-            return output
+    &lt;span style=&#34;color:#75715e&#34;&gt;# The call function is a built-in function in &amp;#39;tf.keras&amp;#39;.&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;call&lt;/span&gt;(self, inputs, training&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None, scale&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kwargs):
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;drop&lt;/span&gt;():
+            mask &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_create_mask(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;shape(inputs))
+            output &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; inputs &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; mask
+            output &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;cond(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;constant(scale, dtype&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;bool) &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; isinstance(scale, bool) &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; scale,
+                             true_fn&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;lambda&lt;/span&gt;: output &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;to_float(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;size(mask)) &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;reduce_sum(mask),
+                             false_fn&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;lambda&lt;/span&gt;: output)
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; output
         
-        if training is None:
-            training = K.learning_phase()
-        output = tf.cond(tf.logical_or(tf.logical_not(training), tf.equal(self.keep_prob, 1.0)),
-                         true_fn=lambda: inputs,
-                         false_fn=drop)
-        return output
-&lt;/code&gt;&lt;/pre&gt;
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; training &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; None:
+            training &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; K&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;learning_phase()
+        output &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;cond(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;logical_or(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;logical_not(training), tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;equal(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;keep_prob, &lt;span style=&#34;color:#ae81ff&#34;&gt;1.0&lt;/span&gt;)),
+                         true_fn&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;lambda&lt;/span&gt;: inputs,
+                         false_fn&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;drop)
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; output&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Testing&lt;/span&gt;
+a &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;placeholder(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;float32, [None, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;])
+keep_prob &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;placeholder(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;float32)
+training &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;placeholder(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;bool)
 
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# Testing
-a = tf.placeholder(tf.float32, [None, 5, 5, 3])
-keep_prob = tf.placeholder(tf.float32)
-training = tf.placeholder(tf.bool)
+drop_block &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; DropBlock(keep_prob&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;keep_prob, block_size&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;)
+b &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; drop_block(inputs&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;a, training&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;training)
 
-drop_block = DropBlock(keep_prob=keep_prob, block_size=3)
-b = drop_block(inputs=a, training=training)
+sess &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Session()
+feed_dict &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {a: np&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;ones([&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;]), keep_prob: &lt;span style=&#34;color:#ae81ff&#34;&gt;0.8&lt;/span&gt;, training: True}
+c &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; sess&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;run(b, feed_dict&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;feed_dict)
 
-sess = tf.Session()
-feed_dict = {a: np.ones([2, 5, 5, 3]), keep_prob: 0.8, training: True}
-c = sess.run(b, feed_dict=feed_dict)
-
-print(c[0, :, :, 0])
-&lt;/code&gt;&lt;/pre&gt;
-
+&lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(c[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, :, :, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;])&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://mp.weixin.qq.com/s?__biz=MzA3MzI4MjgzMw==&amp;amp;mid=2650752571&amp;amp;idx=1&amp;amp;sn=8417645148afd8eebdb79c91b37a7409&amp;amp;chksm=871a8245b06d0b53115d79f1ce42bc5a03aad5d038fe51c2f237c5848c41c51c5b756aaa8937&amp;amp;scene=21#wechat_redirect&#34;&gt;Targeted Dropout&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -1133,9 +1160,9 @@ print(c[0, :, :, 0])
     
     <item>
       <title>XGBoost</title>
-      <link>https://roymondliao.netlify.com/post/2019-03-02_xgboost/</link>
+      <link>https://roymondliao.github.io/post/2019-03-02_xgboost/</link>
       <pubDate>Sat, 02 Mar 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/post/2019-03-02_xgboost/</guid>
+      <guid>https://roymondliao.github.io/post/2019-03-02_xgboost/</guid>
       <description>&lt;h2 id=&#34;review-note&#34;&gt;Review note&lt;/h2&gt;
 
 &lt;p&gt;Bagging&lt;/p&gt;

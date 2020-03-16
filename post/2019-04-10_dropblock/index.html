@@ -32,7 +32,7 @@
  Dropout: 完全隨機丟棄 neuron Sparital Dropout: 按 channel 隨機丟棄 Stochastic Depth: 按 res block 隨機丟棄 DropBlock: 每個 feature map 上按 spatial square 隨機丟棄 Cutout: 在 input layer 按 spatial square 隨機丟棄 DropConnect: 只在連接處丟，不丟 neuron DropBlock  Idea 一般的 Dropout 都是用在 fully connection layer，而在 convolutional network 上使用 dropout 的意義並不大，該文章則認為因為在每一個 feature maps 的位置都具有一個 receptive field，僅對單一像素位置進行 dropout 並不能降低 feature maps 學習特徵範圍，也就是說，network 能夠特過相鄰位置的特徵值去學習，也不會特別加強去學習保留下來的訊息。既然對於單獨的對每個位置進行 dropout 並無法提高 network 本身的泛化能力，那就以區塊的概念來進行 dropout，反而更能讓 network 去學習保留下來的訊息，而加重特徵的權重。 Method  不同 feature maps 共享相同的 dropblock mask，在相同的位置丟棄訊息 每一層的 feature maps 使用各自的 dropblock mask  Parameters block size: 控制要讓 value of feature maps 歸為 0 的區塊大小 $ \gamma $: 用來控制要丟棄特徵的數量 keep_prob: 與 dropout 的參數相同 Code implement https://github.">
 
   
-  <link rel="alternate" hreflang="en-us" href="https://roymondliao.netlify.com/post/2019-04-10_dropblock/">
+  <link rel="alternate" hreflang="en-us" href="https://roymondliao.github.io/post/2019-04-10_dropblock/">
 
   
 
@@ -133,7 +133,7 @@
   <link rel="icon" type="image/png" href="/img/icon-32.png">
   <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
 
-  <link rel="canonical" href="https://roymondliao.netlify.com/post/2019-04-10_dropblock/">
+  <link rel="canonical" href="https://roymondliao.github.io/post/2019-04-10_dropblock/">
 
   
   
@@ -146,11 +146,11 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Roymond Liao">
-  <meta property="og:url" content="https://roymondliao.netlify.com/post/2019-04-10_dropblock/">
+  <meta property="og:url" content="https://roymondliao.github.io/post/2019-04-10_dropblock/">
   <meta property="og:title" content="DropBlock | Roymond Liao">
   <meta property="og:description" content="Dropout 相關方法：
- Dropout: 完全隨機丟棄 neuron Sparital Dropout: 按 channel 隨機丟棄 Stochastic Depth: 按 res block 隨機丟棄 DropBlock: 每個 feature map 上按 spatial square 隨機丟棄 Cutout: 在 input layer 按 spatial square 隨機丟棄 DropConnect: 只在連接處丟，不丟 neuron DropBlock  Idea 一般的 Dropout 都是用在 fully connection layer，而在 convolutional network 上使用 dropout 的意義並不大，該文章則認為因為在每一個 feature maps 的位置都具有一個 receptive field，僅對單一像素位置進行 dropout 並不能降低 feature maps 學習特徵範圍，也就是說，network 能夠特過相鄰位置的特徵值去學習，也不會特別加強去學習保留下來的訊息。既然對於單獨的對每個位置進行 dropout 並無法提高 network 本身的泛化能力，那就以區塊的概念來進行 dropout，反而更能讓 network 去學習保留下來的訊息，而加重特徵的權重。 Method  不同 feature maps 共享相同的 dropblock mask，在相同的位置丟棄訊息 每一層的 feature maps 使用各自的 dropblock mask  Parameters block size: 控制要讓 value of feature maps 歸為 0 的區塊大小 $ \gamma $: 用來控制要丟棄特徵的數量 keep_prob: 與 dropout 的參數相同 Code implement https://github."><meta property="og:image" content="https://roymondliao.netlify.com/img/icon-192.png">
-  <meta property="twitter:image" content="https://roymondliao.netlify.com/img/icon-192.png"><meta property="og:locale" content="en-us">
+ Dropout: 完全隨機丟棄 neuron Sparital Dropout: 按 channel 隨機丟棄 Stochastic Depth: 按 res block 隨機丟棄 DropBlock: 每個 feature map 上按 spatial square 隨機丟棄 Cutout: 在 input layer 按 spatial square 隨機丟棄 DropConnect: 只在連接處丟，不丟 neuron DropBlock  Idea 一般的 Dropout 都是用在 fully connection layer，而在 convolutional network 上使用 dropout 的意義並不大，該文章則認為因為在每一個 feature maps 的位置都具有一個 receptive field，僅對單一像素位置進行 dropout 並不能降低 feature maps 學習特徵範圍，也就是說，network 能夠特過相鄰位置的特徵值去學習，也不會特別加強去學習保留下來的訊息。既然對於單獨的對每個位置進行 dropout 並無法提高 network 本身的泛化能力，那就以區塊的概念來進行 dropout，反而更能讓 network 去學習保留下來的訊息，而加重特徵的權重。 Method  不同 feature maps 共享相同的 dropblock mask，在相同的位置丟棄訊息 每一層的 feature maps 使用各自的 dropblock mask  Parameters block size: 控制要讓 value of feature maps 歸為 0 的區塊大小 $ \gamma $: 用來控制要丟棄特徵的數量 keep_prob: 與 dropout 的參數相同 Code implement https://github."><meta property="og:image" content="https://roymondliao.github.io/img/icon-192.png">
+  <meta property="twitter:image" content="https://roymondliao.github.io/img/icon-192.png"><meta property="og:locale" content="en-us">
   
     
       <meta property="article:published_time" content="2019-04-10T00:00:00&#43;00:00">
@@ -181,7 +181,7 @@
   "@type": "BlogPosting",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "https://roymondliao.netlify.com/post/2019-04-10_dropblock/"
+    "@id": "https://roymondliao.github.io/post/2019-04-10_dropblock/"
   },
   "headline": "DropBlock",
   
@@ -198,7 +198,7 @@
     "name": "Roymond Liao",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://roymondliao.netlify.com/img/icon-512.png"
+      "url": "https://roymondliao.github.io/img/icon-512.png"
     }
   },
   "description": "Dropout 相關方法：\n Dropout: 完全隨機丟棄 neuron Sparital Dropout: 按 channel 隨機丟棄 Stochastic Depth: 按 res block 隨機丟棄 DropBlock: 每個 feature map 上按 spatial square 隨機丟棄 Cutout: 在 input layer 按 spatial square 隨機丟棄 DropConnect: 只在連接處丟，不丟 neuron DropBlock  Idea 一般的 Dropout 都是用在 fully connection layer，而在 convolutional network 上使用 dropout 的意義並不大，該文章則認為因為在每一個 feature maps 的位置都具有一個 receptive field，僅對單一像素位置進行 dropout 並不能降低 feature maps 學習特徵範圍，也就是說，network 能夠特過相鄰位置的特徵值去學習，也不會特別加強去學習保留下來的訊息。既然對於單獨的對每個位置進行 dropout 並無法提高 network 本身的泛化能力，那就以區塊的概念來進行 dropout，反而更能讓 network 去學習保留下來的訊息，而加重特徵的權重。 Method  不同 feature maps 共享相同的 dropblock mask，在相同的位置丟棄訊息 每一層的 feature maps 使用各自的 dropblock mask  Parameters block size: 控制要讓 value of feature maps 歸為 0 的區塊大小 $ \\gamma $: 用來控制要丟棄特徵的數量 keep_prob: 與 dropout 的參數相同 Code implement https://github."
@@ -563,110 +563,101 @@
 </ul>
 
 <p>Bernoulli distrubtion:</p>
-
-<pre><code class="language-python">import tensorflow as tf
-tf.reset_default_graph()
-with tf.Graph().as_default() as g: 
-    mean = tf.placeholder(tf.float32, [None])
-    input_shape = tf.placeholder(tf.float32, [None, 4, 4, 3])
-    shape = tf.stack(tf.shape(input_shape))
-    # method 1
-    # 用 uniform distributions 產生值，再透過 sign 轉為 [-1, 1], 最後透過 relu 將 -1 轉換為 0
-    uniform_dist = tf.random_uniform(shape, minval=0, maxval=1, dtype=tf.float32)
-    sign_dist = tf.sign(mean - uniform_dist)
-    bernoulli = tf.nn.relu(sign_dist)
-    # method 2
-    # probs 可以為多個 p, 對應 shape, 產生 n of p 的 bernoulli distributions
-    noise_dist = tf.distributions.Bernoulli(probs=[0.1])
-    mask = noise_dist.sample(shape)
-with tf.Session(graph=g) as sess:
-    tmp_array = np.zeros([4, 4, 3], dtype=np.uint8) 
-    tmp_array[:,:100] = [255, 0, 0] #Orange left side array[:,100:] = [0, 0, 255] #Blue right side
-    batch_array = np.array([tmp_array]*3)
-    uniform, sign, bern = sess.run([uniform_dist, sign_dist, bernoulli], feed_dict={mean: [1.], input_shape:batch_array})    
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> tensorflow <span style="color:#f92672">as</span> tf
+tf<span style="color:#f92672">.</span>reset_default_graph()
+<span style="color:#66d9ef">with</span> tf<span style="color:#f92672">.</span>Graph()<span style="color:#f92672">.</span>as_default() <span style="color:#66d9ef">as</span> g: 
+    mean <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>placeholder(tf<span style="color:#f92672">.</span>float32, [None])
+    input_shape <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>placeholder(tf<span style="color:#f92672">.</span>float32, [None, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">3</span>])
+    shape <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>stack(tf<span style="color:#f92672">.</span>shape(input_shape))
+    <span style="color:#75715e"># method 1</span>
+    <span style="color:#75715e"># 用 uniform distributions 產生值，再透過 sign 轉為 [-1, 1], 最後透過 relu 將 -1 轉換為 0</span>
+    uniform_dist <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>random_uniform(shape, minval<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, maxval<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, dtype<span style="color:#f92672">=</span>tf<span style="color:#f92672">.</span>float32)
+    sign_dist <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>sign(mean <span style="color:#f92672">-</span> uniform_dist)
+    bernoulli <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>nn<span style="color:#f92672">.</span>relu(sign_dist)
+    <span style="color:#75715e"># method 2</span>
+    <span style="color:#75715e"># probs 可以為多個 p, 對應 shape, 產生 n of p 的 bernoulli distributions</span>
+    noise_dist <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>distributions<span style="color:#f92672">.</span>Bernoulli(probs<span style="color:#f92672">=</span>[<span style="color:#ae81ff">0.1</span>])
+    mask <span style="color:#f92672">=</span> noise_dist<span style="color:#f92672">.</span>sample(shape)
+<span style="color:#66d9ef">with</span> tf<span style="color:#f92672">.</span>Session(graph<span style="color:#f92672">=</span>g) <span style="color:#66d9ef">as</span> sess:
+    tmp_array <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>zeros([<span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">3</span>], dtype<span style="color:#f92672">=</span>np<span style="color:#f92672">.</span>uint8) 
+    tmp_array[:,:<span style="color:#ae81ff">100</span>] <span style="color:#f92672">=</span> [<span style="color:#ae81ff">255</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>] <span style="color:#75715e">#Orange left side array[:,100:] = [0, 0, 255] #Blue right side</span>
+    batch_array <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>array([tmp_array]<span style="color:#f92672">*</span><span style="color:#ae81ff">3</span>)
+    uniform, sign, bern <span style="color:#f92672">=</span> sess<span style="color:#f92672">.</span>run([uniform_dist, sign_dist, bernoulli], feed_dict<span style="color:#f92672">=</span>{mean: [<span style="color:#ae81ff">1.</span>], input_shape:batch_array})    </code></pre></div>
 <p>DropBlock implement:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> tensorflow <span style="color:#f92672">as</span> tf
+<span style="color:#f92672">from</span> tensorflow.python.keras <span style="color:#f92672">import</span> backend <span style="color:#66d9ef">as</span> K
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DropBlock</span>(tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>Layer) :
+    <span style="color:#66d9ef">def</span> __init__(self, keep_prob, block_size, <span style="color:#f92672">**</span>kwargs):
+        super(DropBlock, self)<span style="color:#f92672">.</span>__init__(<span style="color:#f92672">**</span>kwargs)
+        self<span style="color:#f92672">.</span>keep_prob <span style="color:#f92672">=</span> float(keep_prob) <span style="color:#66d9ef">if</span> isinstance(keep_prob, int) <span style="color:#66d9ef">else</span> keep_prob
+        self<span style="color:#f92672">.</span>block_size <span style="color:#f92672">=</span> int(block_size)
 
-<pre><code class="language-python">import tensorflow as tf
-from tensorflow.python.keras import backend as K
-class DropBlock(tf.keras.layers.Layer) :
-    def __init__(self, keep_prob, block_size, **kwargs):
-        super(DropBlock, self).__init__(**kwargs)
-        self.keep_prob = float(keep_prob) if isinstance(keep_prob, int) else keep_prob
-        self.block_size = int(block_size)
-
-    def compute_output_shape(self, input_shape):
-        return input_shape
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">compute_output_shape</span>(self, input_shape):
+        <span style="color:#66d9ef">return</span> input_shape
     
-    def build(self, input_shape):
-        _, self.h, self.w, self.channel = input_shape.as_list()
-        # pad the mask
-        bottom = right = (self.block_size -1) // 2
-        top = left = (self.block_size -1) - bottom
-        self.padding = [[0, 0], [top, bottom], [left, right], [0, 0]]
-        self.set_keep_prob()
-        super(DropBlock, self).build(input_shape)
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">build</span>(self, input_shape):
+        _, self<span style="color:#f92672">.</span>h, self<span style="color:#f92672">.</span>w, self<span style="color:#f92672">.</span>channel <span style="color:#f92672">=</span> input_shape<span style="color:#f92672">.</span>as_list()
+        <span style="color:#75715e"># pad the mask</span>
+        bottom <span style="color:#f92672">=</span> right <span style="color:#f92672">=</span> (self<span style="color:#f92672">.</span>block_size <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">//</span> <span style="color:#ae81ff">2</span>
+        top <span style="color:#f92672">=</span> left <span style="color:#f92672">=</span> (self<span style="color:#f92672">.</span>block_size <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">-</span> bottom
+        self<span style="color:#f92672">.</span>padding <span style="color:#f92672">=</span> [[<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>], [top, bottom], [left, right], [<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>]]
+        self<span style="color:#f92672">.</span>set_keep_prob()
+        super(DropBlock, self)<span style="color:#f92672">.</span>build(input_shape)
         
-    def set_keep_prob(self, keep_prob=None):
-        &quot;&quot;&quot;This method only support Eager Execution&quot;&quot;&quot;
-        if keep_prob is not None:
-            self.keep_prob = keep_prob
-        w, h = tf.to_float(self.w), tf.to_float(self.h)
-        self.gamma = (1. - self.keep_prob) * (w * h) / (self.block_size ** 2) / ((w - self.block_size + 1) * (h - self.block_size + 1))
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">set_keep_prob</span>(self, keep_prob<span style="color:#f92672">=</span>None):
+        <span style="color:#e6db74">&#34;&#34;&#34;This method only support Eager Execution&#34;&#34;&#34;</span>
+        <span style="color:#66d9ef">if</span> keep_prob <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> None:
+            self<span style="color:#f92672">.</span>keep_prob <span style="color:#f92672">=</span> keep_prob
+        w, h <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>to_float(self<span style="color:#f92672">.</span>w), tf<span style="color:#f92672">.</span>to_float(self<span style="color:#f92672">.</span>h)
+        self<span style="color:#f92672">.</span>gamma <span style="color:#f92672">=</span> (<span style="color:#ae81ff">1.</span> <span style="color:#f92672">-</span> self<span style="color:#f92672">.</span>keep_prob) <span style="color:#f92672">*</span> (w <span style="color:#f92672">*</span> h) <span style="color:#f92672">/</span> (self<span style="color:#f92672">.</span>block_size <span style="color:#f92672">**</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">/</span> ((w <span style="color:#f92672">-</span> self<span style="color:#f92672">.</span>block_size <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">*</span> (h <span style="color:#f92672">-</span> self<span style="color:#f92672">.</span>block_size <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>))
 
-    def _create_mask(self, input_shape):
-        sampling_mask_shape = tf.stack([input_shape[0], 
-                                        self.h - self.block_size + 1, 
-                                        self.w - self.block_size + 1,
-                                        self.channel])
-        mask = DropBlock._bernoulli(sampling_mask_shape, self.gamma)
-        # 擴充行列，並給予0值，依據 paddings 參數給予的上下左右值來做擴充，mode有三種模式可選，可參考 document
-        mask = tf.pad(tensor=mask, paddings=self.padding, mode='CONSTANT') 
-        mask = tf.nn.max_pool(value=mask, 
-                              ksize=[1, self.block_size, self.block_size, 1], 
-                              strides=[1, 1, 1, 1], 
-                              padding='SAME')
-        mask = 1 - mask
-        return mask
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">_create_mask</span>(self, input_shape):
+        sampling_mask_shape <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>stack([input_shape[<span style="color:#ae81ff">0</span>], 
+                                        self<span style="color:#f92672">.</span>h <span style="color:#f92672">-</span> self<span style="color:#f92672">.</span>block_size <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, 
+                                        self<span style="color:#f92672">.</span>w <span style="color:#f92672">-</span> self<span style="color:#f92672">.</span>block_size <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>,
+                                        self<span style="color:#f92672">.</span>channel])
+        mask <span style="color:#f92672">=</span> DropBlock<span style="color:#f92672">.</span>_bernoulli(sampling_mask_shape, self<span style="color:#f92672">.</span>gamma)
+        <span style="color:#75715e"># 擴充行列，並給予0值，依據 paddings 參數給予的上下左右值來做擴充，mode有三種模式可選，可參考 document</span>
+        mask <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>pad(tensor<span style="color:#f92672">=</span>mask, paddings<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>padding, mode<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;CONSTANT&#39;</span>) 
+        mask <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>nn<span style="color:#f92672">.</span>max_pool(value<span style="color:#f92672">=</span>mask, 
+                              ksize<span style="color:#f92672">=</span>[<span style="color:#ae81ff">1</span>, self<span style="color:#f92672">.</span>block_size, self<span style="color:#f92672">.</span>block_size, <span style="color:#ae81ff">1</span>], 
+                              strides<span style="color:#f92672">=</span>[<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>], 
+                              padding<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;SAME&#39;</span>)
+        mask <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">-</span> mask
+        <span style="color:#66d9ef">return</span> mask
         
-    @staticmethod    
-    def _bernoulli(shape, mean):
-        return tf.nn.relu(tf.sign(mean - tf.random_uniform(shape, minval=0, maxval=1, dtype=tf.float32)))
+    <span style="color:#a6e22e">@staticmethod</span>    
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">_bernoulli</span>(shape, mean):
+        <span style="color:#66d9ef">return</span> tf<span style="color:#f92672">.</span>nn<span style="color:#f92672">.</span>relu(tf<span style="color:#f92672">.</span>sign(mean <span style="color:#f92672">-</span> tf<span style="color:#f92672">.</span>random_uniform(shape, minval<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, maxval<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, dtype<span style="color:#f92672">=</span>tf<span style="color:#f92672">.</span>float32)))
     
-    # The call function is a built-in function in 'tf.keras'.
-    def call(self, inputs, training=None, scale=True, **kwargs):
-        def drop():
-            mask = self._create_mask(tf.shape(inputs))
-            output = inputs * mask
-            output = tf.cond(tf.constant(scale, dtype=tf.bool) if isinstance(scale, bool) else scale,
-                             true_fn=lambda: output * tf.to_float(tf.size(mask)) / tf.reduce_sum(mask),
-                             false_fn=lambda: output)
-            return output
+    <span style="color:#75715e"># The call function is a built-in function in &#39;tf.keras&#39;.</span>
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">call</span>(self, inputs, training<span style="color:#f92672">=</span>None, scale<span style="color:#f92672">=</span>True, <span style="color:#f92672">**</span>kwargs):
+        <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">drop</span>():
+            mask <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>_create_mask(tf<span style="color:#f92672">.</span>shape(inputs))
+            output <span style="color:#f92672">=</span> inputs <span style="color:#f92672">*</span> mask
+            output <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>cond(tf<span style="color:#f92672">.</span>constant(scale, dtype<span style="color:#f92672">=</span>tf<span style="color:#f92672">.</span>bool) <span style="color:#66d9ef">if</span> isinstance(scale, bool) <span style="color:#66d9ef">else</span> scale,
+                             true_fn<span style="color:#f92672">=</span><span style="color:#66d9ef">lambda</span>: output <span style="color:#f92672">*</span> tf<span style="color:#f92672">.</span>to_float(tf<span style="color:#f92672">.</span>size(mask)) <span style="color:#f92672">/</span> tf<span style="color:#f92672">.</span>reduce_sum(mask),
+                             false_fn<span style="color:#f92672">=</span><span style="color:#66d9ef">lambda</span>: output)
+            <span style="color:#66d9ef">return</span> output
         
-        if training is None:
-            training = K.learning_phase()
-        output = tf.cond(tf.logical_or(tf.logical_not(training), tf.equal(self.keep_prob, 1.0)),
-                         true_fn=lambda: inputs,
-                         false_fn=drop)
-        return output
-</code></pre>
+        <span style="color:#66d9ef">if</span> training <span style="color:#f92672">is</span> None:
+            training <span style="color:#f92672">=</span> K<span style="color:#f92672">.</span>learning_phase()
+        output <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>cond(tf<span style="color:#f92672">.</span>logical_or(tf<span style="color:#f92672">.</span>logical_not(training), tf<span style="color:#f92672">.</span>equal(self<span style="color:#f92672">.</span>keep_prob, <span style="color:#ae81ff">1.0</span>)),
+                         true_fn<span style="color:#f92672">=</span><span style="color:#66d9ef">lambda</span>: inputs,
+                         false_fn<span style="color:#f92672">=</span>drop)
+        <span style="color:#66d9ef">return</span> output</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># Testing</span>
+a <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>placeholder(tf<span style="color:#f92672">.</span>float32, [None, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">3</span>])
+keep_prob <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>placeholder(tf<span style="color:#f92672">.</span>float32)
+training <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>placeholder(tf<span style="color:#f92672">.</span>bool)
 
-<pre><code class="language-python"># Testing
-a = tf.placeholder(tf.float32, [None, 5, 5, 3])
-keep_prob = tf.placeholder(tf.float32)
-training = tf.placeholder(tf.bool)
+drop_block <span style="color:#f92672">=</span> DropBlock(keep_prob<span style="color:#f92672">=</span>keep_prob, block_size<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>)
+b <span style="color:#f92672">=</span> drop_block(inputs<span style="color:#f92672">=</span>a, training<span style="color:#f92672">=</span>training)
 
-drop_block = DropBlock(keep_prob=keep_prob, block_size=3)
-b = drop_block(inputs=a, training=training)
+sess <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>Session()
+feed_dict <span style="color:#f92672">=</span> {a: np<span style="color:#f92672">.</span>ones([<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">3</span>]), keep_prob: <span style="color:#ae81ff">0.8</span>, training: True}
+c <span style="color:#f92672">=</span> sess<span style="color:#f92672">.</span>run(b, feed_dict<span style="color:#f92672">=</span>feed_dict)
 
-sess = tf.Session()
-feed_dict = {a: np.ones([2, 5, 5, 3]), keep_prob: 0.8, training: True}
-c = sess.run(b, feed_dict=feed_dict)
-
-print(c[0, :, :, 0])
-</code></pre>
-
+<span style="color:#66d9ef">print</span>(c[<span style="color:#ae81ff">0</span>, :, :, <span style="color:#ae81ff">0</span>])</code></pre></div>
 <ul>
 <li><a href="https://mp.weixin.qq.com/s?__biz=MzA3MzI4MjgzMw==&amp;mid=2650752571&amp;idx=1&amp;sn=8417645148afd8eebdb79c91b37a7409&amp;chksm=871a8245b06d0b53115d79f1ce42bc5a03aad5d038fe51c2f237c5848c41c51c5b756aaa8937&amp;scene=21#wechat_redirect">Targeted Dropout</a></li>
 </ul>
@@ -909,7 +900,7 @@ print(c[0, :, :, 0])
   
 
   <p class="powered-by">
-    &copy; 2019 - &copy; 2020 &middot; 
+    © 2019 - © 2020 &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

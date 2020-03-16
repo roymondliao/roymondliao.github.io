@@ -2,63 +2,15 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories | Roymond Liao</title>
-    <link>https://roymondliao.netlify.com/categories/</link>
-      <atom:link href="https://roymondliao.netlify.com/categories/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://roymondliao.github.io/categories/</link>
+      <atom:link href="https://roymondliao.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     <description>Categories</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Fri, 28 Feb 2020 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://roymondliao.netlify.com/img/icon-192.png</url>
+      <url>https://roymondliao.github.io/img/icon-192.png</url>
       <title>Categories</title>
-      <link>https://roymondliao.netlify.com/categories/</link>
+      <link>https://roymondliao.github.io/categories/</link>
     </image>
-    
-    <item>
-      <title>Deep Learning</title>
-      <link>https://roymondliao.netlify.com/categories/deep-learning/</link>
-      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/categories/deep-learning/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>NLP</title>
-      <link>https://roymondliao.netlify.com/categories/nlp/</link>
-      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/categories/nlp/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Kaggle</title>
-      <link>https://roymondliao.netlify.com/categories/kaggle/</link>
-      <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/categories/kaggle/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Optimizer</title>
-      <link>https://roymondliao.netlify.com/categories/optimizer/</link>
-      <pubDate>Thu, 03 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/categories/optimizer/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Object Detection</title>
-      <link>https://roymondliao.netlify.com/categories/object-detection/</link>
-      <pubDate>Tue, 14 May 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/categories/object-detection/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Machine Learning</title>
-      <link>https://roymondliao.netlify.com/categories/machine-learning/</link>
-      <pubDate>Sat, 02 Mar 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/categories/machine-learning/</guid>
-      <description></description>
-    </item>
     
   </channel>
 </rss>

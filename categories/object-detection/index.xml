@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Object Detection | Roymond Liao</title>
-    <link>https://roymondliao.netlify.com/categories/object-detection/</link>
-      <atom:link href="https://roymondliao.netlify.com/categories/object-detection/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://roymondliao.github.io/categories/object-detection/</link>
+      <atom:link href="https://roymondliao.github.io/categories/object-detection/index.xml" rel="self" type="application/rss+xml" />
     <description>Object Detection</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Tue, 14 May 2019 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://roymondliao.netlify.com/img/icon-192.png</url>
+      <url>https://roymondliao.github.io/img/icon-192.png</url>
       <title>Object Detection</title>
-      <link>https://roymondliao.netlify.com/categories/object-detection/</link>
+      <link>https://roymondliao.github.io/categories/object-detection/</link>
     </image>
     
     <item>
       <title>Faster R-CNN</title>
-      <link>https://roymondliao.netlify.com/post/2019-05-14_faster_rcnn/</link>
+      <link>https://roymondliao.github.io/post/2019-05-14_faster_rcnn/</link>
       <pubDate>Tue, 14 May 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/post/2019-05-14_faster_rcnn/</guid>
+      <guid>https://roymondliao.github.io/post/2019-05-14_faster_rcnn/</guid>
       <description>&lt;p&gt;Faster R-CNN 是由 object detection 的大神 &lt;a href=&#34;https://www.rossgirshick.info/&#34;&gt;&lt;strong&gt;&lt;em&gt;Ross Girshick&lt;/em&gt;&lt;/strong&gt;&lt;/a&gt; 於 2015 年所提出的一個非常經典的目標檢測(object detection)的方法，當中提出了 &lt;strong&gt;Region Proposal Networks&lt;/strong&gt; 的方法應用在提取候選區域(reigon proposals) 取代了傳統的 Selective Search 的方式，大幅提升了目標檢測的精準度，也提升了整體計算的速度，另外 &lt;a href=&#34;http://kaiminghe.com/&#34;&gt;&lt;strong&gt;&lt;em&gt;Kaiming He&lt;/em&gt;&lt;/strong&gt;&lt;/a&gt; 博士也是共同作者。&lt;/p&gt;
 
 &lt;p&gt;在介紹 Faster R-CNN 之前需要先了解何為 one stage 與 two stage，目前 object detection 的主流都是以 one stage 為基礎的演算法，建議可以參考下列兩篇很棒的文章:&lt;/p&gt;

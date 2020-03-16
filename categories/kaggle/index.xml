@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kaggle | Roymond Liao</title>
-    <link>https://roymondliao.netlify.com/categories/kaggle/</link>
-      <atom:link href="https://roymondliao.netlify.com/categories/kaggle/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://roymondliao.github.io/categories/kaggle/</link>
+      <atom:link href="https://roymondliao.github.io/categories/kaggle/index.xml" rel="self" type="application/rss+xml" />
     <description>Kaggle</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Mon, 18 Nov 2019 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://roymondliao.netlify.com/img/icon-192.png</url>
+      <url>https://roymondliao.github.io/img/icon-192.png</url>
       <title>Kaggle</title>
-      <link>https://roymondliao.netlify.com/categories/kaggle/</link>
+      <link>https://roymondliao.github.io/categories/kaggle/</link>
     </image>
     
     <item>
       <title>Adversarial validation</title>
-      <link>https://roymondliao.netlify.com/post/2019-11-18_adversarial_validation/</link>
+      <link>https://roymondliao.github.io/post/2019-11-18_adversarial_validation/</link>
       <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/post/2019-11-18_adversarial_validation/</guid>
+      <guid>https://roymondliao.github.io/post/2019-11-18_adversarial_validation/</guid>
       <description>&lt;p&gt;在重新回顧 Kaggle 近期的 IEEE-CIS Fraud Detection 的比賽中，發現有人提到一個 Features selection 的方法 &lt;strong&gt;Adversarial validation&lt;/strong&gt;。&lt;/p&gt;
 
 &lt;h1 id=&#34;problem&#34;&gt;Problem&lt;/h1&gt;
@@ -82,30 +82,27 @@
 &lt;h3 id=&#34;code&#34;&gt;Code&lt;/h3&gt;
 
 &lt;p&gt;以下是 Chris Deotte 所提供的簡單的程式碼：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# ADD MONTH FEATURE&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; datetime
+START_DATE &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;strptime(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;2017-11-30&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;%Y-%m-&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;%d&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&lt;/span&gt;)
+train[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;DT_M&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; train[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;TransactionDT&amp;#39;&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;apply(&lt;span style=&#34;color:#66d9ef&#34;&gt;lambda&lt;/span&gt; x: (START_DATE &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;timedelta(seconds &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; x)))
+train[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;DT_M&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (train[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;DT_M&amp;#39;&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;dt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;year&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;2017&lt;/span&gt;)&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;12&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; train[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;DT_M&amp;#39;&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;dt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;month 
 
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# ADD MONTH FEATURE
-import datetime
-START_DATE = datetime.datetime.strptime(&#39;2017-11-30&#39;, &#39;%Y-%m-%d&#39;)
-train[&#39;DT_M&#39;] = train[&#39;TransactionDT&#39;].apply(lambda x: (START_DATE + datetime.timedelta(seconds = x)))
-train[&#39;DT_M&#39;] = (train[&#39;DT_M&#39;].dt.year-2017)*12 + train[&#39;DT_M&#39;].dt.month 
+&lt;span style=&#34;color:#75715e&#34;&gt;# SPLIT DATA INTO FIRST MONTH AND LAST MONTH&lt;/span&gt;
+train &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; train[train&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;DT_M&lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;12&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;copy()
+validate &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; train[train&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;DT_M&lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;17&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;copy()
 
-# SPLIT DATA INTO FIRST MONTH AND LAST MONTH
-train = train[train.DT_M==12].copy()
-validate = train[train.DT_M==17].copy()
-
-# TRAIN AND VALIDATE
-lgbm = lgb.LGBMClassifier(n_estimators=500, objective=&#39;binary&#39;, num_leaves=8, learning_rate=0.02)
-h = lgbm.fit(train[[col]], 
-             train.isFraud, 
-             eval_metric=&#39;auc&#39;, 
-             eval_names=[&#39;train&#39;, &#39;valid&#39;],
-             eval_set=[(train[[col]],train.isFraud),(validate[[col]],validate.isFraud)],
-             verbose=10)
-auc_train = np.round(h._best_score[&#39;train&#39;][&#39;auc&#39;], 4)
-auc_val = np.round(h._best_score[&#39;valid&#39;][&#39;auc&#39;], 4)
-print(&#39;Best score in trian:{}, valid:{}&#39;.format(auc_train, auc_val))
-&lt;/code&gt;&lt;/pre&gt;
-
+&lt;span style=&#34;color:#75715e&#34;&gt;# TRAIN AND VALIDATE&lt;/span&gt;
+lgbm &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; lgb&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;LGBMClassifier(n_estimators&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;500&lt;/span&gt;, objective&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;binary&amp;#39;&lt;/span&gt;, num_leaves&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;8&lt;/span&gt;, learning_rate&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0.02&lt;/span&gt;)
+h &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; lgbm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;fit(train[[col]], 
+             train&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;isFraud, 
+             eval_metric&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;auc&amp;#39;&lt;/span&gt;, 
+             eval_names&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;train&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;valid&amp;#39;&lt;/span&gt;],
+             eval_set&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[(train[[col]],train&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;isFraud),(validate[[col]],validate&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;isFraud)],
+             verbose&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;)
+auc_train &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; np&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;round(h&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_best_score[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;train&amp;#39;&lt;/span&gt;][&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;auc&amp;#39;&lt;/span&gt;], &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;)
+auc_val &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; np&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;round(h&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_best_score[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;valid&amp;#39;&lt;/span&gt;][&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;auc&amp;#39;&lt;/span&gt;], &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;)
+&lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Best score in trian:{}, valid:{}&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;format(auc_train, auc_val))&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Btw，最近有看到一個驗證的方法叫做 &lt;code&gt;Double Cross-Validation&lt;/code&gt;，這邊紀錄一下，有機會再來講講這方法的概念與應用。&lt;/p&gt;
 
 &lt;h1 id=&#34;refenece&#34;&gt;Refenece&lt;/h1&gt;

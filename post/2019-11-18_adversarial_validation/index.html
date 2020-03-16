@@ -35,7 +35,7 @@ Mothed 其實 Adversarial validation 的概念非常簡單，只需要幾個步�
  將 training set 與 testing set 合併，並標注新的 target column is_train ($training = 1, testing = 0$) 建立一個 classifier 將 training set 的預測機率按照 Ascending 的方式排序，由小排到大。 取 Top $n\%$ 的數據當作 validation set  藉由這樣的方式所取得的 validation set 在分佈上就與 testing set 相似，如果 model 在 validation 上取得好的預測結果，那相對地也能反映在 testing set。">
 
   
-  <link rel="alternate" hreflang="en-us" href="https://roymondliao.netlify.com/post/2019-11-18_adversarial_validation/">
+  <link rel="alternate" hreflang="en-us" href="https://roymondliao.github.io/post/2019-11-18_adversarial_validation/">
 
   
 
@@ -136,7 +136,7 @@ Mothed 其實 Adversarial validation 的概念非常簡單，只需要幾個步�
   <link rel="icon" type="image/png" href="/img/icon-32.png">
   <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
 
-  <link rel="canonical" href="https://roymondliao.netlify.com/post/2019-11-18_adversarial_validation/">
+  <link rel="canonical" href="https://roymondliao.github.io/post/2019-11-18_adversarial_validation/">
 
   
   
@@ -148,14 +148,14 @@ Mothed 其實 Adversarial validation 的概念非常簡單，只需要幾個步�
   <meta property="twitter:card" content="summary_large_image">
   
   <meta property="og:site_name" content="Roymond Liao">
-  <meta property="og:url" content="https://roymondliao.netlify.com/post/2019-11-18_adversarial_validation/">
+  <meta property="og:url" content="https://roymondliao.github.io/post/2019-11-18_adversarial_validation/">
   <meta property="og:title" content="Adversarial validation | Roymond Liao">
   <meta property="og:description" content="在重新回顧 Kaggle 近期的 IEEE-CIS Fraud Detection 的比賽中，發現有人提到一個 Features selection 的方法 Adversarial validation。
 Problem 在建立模型時常常都會遇到 training set 與 testing set 的分佈存在明顯的差異的，而在分佈不相同的狀況下，即使我們使用 Kfold 的方法來驗證 model，也不會得到較好的結果，因為在驗證所取得的 validation set 也會與 testing set 有著分佈上的差異。
 在現實的處理方法，可以透過重新收集數據或是一些處理手段，來取得 training set 與 testing set 分佈相同的，但在資料的比賽中， training set 與 testing set 都是給定好的數據，並無法做其他跟改，而面對這樣的狀況， Adversarial validation 就是一個很好來處理這樣的問題。
 Mothed 其實 Adversarial validation 的概念非常簡單，只需要幾個步驟：
- 將 training set 與 testing set 合併，並標注新的 target column is_train ($training = 1, testing = 0$) 建立一個 classifier 將 training set 的預測機率按照 Ascending 的方式排序，由小排到大。 取 Top $n\%$ 的數據當作 validation set  藉由這樣的方式所取得的 validation set 在分佈上就與 testing set 相似，如果 model 在 validation 上取得好的預測結果，那相對地也能反映在 testing set。"><meta property="og:image" content="https://roymondliao.netlify.com/post/2019-11-18_adversarial_validation/featured.jpg">
-  <meta property="twitter:image" content="https://roymondliao.netlify.com/post/2019-11-18_adversarial_validation/featured.jpg"><meta property="og:locale" content="en-us">
+ 將 training set 與 testing set 合併，並標注新的 target column is_train ($training = 1, testing = 0$) 建立一個 classifier 將 training set 的預測機率按照 Ascending 的方式排序，由小排到大。 取 Top $n\%$ 的數據當作 validation set  藉由這樣的方式所取得的 validation set 在分佈上就與 testing set 相似，如果 model 在 validation 上取得好的預測結果，那相對地也能反映在 testing set。"><meta property="og:image" content="https://roymondliao.github.io/post/2019-11-18_adversarial_validation/featured.jpg">
+  <meta property="twitter:image" content="https://roymondliao.github.io/post/2019-11-18_adversarial_validation/featured.jpg"><meta property="og:locale" content="en-us">
   
     
       <meta property="article:published_time" content="2019-11-18T00:00:00&#43;00:00">
@@ -186,12 +186,12 @@ Mothed 其實 Adversarial validation 的概念非常簡單，只需要幾個步�
   "@type": "BlogPosting",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "https://roymondliao.netlify.com/post/2019-11-18_adversarial_validation/"
+    "@id": "https://roymondliao.github.io/post/2019-11-18_adversarial_validation/"
   },
   "headline": "Adversarial validation",
   
   "image": [
-    "https://roymondliao.netlify.com/post/2019-11-18_adversarial_validation/featured.jpg"
+    "https://roymondliao.github.io/post/2019-11-18_adversarial_validation/featured.jpg"
   ],
   
   "datePublished": "2019-11-18T00:00:00Z",
@@ -207,7 +207,7 @@ Mothed 其實 Adversarial validation 的概念非常簡單，只需要幾個步�
     "name": "Roymond Liao",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://roymondliao.netlify.com/img/icon-512.png"
+      "url": "https://roymondliao.github.io/img/icon-512.png"
     }
   },
   "description": "在重新回顧 Kaggle 近期的 IEEE-CIS Fraud Detection 的比賽中，發現有人提到一個 Features selection 的方法 Adversarial validation。\nProblem 在建立模型時常常都會遇到 training set 與 testing set 的分佈存在明顯的差異的，而在分佈不相同的狀況下，即使我們使用 Kfold 的方法來驗證 model，也不會得到較好的結果，因為在驗證所取得的 validation set 也會與 testing set 有著分佈上的差異。\n在現實的處理方法，可以透過重新收集數據或是一些處理手段，來取得 training set 與 testing set 分佈相同的，但在資料的比賽中， training set 與 testing set 都是給定好的數據，並無法做其他跟改，而面對這樣的狀況， Adversarial validation 就是一個很好來處理這樣的問題。\nMothed 其實 Adversarial validation 的概念非常簡單，只需要幾個步驟：\n 將 training set 與 testing set 合併，並標注新的 target column is_train ($training = 1, testing = 0$) 建立一個 classifier 將 training set 的預測機率按照 Ascending 的方式排序，由小排到大。 取 Top $n\\%$ 的數據當作 validation set  藉由這樣的方式所取得的 validation set 在分佈上就與 testing set 相似，如果 model 在 validation 上取得好的預測結果，那相對地也能反映在 testing set。"
@@ -621,30 +621,27 @@ Mothed 其實 Adversarial validation 的概念非常簡單，只需要幾個步�
 <h3 id="code">Code</h3>
 
 <p>以下是 Chris Deotte 所提供的簡單的程式碼：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># ADD MONTH FEATURE</span>
+<span style="color:#f92672">import</span> datetime
+START_DATE <span style="color:#f92672">=</span> datetime<span style="color:#f92672">.</span>datetime<span style="color:#f92672">.</span>strptime(<span style="color:#e6db74">&#39;2017-11-30&#39;</span>, <span style="color:#e6db74">&#39;%Y-%m-</span><span style="color:#e6db74">%d</span><span style="color:#e6db74">&#39;</span>)
+train[<span style="color:#e6db74">&#39;DT_M&#39;</span>] <span style="color:#f92672">=</span> train[<span style="color:#e6db74">&#39;TransactionDT&#39;</span>]<span style="color:#f92672">.</span>apply(<span style="color:#66d9ef">lambda</span> x: (START_DATE <span style="color:#f92672">+</span> datetime<span style="color:#f92672">.</span>timedelta(seconds <span style="color:#f92672">=</span> x)))
+train[<span style="color:#e6db74">&#39;DT_M&#39;</span>] <span style="color:#f92672">=</span> (train[<span style="color:#e6db74">&#39;DT_M&#39;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>year<span style="color:#f92672">-</span><span style="color:#ae81ff">2017</span>)<span style="color:#f92672">*</span><span style="color:#ae81ff">12</span> <span style="color:#f92672">+</span> train[<span style="color:#e6db74">&#39;DT_M&#39;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>month 
 
-<pre><code class="language-python"># ADD MONTH FEATURE
-import datetime
-START_DATE = datetime.datetime.strptime('2017-11-30', '%Y-%m-%d')
-train['DT_M'] = train['TransactionDT'].apply(lambda x: (START_DATE + datetime.timedelta(seconds = x)))
-train['DT_M'] = (train['DT_M'].dt.year-2017)*12 + train['DT_M'].dt.month 
+<span style="color:#75715e"># SPLIT DATA INTO FIRST MONTH AND LAST MONTH</span>
+train <span style="color:#f92672">=</span> train[train<span style="color:#f92672">.</span>DT_M<span style="color:#f92672">==</span><span style="color:#ae81ff">12</span>]<span style="color:#f92672">.</span>copy()
+validate <span style="color:#f92672">=</span> train[train<span style="color:#f92672">.</span>DT_M<span style="color:#f92672">==</span><span style="color:#ae81ff">17</span>]<span style="color:#f92672">.</span>copy()
 
-# SPLIT DATA INTO FIRST MONTH AND LAST MONTH
-train = train[train.DT_M==12].copy()
-validate = train[train.DT_M==17].copy()
-
-# TRAIN AND VALIDATE
-lgbm = lgb.LGBMClassifier(n_estimators=500, objective='binary', num_leaves=8, learning_rate=0.02)
-h = lgbm.fit(train[[col]], 
-             train.isFraud, 
-             eval_metric='auc', 
-             eval_names=['train', 'valid'],
-             eval_set=[(train[[col]],train.isFraud),(validate[[col]],validate.isFraud)],
-             verbose=10)
-auc_train = np.round(h._best_score['train']['auc'], 4)
-auc_val = np.round(h._best_score['valid']['auc'], 4)
-print('Best score in trian:{}, valid:{}'.format(auc_train, auc_val))
-</code></pre>
-
+<span style="color:#75715e"># TRAIN AND VALIDATE</span>
+lgbm <span style="color:#f92672">=</span> lgb<span style="color:#f92672">.</span>LGBMClassifier(n_estimators<span style="color:#f92672">=</span><span style="color:#ae81ff">500</span>, objective<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;binary&#39;</span>, num_leaves<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span>, learning_rate<span style="color:#f92672">=</span><span style="color:#ae81ff">0.02</span>)
+h <span style="color:#f92672">=</span> lgbm<span style="color:#f92672">.</span>fit(train[[col]], 
+             train<span style="color:#f92672">.</span>isFraud, 
+             eval_metric<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;auc&#39;</span>, 
+             eval_names<span style="color:#f92672">=</span>[<span style="color:#e6db74">&#39;train&#39;</span>, <span style="color:#e6db74">&#39;valid&#39;</span>],
+             eval_set<span style="color:#f92672">=</span>[(train[[col]],train<span style="color:#f92672">.</span>isFraud),(validate[[col]],validate<span style="color:#f92672">.</span>isFraud)],
+             verbose<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>)
+auc_train <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>round(h<span style="color:#f92672">.</span>_best_score[<span style="color:#e6db74">&#39;train&#39;</span>][<span style="color:#e6db74">&#39;auc&#39;</span>], <span style="color:#ae81ff">4</span>)
+auc_val <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>round(h<span style="color:#f92672">.</span>_best_score[<span style="color:#e6db74">&#39;valid&#39;</span>][<span style="color:#e6db74">&#39;auc&#39;</span>], <span style="color:#ae81ff">4</span>)
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#39;Best score in trian:{}, valid:{}&#39;</span><span style="color:#f92672">.</span>format(auc_train, auc_val))</code></pre></div>
 <p>Btw，最近有看到一個驗證的方法叫做 <code>Double Cross-Validation</code>，這邊紀錄一下，有機會再來講講這方法的概念與應用。</p>
 
 <h1 id="refenece">Refenece</h1>
@@ -892,7 +889,7 @@ print('Best score in trian:{}, valid:{}'.format(auc_train, auc_val))
   
 
   <p class="powered-by">
-    &copy; 2019 - &copy; 2020 &middot; 
+    © 2019 - © 2020 &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

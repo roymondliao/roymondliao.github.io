@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Optimizer | Roymond Liao</title>
-    <link>https://roymondliao.netlify.com/categories/optimizer/</link>
-      <atom:link href="https://roymondliao.netlify.com/categories/optimizer/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://roymondliao.github.io/categories/optimizer/</link>
+      <atom:link href="https://roymondliao.github.io/categories/optimizer/index.xml" rel="self" type="application/rss+xml" />
     <description>Optimizer</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019 - © 2020</copyright><lastBuildDate>Thu, 03 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://roymondliao.netlify.com/img/icon-192.png</url>
+      <url>https://roymondliao.github.io/img/icon-192.png</url>
       <title>Optimizer</title>
-      <link>https://roymondliao.netlify.com/categories/optimizer/</link>
+      <link>https://roymondliao.github.io/categories/optimizer/</link>
     </image>
     
     <item>
       <title>Lookahead Optimizer: k steps forward, 1 step back</title>
-      <link>https://roymondliao.netlify.com/post/2019-10-03_lookahead/</link>
+      <link>https://roymondliao.github.io/post/2019-10-03_lookahead/</link>
       <pubDate>Thu, 03 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/post/2019-10-03_lookahead/</guid>
+      <guid>https://roymondliao.github.io/post/2019-10-03_lookahead/</guid>
       <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
 
 &lt;p&gt;在目前的 optimizer 分為兩個主要發展方向：&lt;/p&gt;
@@ -110,9 +110,9 @@ Step 5 : 更新 slow weight $\phi_{k} \leftarrow \phi_{k-1} + \alpha\left(\theta
     
     <item>
       <title>DropBlock</title>
-      <link>https://roymondliao.netlify.com/post/2019-04-10_dropblock/</link>
+      <link>https://roymondliao.github.io/post/2019-04-10_dropblock/</link>
       <pubDate>Wed, 10 Apr 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.netlify.com/post/2019-04-10_dropblock/</guid>
+      <guid>https://roymondliao.github.io/post/2019-04-10_dropblock/</guid>
       <description>&lt;p&gt;Dropout 相關方法：&lt;/p&gt;
 
 &lt;ul&gt;
@@ -144,110 +144,101 @@ Step 5 : 更新 slow weight $\phi_{k} \leftarrow \phi_{k-1} + \alpha\left(\theta
 &lt;/ul&gt;
 
 &lt;p&gt;Bernoulli distrubtion:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import tensorflow as tf
-tf.reset_default_graph()
-with tf.Graph().as_default() as g: 
-    mean = tf.placeholder(tf.float32, [None])
-    input_shape = tf.placeholder(tf.float32, [None, 4, 4, 3])
-    shape = tf.stack(tf.shape(input_shape))
-    # method 1
-    # 用 uniform distributions 產生值，再透過 sign 轉為 [-1, 1], 最後透過 relu 將 -1 轉換為 0
-    uniform_dist = tf.random_uniform(shape, minval=0, maxval=1, dtype=tf.float32)
-    sign_dist = tf.sign(mean - uniform_dist)
-    bernoulli = tf.nn.relu(sign_dist)
-    # method 2
-    # probs 可以為多個 p, 對應 shape, 產生 n of p 的 bernoulli distributions
-    noise_dist = tf.distributions.Bernoulli(probs=[0.1])
-    mask = noise_dist.sample(shape)
-with tf.Session(graph=g) as sess:
-    tmp_array = np.zeros([4, 4, 3], dtype=np.uint8) 
-    tmp_array[:,:100] = [255, 0, 0] #Orange left side array[:,100:] = [0, 0, 255] #Blue right side
-    batch_array = np.array([tmp_array]*3)
-    uniform, sign, bern = sess.run([uniform_dist, sign_dist, bernoulli], feed_dict={mean: [1.], input_shape:batch_array})    
-&lt;/code&gt;&lt;/pre&gt;
-
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; tensorflow &lt;span style=&#34;color:#f92672&#34;&gt;as&lt;/span&gt; tf
+tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;reset_default_graph()
+&lt;span style=&#34;color:#66d9ef&#34;&gt;with&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Graph()&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;as_default() &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; g: 
+    mean &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;placeholder(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;float32, [None])
+    input_shape &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;placeholder(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;float32, [None, &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;])
+    shape &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;stack(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;shape(input_shape))
+    &lt;span style=&#34;color:#75715e&#34;&gt;# method 1&lt;/span&gt;
+    &lt;span style=&#34;color:#75715e&#34;&gt;# 用 uniform distributions 產生值，再透過 sign 轉為 [-1, 1], 最後透過 relu 將 -1 轉換為 0&lt;/span&gt;
+    uniform_dist &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;random_uniform(shape, minval&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, maxval&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, dtype&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;float32)
+    sign_dist &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sign(mean &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; uniform_dist)
+    bernoulli &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;nn&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;relu(sign_dist)
+    &lt;span style=&#34;color:#75715e&#34;&gt;# method 2&lt;/span&gt;
+    &lt;span style=&#34;color:#75715e&#34;&gt;# probs 可以為多個 p, 對應 shape, 產生 n of p 的 bernoulli distributions&lt;/span&gt;
+    noise_dist &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;distributions&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Bernoulli(probs&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;0.1&lt;/span&gt;])
+    mask &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; noise_dist&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sample(shape)
+&lt;span style=&#34;color:#66d9ef&#34;&gt;with&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Session(graph&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;g) &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; sess:
+    tmp_array &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; np&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;zeros([&lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;], dtype&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;np&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;uint8) 
+    tmp_array[:,:&lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [&lt;span style=&#34;color:#ae81ff&#34;&gt;255&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;] &lt;span style=&#34;color:#75715e&#34;&gt;#Orange left side array[:,100:] = [0, 0, 255] #Blue right side&lt;/span&gt;
+    batch_array &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; np&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;array([tmp_array]&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;)
+    uniform, sign, bern &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; sess&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;run([uniform_dist, sign_dist, bernoulli], feed_dict&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;{mean: [&lt;span style=&#34;color:#ae81ff&#34;&gt;1.&lt;/span&gt;], input_shape:batch_array})    &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;DropBlock implement:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; tensorflow &lt;span style=&#34;color:#f92672&#34;&gt;as&lt;/span&gt; tf
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; tensorflow.python.keras &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; backend &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; K
+&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;DropBlock&lt;/span&gt;(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;keras&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;layers&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Layer) :
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, keep_prob, block_size, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kwargs):
+        super(DropBlock, self)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;__init__(&lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kwargs)
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;keep_prob &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; float(keep_prob) &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; isinstance(keep_prob, int) &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; keep_prob
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; int(block_size)
 
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import tensorflow as tf
-from tensorflow.python.keras import backend as K
-class DropBlock(tf.keras.layers.Layer) :
-    def __init__(self, keep_prob, block_size, **kwargs):
-        super(DropBlock, self).__init__(**kwargs)
-        self.keep_prob = float(keep_prob) if isinstance(keep_prob, int) else keep_prob
-        self.block_size = int(block_size)
-
-    def compute_output_shape(self, input_shape):
-        return input_shape
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;compute_output_shape&lt;/span&gt;(self, input_shape):
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; input_shape
     
-    def build(self, input_shape):
-        _, self.h, self.w, self.channel = input_shape.as_list()
-        # pad the mask
-        bottom = right = (self.block_size -1) // 2
-        top = left = (self.block_size -1) - bottom
-        self.padding = [[0, 0], [top, bottom], [left, right], [0, 0]]
-        self.set_keep_prob()
-        super(DropBlock, self).build(input_shape)
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;build&lt;/span&gt;(self, input_shape):
+        _, self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;h, self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;w, self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;channel &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; input_shape&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;as_list()
+        &lt;span style=&#34;color:#75715e&#34;&gt;# pad the mask&lt;/span&gt;
+        bottom &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; right &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;//&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+        top &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; left &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; bottom
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;padding &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;], [top, bottom], [left, right], [&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;]]
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;set_keep_prob()
+        super(DropBlock, self)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;build(input_shape)
         
-    def set_keep_prob(self, keep_prob=None):
-        &amp;quot;&amp;quot;&amp;quot;This method only support Eager Execution&amp;quot;&amp;quot;&amp;quot;
-        if keep_prob is not None:
-            self.keep_prob = keep_prob
-        w, h = tf.to_float(self.w), tf.to_float(self.h)
-        self.gamma = (1. - self.keep_prob) * (w * h) / (self.block_size ** 2) / ((w - self.block_size + 1) * (h - self.block_size + 1))
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;set_keep_prob&lt;/span&gt;(self, keep_prob&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None):
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34;This method only support Eager Execution&amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; keep_prob &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;not&lt;/span&gt; None:
+            self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;keep_prob &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; keep_prob
+        w, h &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;to_float(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;w), tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;to_float(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;h)
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;gamma &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (&lt;span style=&#34;color:#ae81ff&#34;&gt;1.&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;keep_prob) &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; (w &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; h) &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt; (self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt; ((w &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; (h &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;))
 
-    def _create_mask(self, input_shape):
-        sampling_mask_shape = tf.stack([input_shape[0], 
-                                        self.h - self.block_size + 1, 
-                                        self.w - self.block_size + 1,
-                                        self.channel])
-        mask = DropBlock._bernoulli(sampling_mask_shape, self.gamma)
-        # 擴充行列，並給予0值，依據 paddings 參數給予的上下左右值來做擴充，mode有三種模式可選，可參考 document
-        mask = tf.pad(tensor=mask, paddings=self.padding, mode=&#39;CONSTANT&#39;) 
-        mask = tf.nn.max_pool(value=mask, 
-                              ksize=[1, self.block_size, self.block_size, 1], 
-                              strides=[1, 1, 1, 1], 
-                              padding=&#39;SAME&#39;)
-        mask = 1 - mask
-        return mask
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;_create_mask&lt;/span&gt;(self, input_shape):
+        sampling_mask_shape &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;stack([input_shape[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;], 
+                                        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;h &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, 
+                                        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;w &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;,
+                                        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;channel])
+        mask &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; DropBlock&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_bernoulli(sampling_mask_shape, self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;gamma)
+        &lt;span style=&#34;color:#75715e&#34;&gt;# 擴充行列，並給予0值，依據 paddings 參數給予的上下左右值來做擴充，mode有三種模式可選，可參考 document&lt;/span&gt;
+        mask &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;pad(tensor&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;mask, paddings&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;padding, mode&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;CONSTANT&amp;#39;&lt;/span&gt;) 
+        mask &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;nn&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;max_pool(value&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;mask, 
+                              ksize&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size, self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;], 
+                              strides&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;], 
+                              padding&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;SAME&amp;#39;&lt;/span&gt;)
+        mask &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; mask
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; mask
         
-    @staticmethod    
-    def _bernoulli(shape, mean):
-        return tf.nn.relu(tf.sign(mean - tf.random_uniform(shape, minval=0, maxval=1, dtype=tf.float32)))
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;@staticmethod&lt;/span&gt;    
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;_bernoulli&lt;/span&gt;(shape, mean):
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;nn&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;relu(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sign(mean &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;random_uniform(shape, minval&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, maxval&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, dtype&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;float32)))
     
-    # The call function is a built-in function in &#39;tf.keras&#39;.
-    def call(self, inputs, training=None, scale=True, **kwargs):
-        def drop():
-            mask = self._create_mask(tf.shape(inputs))
-            output = inputs * mask
-            output = tf.cond(tf.constant(scale, dtype=tf.bool) if isinstance(scale, bool) else scale,
-                             true_fn=lambda: output * tf.to_float(tf.size(mask)) / tf.reduce_sum(mask),
-                             false_fn=lambda: output)
-            return output
+    &lt;span style=&#34;color:#75715e&#34;&gt;# The call function is a built-in function in &amp;#39;tf.keras&amp;#39;.&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;call&lt;/span&gt;(self, inputs, training&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None, scale&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kwargs):
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;drop&lt;/span&gt;():
+            mask &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_create_mask(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;shape(inputs))
+            output &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; inputs &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; mask
+            output &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;cond(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;constant(scale, dtype&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;bool) &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; isinstance(scale, bool) &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; scale,
+                             true_fn&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;lambda&lt;/span&gt;: output &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;to_float(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;size(mask)) &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;reduce_sum(mask),
+                             false_fn&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;lambda&lt;/span&gt;: output)
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; output
         
-        if training is None:
-            training = K.learning_phase()
-        output = tf.cond(tf.logical_or(tf.logical_not(training), tf.equal(self.keep_prob, 1.0)),
-                         true_fn=lambda: inputs,
-                         false_fn=drop)
-        return output
-&lt;/code&gt;&lt;/pre&gt;
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; training &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; None:
+            training &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; K&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;learning_phase()
+        output &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;cond(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;logical_or(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;logical_not(training), tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;equal(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;keep_prob, &lt;span style=&#34;color:#ae81ff&#34;&gt;1.0&lt;/span&gt;)),
+                         true_fn&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;lambda&lt;/span&gt;: inputs,
+                         false_fn&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;drop)
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; output&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Testing&lt;/span&gt;
+a &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;placeholder(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;float32, [None, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;])
+keep_prob &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;placeholder(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;float32)
+training &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;placeholder(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;bool)
 
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# Testing
-a = tf.placeholder(tf.float32, [None, 5, 5, 3])
-keep_prob = tf.placeholder(tf.float32)
-training = tf.placeholder(tf.bool)
+drop_block &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; DropBlock(keep_prob&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;keep_prob, block_size&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;)
+b &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; drop_block(inputs&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;a, training&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;training)
 
-drop_block = DropBlock(keep_prob=keep_prob, block_size=3)
-b = drop_block(inputs=a, training=training)
+sess &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Session()
+feed_dict &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {a: np&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;ones([&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;]), keep_prob: &lt;span style=&#34;color:#ae81ff&#34;&gt;0.8&lt;/span&gt;, training: True}
+c &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; sess&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;run(b, feed_dict&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;feed_dict)
 
-sess = tf.Session()
-feed_dict = {a: np.ones([2, 5, 5, 3]), keep_prob: 0.8, training: True}
-c = sess.run(b, feed_dict=feed_dict)
-
-print(c[0, :, :, 0])
-&lt;/code&gt;&lt;/pre&gt;
-
+&lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(c[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, :, :, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;])&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://mp.weixin.qq.com/s?__biz=MzA3MzI4MjgzMw==&amp;amp;mid=2650752571&amp;amp;idx=1&amp;amp;sn=8417645148afd8eebdb79c91b37a7409&amp;amp;chksm=871a8245b06d0b53115d79f1ce42bc5a03aad5d038fe51c2f237c5848c41c51c5b756aaa8937&amp;amp;scene=21#wechat_redirect&#34;&gt;Targeted Dropout&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
