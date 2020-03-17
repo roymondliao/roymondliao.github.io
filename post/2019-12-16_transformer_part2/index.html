@@ -689,7 +689,8 @@ $$
 $$
 y = {y_1, \dots, y_C}, y_i \in R^K
 $$
-K 為字詞的數量，C 為標題的長度。</p>
+K 為字詞的數量，C 為標題的長度。下圖為作者這本篇論文所採用的 LSTM 架構：</p>
+<!-- raw HTML omitted -->
 <h1 id="endpmatrix">利用 affine transformation 的方式  $$T_{s, t} : R^s \rightarrow R^t$$ 來表達 LSTM 的公式：
 $$
 \begin{pmatrix}
@@ -725,7 +726,7 @@ $$</p>
 <li>$$g_t$$ : canaidate cell</li>
 <li>$$c_t$$ : memory cell</li>
 <li>$$h_t$$ : hidden state</li>
-<li>$$Ey_{t-1}$$ 是詞 $$y_{t-1}$$ 的 embedding vector，$$E \in R^{m \times k}$$ 為 embedding matrix</li>
+<li>$$Ey_{t-1}$$ 是詞 $$y_{t-1}$$ 的 embedding vector，$$E \in R^{m \times k}$$ 為 embedding matrix，m 為 embedding dimention</li>
 <li>$$\hat{Z} \in R^D$$ 是 context vector，代表捕捉特定區域視覺訊息的上下文向量，與時間 $t$ 有關，所以是一個動態變化的量</li>
 </ul>
 <p>特別注意的是作者在給定 memory state 與 hidden state 的初始值的計算方式使用了兩個獨立的多層感知器(MLP)，其輸入是各個圖像區域特徵的平均，計算公式如下：
@@ -733,25 +734,26 @@ $$
 c_0 = f_{init, c}( \frac{1}{L} \sum_{i}^L a_i) \<br>
 h_0 = f_{init, h}( \frac{1}{L} \sum_{i}^L a_i) \<br>
 $$
-以及作者為了計算在 $t$ 時間下所關注的 context vector $\hat{Z_t}$ 定義了 attention machansim $\phi$ 為在 $t$ 時間，對於每個區域 $i$ 計算出一個權重 $$\alpha_{ti}$$ 來表示產生字詞 $y_t$ 需要關注哪個圖像區域  annotation vectors $a_i, i=1, \dots, L$ 的訊息。權重 $$\alpha_i$$ 的產生是透過輸入 attention vector $a_i$ 與前一個時間的 hidden state  $h_{t-1}$ 經由 attention model $f_{att}$ 計算所產生。</p>
+以及作者為了計算在 $t$ 時間下所關注的 context vector $\hat{Z_t}$ **定義了 attention machansim $\phi$ 為在 $t$ 時間，對於每個區域 $i$ 計算出一個權重 $$\alpha_{ti}$$ 來表示產生字詞 $y_t$ 需要關注哪個圖像區域  annotation vectors $a_i, i=1, \dots, L$ 的訊息。**權重 $$\alpha_i$$ 的產生是透過輸入 annotation vector $a_i$ 與前一個時間的 hidden state  $h_{t-1}$ 經由 attention model $f_{att}$ 計算所產生。</p>
 <p>$$
 \begin{align}
 e_{ti} = f_{att}(a_i, h_{t-1}) \tag4 \<br>
 \alpha_{ti} = \frac{exp(e_{ti})}{\sum_{k=1}^{L}exp{e_{tk}}} \tag5 \<br>
-\hat{Z_t} = \phi({a_i}, {\alpha_{ti}}) \tag6
+\hat{Z_t} = \phi({a_i}, {\alpha_{i}}) \tag6
 \end{align}
 $$</p>
 <p>有了上述的資訊，在生成下一個 $t$ 時間的字詞機率可以定義為：
 $$
 p(y_t | a, y_1, y_2, \dots, y_{t-1}) \propto exp(L_o(Ey_{t-1} + L_hh_t + L_z\hat{Z_t})) \tag7
 $$
-其中 $$L_o \in R^{K \times m}, L_h \in R^{m \times n}, L_z \in R^{m \times D}$$。</p>
+其中 $$L_o \in R^{K \times m}, L_h \in R^{m \times n}, L_z \in R^{m \times D}$$，m 與 n 分別為 embedding dimension 與 LSTM dimension。</p>
 </li>
 </ul>
-<p>對於函數 $\phi$ 作者提出了兩種 attention  machansim，對應於將權重附加到圖像區域的兩個不同策略。</p>
+<p>對於函數 $\phi$ 作者提出了兩種 attention  machansim，對應於將權重附加到圖像區域的兩個不同策略。根據上述的講解，搭配下圖為 Xu et al. [Paper 2] 的模型架構解析，更能了解整篇論文模型的細節：</p>
+<!-- raw HTML omitted -->
 <h4 id="hard-attention-stochastic-hard-attention">Hard attention (Stochastic Hard Attention)</h4>
 <p>在 hard attention 中定義區域變數(location variables) $s_{t, i}$ 為在 t 時間下，模型決定要關注的圖像區域，用 one-hot 的方式來表示，要關注的區域 $i$ 為 1，否則為 0。</p>
-<p>$s_{t, i}$ 被定為一個淺在變數(latent variables)，並且以 multinoulli distriubtion 作為參數 $\alpha_{t, i}$ 的分佈，而 $\hat{Z_t}$ 則被視為一個隨機變數，公式如下：
+<p>$s_{t, i}$ 被定為一個淺在變數(latent variables)，並且以 **multinoulli distriubtion** 作為參數 $\alpha_{t, i}$ 的分佈，而 $\hat{Z_t}$ 則被視為一個隨機變數，公式如下：
 $$
 p(s_{t, i} = 1 | s_{j, t}, a) = \alpha_{t, i} \tag8\<br>
 $$</p>
@@ -777,13 +779,20 @@ $$
 $$
 \mathbb{E}_{p(s_t|a)}[\hat{Z_t}] = \sum_{i=1}^L \alpha_{t,i}a_i
 $$
-這計算方式是參考前面所介紹的 Bahdanau attention 而來。</p>
-<p>作者</p>
-<blockquote>
-<p>Attention 要實現的就是在 decoder 的不同時刻可以關注不同的圖像區域，進而可以生成更合理的詞。</p>
-</blockquote>
+這計算方式將 weight vector $\alpha_i$ 參數化，讓公式是可微的，可以透過 backpropagation 做到 end-to-end 的學習。其方法是參考前面所介紹的 Bahdanau attention 而來。</p>
+<p>由於公式(7)的定義了生成下一個 $t$ 時間的字詞機率，所以在這邊作者定義了 $$n_t = L_o(Ey_{t-1} + L_hh_t + L_z\hat{Z_t})$$，透過 expect context vector</p>
+<p>另外 soft attention 在最後做文字的預測時作者定義了 softmax $k^{th}$ 的 normalized weighted geometric mean。
+$$
+\begin{align}
+NWGM[p(y_t=k|a)] &amp; = \frac{\prod_i exp(n_{t,k,i})^{p(s_{t,i} = 1 | a)}}{\sum_j\prod_i exp(n_{t,j,i})^{p(s_{t,i} = 1 | a)}} \<br>
+&amp; = \frac{exp\left(\mathbb{E_{p(s_t) | a}[n_{t,k}]}\right)}{\sum_j exp\left(\mathbb{E_{p(s_t) | a}[n_{t,j}]}\right)}
+\end{align}
+$$</p>
 <h3 id="global-attention--local-attention">Global Attention &amp; Local Attention</h3>
-<p>attenion value and query 的理解不要被公式混淆，而是從 attention 的概念去了解，query 就是</p>
+<p>總結來說：</p>
+<blockquote>
+<p>Attention 要實現的就是在 decoder 的不同時刻可以關注不同的圖像區域或是句子中的文字，進而可以生成更合理的詞。</p>
+</blockquote>
 <h2 id="refenece">Refenece</h2>
 <p>Paper:</p>
 <ol>
@@ -799,6 +808,8 @@ $$
 <li><a href="https://blog.floydhub.com/attention-mechanism/#bahdanau-atth">https://blog.floydhub.com/attention-mechanism/#bahdanau-atth</a></li>
 <li><a href="https://web.stanford.edu/class/cs224n/slides/cs224n-2019-lecture08-nmt.pdf">https://web.stanford.edu/class/cs224n/slides/cs224n-2019-lecture08-nmt.pdf</a></li>
 <li><a href="https://www.cnblogs.com/Determined22/p/6914926.html">https://www.cnblogs.com/Determined22/p/6914926.html</a></li>
+<li><a href="https://jhui.github.io/2017/03/15/Soft-and-hard-attention/">https://jhui.github.io/2017/03/15/Soft-and-hard-attention/</a></li>
+<li><a href="http://download.mpi-inf.mpg.de/d2/mmalinow-slides/attention_networks.pdf">http://download.mpi-inf.mpg.de/d2/mmalinow-slides/attention_networks.pdf</a></li>
 </ol>
 <p>Tutorial:</p>
 <ol>
