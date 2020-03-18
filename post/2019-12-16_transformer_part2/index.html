@@ -30,9 +30,8 @@
   
   <meta name="description" content="Attention Mechanism Attention 的概念在 2014 年被 Bahdanau et al. [Paper 1] 所提出，解決了 encoder-decoder 架構的模型在 decoder 必須依賴一個固定向量長度的 context vector 的問題。實際上 attention mechanism 也符合人類在生活上的應用，例如：當你在閱讀一篇文章時，會從上下文的關鍵字詞來推論句子所以表達的意思，又或者像是在聆聽演講時，會捕捉講者的關鍵字，來了解講者所要描述的內容，這都是人類在注意力上的行為表現。
  用比較簡單的講法來說， attention mechanism 可以幫助模型對輸入 sequence 的每個部分賦予不同的權重， 然後抽出更加關鍵的重要訊息，使模型可以做出更加準確的判斷。
- 複習一下在之前介紹的 Seq2Seq model 中，decoder 要預測在給定 context vector 與先前預測字詞 $${y_1, \cdots, y_{t-1}}$$ 的條件下字詞 $y_{t}$ 的機率，所以 decoder 的定義是在有序的條件下所有預測字詞的聯合機率：
-$$ \begin{align} p(\mathrm{y}) &amp; = \prod_{t=1}^T p(y_t | {y_1, \cdots, y_{t-1}}, c) \tag 1 \
-\mathrm{y} &amp; = (y_1, \cdots, y_T) \end{align} $$">
+ 複習一下在之前介紹的 Seq2Seq model 中，decoder 要預測在給定 context vector 與先前預測字詞 \({y_1, \cdots, y_{t-1}}\) 的條件下字詞 $y_{t}$ 的機率，所以 decoder 的定義是在有序的條件下所有預測字詞的聯合機率：
+\[ \begin{align} p(\mathrm{y}) & = \prod_{t=1}^T p(y_t | \{y_1, \cdots, y_{t-1}\}, c) \tag 1 \\ \mathrm{y} & = (y_1, \cdots, y_T) \end{align} \]">
 
   
   <link rel="alternate" hreflang="en-us" href="https://roymondliao.github.io/post/2019-12-16_transformer_part2/">
@@ -152,9 +151,8 @@ $$ \begin{align} p(\mathrm{y}) &amp; = \prod_{t=1}^T p(y_t | {y_1, \cdots, y_{t-
   <meta property="og:title" content="Transformer Part 2 - Attention | Roymond Liao">
   <meta property="og:description" content="Attention Mechanism Attention 的概念在 2014 年被 Bahdanau et al. [Paper 1] 所提出，解決了 encoder-decoder 架構的模型在 decoder 必須依賴一個固定向量長度的 context vector 的問題。實際上 attention mechanism 也符合人類在生活上的應用，例如：當你在閱讀一篇文章時，會從上下文的關鍵字詞來推論句子所以表達的意思，又或者像是在聆聽演講時，會捕捉講者的關鍵字，來了解講者所要描述的內容，這都是人類在注意力上的行為表現。
  用比較簡單的講法來說， attention mechanism 可以幫助模型對輸入 sequence 的每個部分賦予不同的權重， 然後抽出更加關鍵的重要訊息，使模型可以做出更加準確的判斷。
- 複習一下在之前介紹的 Seq2Seq model 中，decoder 要預測在給定 context vector 與先前預測字詞 $${y_1, \cdots, y_{t-1}}$$ 的條件下字詞 $y_{t}$ 的機率，所以 decoder 的定義是在有序的條件下所有預測字詞的聯合機率：
-$$ \begin{align} p(\mathrm{y}) &amp; = \prod_{t=1}^T p(y_t | {y_1, \cdots, y_{t-1}}, c) \tag 1 \
-\mathrm{y} &amp; = (y_1, \cdots, y_T) \end{align} $$"><meta property="og:image" content="https://roymondliao.github.io/post/2019-12-16_transformer_part2/featured.jpg">
+ 複習一下在之前介紹的 Seq2Seq model 中，decoder 要預測在給定 context vector 與先前預測字詞 \({y_1, \cdots, y_{t-1}}\) 的條件下字詞 $y_{t}$ 的機率，所以 decoder 的定義是在有序的條件下所有預測字詞的聯合機率：
+\[ \begin{align} p(\mathrm{y}) & = \prod_{t=1}^T p(y_t | \{y_1, \cdots, y_{t-1}\}, c) \tag 1 \\ \mathrm{y} & = (y_1, \cdots, y_T) \end{align} \]"><meta property="og:image" content="https://roymondliao.github.io/post/2019-12-16_transformer_part2/featured.jpg">
   <meta property="twitter:image" content="https://roymondliao.github.io/post/2019-12-16_transformer_part2/featured.jpg"><meta property="og:locale" content="en-us">
   
     
@@ -210,7 +208,7 @@ $$ \begin{align} p(\mathrm{y}) &amp; = \prod_{t=1}^T p(y_t | {y_1, \cdots, y_{t-
       "url": "https://roymondliao.github.io/img/icon-512.png"
     }
   },
-  "description": "Attention Mechanism Attention 的概念在 2014 年被 Bahdanau et al. [Paper 1] 所提出，解決了 encoder-decoder 架構的模型在 decoder 必須依賴一個固定向量長度的 context vector 的問題。實際上 attention mechanism 也符合人類在生活上的應用，例如：當你在閱讀一篇文章時，會從上下文的關鍵字詞來推論句子所以表達的意思，又或者像是在聆聽演講時，會捕捉講者的關鍵字，來了解講者所要描述的內容，這都是人類在注意力上的行為表現。\n 用比較簡單的講法來說， attention mechanism 可以幫助模型對輸入 sequence 的每個部分賦予不同的權重， 然後抽出更加關鍵的重要訊息，使模型可以做出更加準確的判斷。\n 複習一下在之前介紹的 Seq2Seq model 中，decoder 要預測在給定 context vector 與先前預測字詞 $${y_1, \\cdots, y_{t-1}}$$ 的條件下字詞 $y_{t}$ 的機率，所以 decoder 的定義是在有序的條件下所有預測字詞的聯合機率：\n$$ \\begin{align} p(\\mathrm{y}) \u0026amp; = \\prod_{t=1}^T p(y_t | {y_1, \\cdots, y_{t-1}}, c) \\tag 1 \\\n\\mathrm{y} \u0026amp; = (y_1, \\cdots, y_T) \\end{align} $$"
+  "description": "Attention Mechanism Attention 的概念在 2014 年被 Bahdanau et al. [Paper 1] 所提出，解決了 encoder-decoder 架構的模型在 decoder 必須依賴一個固定向量長度的 context vector 的問題。實際上 attention mechanism 也符合人類在生活上的應用，例如：當你在閱讀一篇文章時，會從上下文的關鍵字詞來推論句子所以表達的意思，又或者像是在聆聽演講時，會捕捉講者的關鍵字，來了解講者所要描述的內容，這都是人類在注意力上的行為表現。\n 用比較簡單的講法來說， attention mechanism 可以幫助模型對輸入 sequence 的每個部分賦予不同的權重， 然後抽出更加關鍵的重要訊息，使模型可以做出更加準確的判斷。\n 複習一下在之前介紹的 Seq2Seq model 中，decoder 要預測在給定 context vector 與先前預測字詞 \\({y_1, \\cdots, y_{t-1}}\\) 的條件下字詞 $y_{t}$ 的機率，所以 decoder 的定義是在有序的條件下所有預測字詞的聯合機率：\n\\[ \\begin{align} p(\\mathrm{y}) \u0026 = \\prod_{t=1}^T p(y_t | \\{y_1, \\cdots, y_{t-1}\\}, c) \\tag 1 \\\\ \\mathrm{y} \u0026 = (y_1, \\cdots, y_T) \\end{align} \\]"
 }
 </script>
 
@@ -557,89 +555,146 @@ $$ \begin{align} p(\mathrm{y}) &amp; = \prod_{t=1}^T p(y_t | {y_1, \cdots, y_{t-
 
     <div class="article-style">
       <h1 id="attention-mechanism">Attention Mechanism</h1>
+
 <p><strong>Attention</strong> 的概念在 2014 年被 Bahdanau et al. [Paper 1] 所提出，解決了 encoder-decoder 架構的模型在 decoder 必須依賴一個固定向量長度的 context vector 的問題。實際上 attention mechanism 也符合人類在生活上的應用，例如：當你在閱讀一篇文章時，會從上下文的關鍵字詞來推論句子所以表達的意思，又或者像是在聆聽演講時，會捕捉講者的關鍵字，來了解講者所要描述的內容，這都是人類在注意力上的行為表現。</p>
+
 <blockquote>
 <p>用比較簡單的講法來說， attention mechanism 可以幫助模型對輸入 sequence 的每個部分賦予不同的權重， 然後抽出更加關鍵的重要訊息，使模型可以做出更加準確的判斷。</p>
 </blockquote>
-<p>複習一下在之前介紹的 Seq2Seq model 中，decoder 要預測在給定 context vector 與先前預測字詞 $${y_1, \cdots, y_{t-1}}$$ 的條件下字詞 $y_{t}$ 的機率，所以 decoder  的定義是在有序的條件下所有預測字詞的聯合機率：</p>
-<p>$$
+
+<p>複習一下在之前介紹的 Seq2Seq model 中，decoder 要預測在給定 context vector 與先前預測字詞 <span  class="math">\({y_1, \cdots, y_{t-1}}\)</span> 的條件下字詞 $y_{t}$ 的機率，所以 decoder  的定義是在有序的條件下所有預測字詞的聯合機率：</p>
+
+<p><span  class="math">\[
 \begin{align}
-p(\mathrm{y}) &amp; = \prod_{t=1}^T p(y_t | {y_1, \cdots, y_{t-1}}, c) \tag 1 \<br>
-\mathrm{y} &amp; = (y_1, \cdots, y_T)
+p(\mathrm{y}) & = \prod_{t=1}^T p(y_t | \{y_1, \cdots, y_{t-1}\}, c) \tag 1 \\
+\mathrm{y} & = (y_1, \cdots, y_T)
 \end{align}
-$$</p>
+\]</span></p>
+
 <p>在第 $t$ 個字詞，字詞 $y_t$ 的條件機率：</p>
-<p>$$
+
+<p><span  class="math">\[
 \begin{align}
-p(y_t | {y_1, \cdots, y_{t-1}}, c) = g(y_{t-1}, s_t, c) \tag 2
+p(y_t | \{y_1, \cdots, y_{t-1}\}, c) = g(y_{t-1}, s_t, c) \tag 2
 \end{align}
-$$</p>
+\]</span></p>
+
 <p>當中 $g$ 唯一個 nonlinear function，$s_t$ 為 hidden state，c 為 context vector。</p>
+
 <p>而在 Attention model 中，作者將 decoder 預測下一個字詞的的條件機率重新定義為：</p>
-<p>$$
+
+<p><span  class="math">\[
 \begin{align}
-p(y_i | {y_1, \cdots, y_{i-1}}, \mathrm{x}) = g(y_{i-1}, s_t, c_i) \tag 3
+p(y_i | \{y_1, \cdots, y_{i-1}\}, \mathrm{x}) = g(y_{i-1}, s_t, c_i) \tag 3
 \end{align}
-$$</p>
+\]</span></p>
+
 <p>當中 $s_i$ 表示 RNN 在 $i$ 時間的 hiddent state。</p>
-<p>$$
+
+<p><span  class="math">\[
 \begin{align}
 s_i = f\left(s_{i-1}, y_{i-1}, c_i\right) \tag 4
 \end{align}
-$$</p>
+\]</span></p>
+
 <p>將式子 (3) 與 (2) 相比就可以發現，每一個預測字詞 $y_i$ 對於 context vector 的取得，由原本都是固定的 C  轉變成 每個字詞預測都會取得不同的 $C_i$。</p>
+
 <p>Bahdanau Attention model 的架構如圖一：</p>
-<!-- raw HTML omitted -->
-<p>Context vector $c_i$ 是取決於 sequence of annotations $$(h_1, h_2, \cdots, h_{T_x})$$ 的訊息，annotation $h_i$ 包含了在第 $i$ 步下， input sequence 輸入到 econder 的訊息。計算方法是透過序列權重加總 annotation $h_i$，公式如下：</p>
-<p>$$
+
+<figure class="image">
+<center>
+  <img src="./attention_bahdanau.png" style="zoom:60%" />
+  <figcaption>
+  圖一(Image credit:[Paper 1])
+  </figcaption>
+</center>
+</figure>
+
+<p>Context vector $c_i$ 是取決於 sequence of annotations <span  class="math">\((h_1, h_2, \cdots, h_{T_x})\)</span> 的訊息，annotation $h_i$ 包含了在第 $i$ 步下， input sequence 輸入到 econder 的訊息。計算方法是透過序列權重加總 annotation $h_i$，公式如下：</p>
+
+<p><span  class="math">\[
 \begin{equation}
 c_i = \displaystyle\sum_{j=1}^{T_x}\alpha_{ij}h_j \tag5
 \end{equation}
-$$</p>
+\]</span></p>
+
 <p>其中 $i$ 表示 decoder 在第 $i$ 個字詞，$j$ 表示 encoder 中第 $j$ 個詞。</p>
+
 <p>$\alpha_{ij} $ 則稱之為 attention distribution，可以用來衡量 input sequence 中的每個文字對 output sequence 中的每個文字所帶來重要性的程度，計算方式如下
 ：
-$$
+<span  class="math">\(
 \begin{align}
-\alpha_{ij} &amp; = softmax(e_{ij}) \<br>
-&amp; = \frac{exp(e_{ij})}{\sum_{k=1}^{T_x}exp(e_{ik})} \tag6 \<br>
+\alpha_{ij} & = softmax(e_{ij}) \\
+& = \frac{exp(e_{ij})}{\sum_{k=1}^{T_x}exp(e_{ik})} \tag6 \\
 \end{align}
-$$</p>
-<p>$$
+\)</span></p>
+
+<p><span  class="math">\[
 e_{ij} = a(s_{i-1}, h_j) \tag7
-$$</p>
-<p>**計算 attention  score $e_{ij}$ 中 $a$ 表示為 alignment model (對齊模型)，是衡量 input sequence 在位置 $j$ 與 output sequence 位置 $i$ 這兩者之間的關係**。
+\]</span></p>
+
+<p><strong>計算 attention  score $e_{ij}$ 中 $a$ 表示為 alignment model (對齊模型)，是衡量 input sequence 在位置 $j$ 與 output sequence 位置 $i$ 這兩者之間的關係</strong>。
 這邊作者為了解決在計算上需要 $T_{x} \times T_{y}$ 的計算量，所以採用了 singlelayer multilayer perceptron 的方式來減少計算量，其計算公式：</p>
-<p>$$
+
+<p><span  class="math">\[
 \begin{align}
 a(s_{i-1}, h_j) = v_a^Ttanh(W_aS_{i-1} + U_ah_j) \tag8
 \end{align}
-$$</p>
+\]</span></p>
+
 <p>其中 $W_a \in R^{n\times n}，U_a \in R^{n \times 2n}，v_a \in R^n$ 都是 weight。</p>
+
 <p>另外作者在此採用了 BiRNN(Bi-directional RNN) 的 forward 與 backward 的架構，由圖一可以得知</p>
+
 <ul>
-<li>Forward hidden state 為 $$(\overrightarrow{h_1}, \cdots, \overrightarrow{h_{T_x}})$$</li>
-<li>Backward hidden state 為 $$(\overleftarrow{h_1}, \cdots, \overleftarrow{h_{T_x}})$$</li>
-<li>Concatenate forward 與 backward 的 hidden state，所以 annotation $h_j$ 為 $$\left[\overrightarrow{h_j^T};\overleftarrow{h_j^T}\right]^T$$</li>
+<li>Forward hidden state 為 <span  class="math">\((\overrightarrow{h_1}, \cdots, \overrightarrow{h_{T_x}})\)</span></li>
+<li>Backward hidden state 為 <span  class="math">\((\overleftarrow{h_1}, \cdots, \overleftarrow{h_{T_x}})\)</span></li>
+<li>Concatenate forward 與 backward 的 hidden state，所以 annotation $h_j$ 為 <span  class="math">\(\left[\overrightarrow{h_j^T};\overleftarrow{h_j^T}\right]^T\)</span></li>
 </ul>
+
 <p>這樣的方式更能理解句子所要表達的意思，並得到更好的預測結果。</p>
+
 <blockquote>
 <p>例如以下兩個句子的比較：</p>
-</blockquote>
+
 <ol>
 <li>我喜歡蘋果，因為它很好吃。</li>
 <li>我喜歡蘋果，因為它很潮。</li>
 </ol>
+</blockquote>
+
 <p>下圖為 Bahdanau Attention model 的解析可以與圖一對照理解，這樣更能了解圖一的結構：</p>
+
 <blockquote>
 <p>需要注意的一點是在最一開始的 decoder hidden state $S_0$ 是採用 encoder 最後一層的 output</p>
 </blockquote>
-<!-- raw HTML omitted -->
+
+<figure class="image">
+<center>
+  <img src="./attention_bahdanau_example.png" style="zoom:100%" />
+  <figcaption>
+  圖二
+  </figcaption>
+</center>
+</figure>
+
 <p>下圖為論文中英文翻譯成法語的 attention distribution：</p>
-<!-- raw HTML omitted -->
+
+<figure class="image">
+<center>
+  <img src="./attention_bahdanau_output.png" style="zoom:90%" />
+  <figcaption>
+  圖三(Image credit:[Paper 1])
+  </figcaption>
+</center>
+</figure>
+
 <p>在上圖中 $[European \space Economic \space Area]$ 翻譯成$ [zone \space \acute{a}conomique \space europ\acute{e}enne] $ 的注意力分數上，模型成功地專注在對應的字詞上。</p>
+
 <h1 id="attention-mechanism-family">Attention Mechanism Family</h1>
+
 <p>Attention score function:</p>
+
 <table>
 <thead>
 <tr>
@@ -647,161 +702,237 @@ $$</p>
 <th>Attention score function</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td>Dot-product</td>
 <td>$e_{ij} = S_i^Th_j$</td>
 </tr>
+
 <tr>
 <td>General</td>
 <td>$e_{ij} = S_i^TWh_j$</td>
 </tr>
+
 <tr>
 <td>Additive</td>
 <td>$e_{ij} = v^Ttanh(WS_{i-1} + Uh_j) $</td>
 </tr>
+
 <tr>
 <td>Scaled Dot-product</td>
 <td>$e_{ij} = \frac{S_i^Th_j}{\sqrt{d}}$</td>
 </tr>
+
 <tr>
 <td></td>
 <td></td>
 </tr>
 </tbody>
 </table>
+
 <h3 id="hard-attention--soft-attention">Hard Attention &amp; Soft Attention</h3>
+
 <p>Xu et al. [Paper 2] 對於圖像標題(caption)的生成研究中提出了 hard attention 與 soft attention 的方法，作者希望透過 attention mechanism 的方法能夠讓 caption 的生成從圖像中獲得更多有幫助的訊息。下圖為作者所提出的模型架構：</p>
-<!-- raw HTML omitted -->
+
+<figure class="image">
+<center>
+  <img src="./nic_figure1.jpg" style="zoom:70%" />
+  <figcaption>
+  圖四(Image credit:[Paper 2])
+  </figcaption>
+</center>
+</figure>
+
 <p><strong>模型結構</strong></p>
+
 <ul>
-<li>
-<p>Encoder</p>
+<li>Encoder</li>
+</ul>
+
 <p>在 encoder 端模型使用 CNN 來提取 low-level 的卷積層特徵，每一個特徵都對應圖像的一個區域</p>
-<p>$$
-a = {a_1, \dots, a_L}, a_i \in R^D
-$$
-總共有 $L$ 個特徵，特徵向量維度為 $D$。</p>
-</li>
-<li>
-<p>Decoder</p>
-<p>採用 LSTM 模型來生成字詞，而因應圖片的內容不同，所以標題的長度是不相同的，作者將標題 $y$ encoded 成一個 one-hot encoding 的方式來表示
-$$
-y = {y_1, \dots, y_C}, y_i \in R^K
-$$
-K 為字詞的數量，C 為標題的長度。下圖為作者這本篇論文所採用的 LSTM 架構：</p>
-<!-- raw HTML omitted -->
-<h1 id="endpmatrix">利用 affine transformation 的方式  $$T_{s, t} : R^s \rightarrow R^t$$ 來表達 LSTM 的公式：
-$$
-\begin{pmatrix}
-i_t \<br>
-f_t \<br>
-o_t \<br>
-g_t
-\end{pmatrix}</h1>
-<p>\begin{pmatrix}
-\sigma \<br>
-\sigma \<br>
-\sigma \<br>
-tanh
-\end{pmatrix}
-T_{D+m+n, n}
-\begin{pmatrix}
-Ey_{t-1} \<br>
-h_{t-1} \<br>
-\hat{Z_t}
-\end{pmatrix}  \tag1 \<br>
-$$</p>
-<p>$$
-\begin{align}
-c_t &amp; = f_t \odot c_{t-1} + i_t \odot g_t \tag2 \<br>
-h_t &amp; = o_t \odot tanh(c_t) \tag3
-\end{align}
-$$</p>
-<p>其中</p>
+
+<p><span  class="math">\[ a = \{a_1, \dots, a_L\}, a_i \in R^D \]</span></p>
+
+<p>總共有 $L$ 個特徵，特徵向量維度為 $D$。</p>
+
 <ul>
-<li>$$i_t$$ : input gate</li>
-<li>$$f_t$$ : forget gate</li>
-<li>$$o_t$$ : ouput gate</li>
-<li>$$g_t$$ : canaidate cell</li>
-<li>$$c_t$$ : memory cell</li>
-<li>$$h_t$$ : hidden state</li>
-<li>$$Ey_{t-1}$$ 是詞 $$y_{t-1}$$ 的 embedding vector，$$E \in R^{m \times k}$$ 為 embedding matrix，m 為 embedding dimention</li>
-<li>$$\hat{Z} \in R^D$$ 是 context vector，代表捕捉特定區域視覺訊息的上下文向量，與時間 $t$ 有關，所以是一個動態變化的量</li>
+<li>Decoder</li>
 </ul>
-<p>特別注意的是作者在給定 memory state 與 hidden state 的初始值的計算方式使用了兩個獨立的多層感知器(MLP)，其輸入是各個圖像區域特徵的平均，計算公式如下：
-$$
-c_0 = f_{init, c}( \frac{1}{L} \sum_{i}^L a_i) \<br>
-h_0 = f_{init, h}( \frac{1}{L} \sum_{i}^L a_i) \<br>
-$$
-以及作者為了計算在 $t$ 時間下所關注的 context vector $\hat{Z_t}$ **定義了 attention machansim $\phi$ 為在 $t$ 時間，對於每個區域 $i$ 計算出一個權重 $$\alpha_{ti}$$ 來表示產生字詞 $y_t$ 需要關注哪個圖像區域  annotation vectors $a_i, i=1, \dots, L$ 的訊息。**權重 $$\alpha_i$$ 的產生是透過輸入 annotation vector $a_i$ 與前一個時間的 hidden state  $h_{t-1}$ 經由 attention model $f_{att}$ 計算所產生。</p>
-<p>$$
-\begin{align}
-e_{ti} = f_{att}(a_i, h_{t-1}) \tag4 \<br>
-\alpha_{ti} = \frac{exp(e_{ti})}{\sum_{k=1}^{L}exp{e_{tk}}} \tag5 \<br>
-\hat{Z_t} = \phi({a_i}, {\alpha_{i}}) \tag6
-\end{align}
-$$</p>
-<p>有了上述的資訊，在生成下一個 $t$ 時間的字詞機率可以定義為：
-$$
-p(y_t | a, y_1, y_2, \dots, y_{t-1}) \propto exp(L_o(Ey_{t-1} + L_hh_t + L_z\hat{Z_t})) \tag7
-$$
-其中 $$L_o \in R^{K \times m}, L_h \in R^{m \times n}, L_z \in R^{m \times D}$$，m 與 n 分別為 embedding dimension 與 LSTM dimension。</p>
-</li>
+
+<p>採用 LSTM 模型來生成字詞，而因應圖片的內容不同，所以標題的長度是不相同的，作者將標題 $y $ encoded 成一個 one-hot encoding 的方式來表示</p>
+
+<p><span  class="math">\[ y = \{y_1, \dots, y_C\}, y_i \in R^K \]</span></p>
+
+<p>K 為字詞的數量，C 為標題的長度。下圖為作者這本篇論文所採用的 LSTM 架構：</p>
+
+<p><figure class="image">
+  <center>
+  <img src="./attention_soft_and_hard.png" style="zoom:50%" />
+  <figcaption>
+  圖五(Image credit:[Paper 2])
+  </figcaption>
+  </center>
+  </figure></p>
+
+<p>利用 affine transformation 的方式  <span  class="math">\(T_{s, t} : R^s \rightarrow R^t\)</span> 來表達 LSTM 的公式：</p>
+
+<p><span  class="math">\[
+  \begin{pmatrix}
+  i_t \\
+  f_t \\
+  o_t \\
+  g_t 
+  \end{pmatrix}
+  = 
+  \begin{pmatrix}
+  \sigma \\
+  \sigma \\
+  \sigma \\
+  tanh 
+  \end{pmatrix}
+  T_{D+m+n, n}
+  \begin{pmatrix}
+  Ey_{t-1} \\
+  h_{t-1} \\
+  \hat{Z_t}
+  \end{pmatrix}  \tag1 \\
+  \]</span></p>
+
+<p><span  class="math">\[
+  \begin{align}
+  c_t & = f_t \odot c_{t-1} + i_t \odot g_t \tag2 \\
+  h_t & = o_t \odot tanh(c_t) \tag3
+  \end{align}
+  \]</span></p>
+
+<p>其中</p>
+
+<ul>
+<li><span  class="math">\(i_t\)</span> : input gate</li>
+<li><span  class="math">\(f_t\)</span> : forget gate</li>
+<li><span  class="math">\(o_t\)</span> : ouput gate</li>
+<li><span  class="math">\(g_t\)</span> : canaidate cell</li>
+<li><span  class="math">\(c_t\)</span> : memory cell</li>
+<li><span  class="math">\(h_t\)</span> : hidden state</li>
+<li><span  class="math">\(Ey_{t-1}\)</span> 是詞 <span  class="math">\(y_{t-1}\)</span> 的 embedding vector，<span  class="math">\(E \in R^{m \times k}\)</span> 為 embedding matrix，m 為 embedding dimention</li>
+<li><span  class="math">\(\hat{Z} \in R^D\)</span> 是 context vector，代表捕捉特定區域視覺訊息的上下文向量，與時間 $t$ 有關，所以是一個動態變化的量
+<br></li>
 </ul>
+
+<p>特別注意的是作者在給定 memory state 與 hidden state 的初始值的計算方式使用了兩個獨立的多層感知器(MLP)，其輸入是各個圖像區域特徵的平均，計算公式如下：</p>
+
+<p><span  class="math">\[
+  \begin{align}
+  c_0 = f_{init, c}( \frac{1}{L} \sum_{i}^L a_i) \\
+  h_0 = f_{init, h}( \frac{1}{L} \sum_{i}^L a_i)
+  \end{align}
+  \]</span></p>
+
+<p>以及作者為了計算在 $t$ 時間下所關注的 context vector <span  class="math">\(\hat{Z_t}\)</span> <strong>定義了 attention machansim $\phi$ 為在 $t$ 時間，對於每個區域 $i$ 計算出一個權重 <span  class="math">\(\alpha_{ti}\)</span> 來表示產生字詞 $y_t$ 需要關注哪個圖像區域  annotation vectors $a_i, i=1, \dots, L$ 的訊息。</strong>權重 <span  class="math">\(\alpha_i\)</span> 的產生是透過輸入 annotation vector <span  class="math">\(a_i\)</span> 與前一個時間的 hidden state  $h_{t-1}$ 經由 attention model $f_{att}$ 計算所產生。</p>
+
+<p><span  class="math">\[
+  \begin{align}
+  e_{ti} = f_{att}(a_i, h_{t-1}) \tag4 \\
+  \alpha_{ti} = \frac{exp(e_{ti})}{\sum_{k=1}^{L}exp{e_{tk}}} \tag5 \\
+  \hat{Z_t} = \phi(\{a_i\}, \{\alpha_{i}\}) \tag6
+  \end{align}
+  \]</span></p>
+
+<p>有了上述的資訊，在生成下一個 $t$ 時間的字詞機率可以定義為：</p>
+
+<p><span  class="math">\[ p(y_t | a, y_1, y_2, \dots, y_{t-1}) \propto exp(L_o(Ey_{t-1} + L_hh_t + L_z\hat{Z_t})) \tag7 \]</span></p>
+
+<p>其中 <span  class="math">\(L_o \in R^{K \times m}, L_h \in R^{m \times n}, L_z \in R^{m \times D}\)</span>，m 與 n 分別為 embedding dimension 與 LSTM dimension。</p>
+
 <p>對於函數 $\phi$ 作者提出了兩種 attention  machansim，對應於將權重附加到圖像區域的兩個不同策略。根據上述的講解，搭配下圖為 Xu et al. [Paper 2] 的模型架構解析，更能了解整篇論文模型的細節：</p>
-<!-- raw HTML omitted -->
+
+<figure class="image">
+<center>
+  <img src="./attention_soft_and_hard_example.png" style="zoom:90%" />
+  <figcaption>
+  圖六
+  </figcaption>
+</center>
+</figure>
+
 <h4 id="hard-attention-stochastic-hard-attention">Hard attention (Stochastic Hard Attention)</h4>
+
 <p>在 hard attention 中定義區域變數(location variables) $s_{t, i}$ 為在 t 時間下，模型決定要關注的圖像區域，用 one-hot 的方式來表示，要關注的區域 $i$ 為 1，否則為 0。</p>
-<p>$s_{t, i}$ 被定為一個淺在變數(latent variables)，並且以 **multinoulli distriubtion** 作為參數 $\alpha_{t, i}$ 的分佈，而 $\hat{Z_t}$ 則被視為一個隨機變數，公式如下：
-$$
-p(s_{t, i} = 1 | s_{j, t}, a) = \alpha_{t, i} \tag8\<br>
-$$</p>
-<p>$$
-\hat{Z_t} = \sum_{i} s_{t, i}a_i \tag9
-$$</p>
-<p>定義新的 objective functipn $L_s$ 為 marginal log-likelihood $\text{log }p(y|a)$ 的下界(lower bound)
-$$
+
+<p>$s_{t, i}$ 被定為一個淺在變數(latent variables)，並且以 <strong>multinoulli distriubtion</strong> 作為參數 $\alpha_{t, i}$ 的分佈，而 $\hat{Z_t}$ 則被視為一個隨機變數，公式如下：</p>
+
+<p><span  class="math">\[ p(s_{t, i} = 1 | s_{j, t}, a) = \alpha_{t, i} \tag8 \]</span></p>
+
+<p><span  class="math">\[ \hat{Z_t} = \sum_{i} s_{t, i}a_i \tag9 \]</span></p>
+
+<p>定義新的 objective functipn $L_s$ 為 marginal log-likelihood $\text{log }p(y|a)$ 的下界(lower bound)</p>
+
+<p><span  class="math">\[
 \begin{align}
-L_s &amp; = \sum_s p(s|a)\text{log }p(y|s,a) \<br>
-&amp; \leq \text{log } \sum_s p(s|a)p(y|s,a) \<br>
-&amp; = \text{log }p(y|a)
+L_s & = \sum_s p(s|a)\text{log }p(y|s,a) \\
+& \leq \text{log } \sum_s p(s|a)p(y|s,a) \\
+& = \text{log }p(y|a)
 \end{align}
-$$
-在後續的 $L_s$ 推導求解的過程，作者利用了</p>
+\]</span></p>
+
+<p>在後續的 $L_s$ 推導求解的過程，作者利用了</p>
+
 <ol>
 <li>Monte Carlo 方法來估計梯度，利用 moving average 的方式來減小梯度的變異數</li>
 <li>加入了 multinouilli distriubtion 的 entropy term $H[s]$</li>
 </ol>
+
 <p>透過這兩個方法提升隨機算法的學習，作者在文中也提到，最終的公式其實等價於 <strong>Reinforce learing</strong>。作者在論文中有列出推導的公式，有興趣的可以直接參考論文。</p>
+
 <h4 id="soft-attention-deterministic-soft-attention">Soft attention (Deterministic Soft Attention)</h4>
-<p>Soft attention 所關注的圖像區域並不像 hard attention 在特定時間只關注特定的區域，在 soft attention 中則是每一個區域都關注，只是關注的程度不同。透過對每個圖像區域 $a_{i}$ 與對應的 weight $\alpha_{t,i}$ ，$\hat{Z}_t$ 就可以直接對權重做加總求和，公式如下：
-$$
-\mathbb{E}_{p(s_t|a)}[\hat{Z_t}] = \sum_{i=1}^L \alpha_{t,i}a_i
-$$
-這計算方式將 weight vector $\alpha_i$ 參數化，讓公式是可微的，可以透過 backpropagation 做到 end-to-end 的學習。其方法是參考前面所介紹的 Bahdanau attention 而來。</p>
-<p>由於公式(7)的定義了生成下一個 $t$ 時間的字詞機率，所以在這邊作者定義了 $$n_t = L_o(Ey_{t-1} + L_hh_t + L_z\hat{Z_t})$$，透過 expect context vector</p>
+
+<p>Soft attention 所關注的圖像區域並不像 hard attention 在特定時間只關注特定的區域，在 soft attention 中則是每一個區域都關注，只是關注的程度不同。透過對每個圖像區域 $a_{i}$ 與對應的 weight $\alpha_{t,i}$ ，$\hat{Z}_t$ 就可以直接對權重做加總求和，從 hard attention  轉換到 soft attention 的 context vector：</p>
+
+<p><span  class="math">\[ \hat{Z_t} = \sum_{i} s_{t, i}a_i \implies \mathbb{E}_{p(s_t|a)}[\hat{Z_t}] = \sum_{i=1}^L \alpha_{t,i}a_i \]</span></p>
+
+<p>這計算方式將 weight vector $\alpha_i$ 參數化，讓公式是可微的，可以透過 backpropagation 做到 end-to-end 的學習。其方法是參考前面所介紹的 Bahdanau attention 而來。</p>
+
+<p>由於公式(7)的定義了生成下一個 $t$ 時間的字詞機率，所以在這邊作者定義了 <span  class="math">\(n_t = L_o(Ey_{t-1} + L_hh_t + L_z\hat{Z_t})\)</span>，透過 expect context vector</p>
+
 <p>另外 soft attention 在最後做文字的預測時作者定義了 softmax $k^{th}$ 的 normalized weighted geometric mean。
-$$
+<span  class="math">\(
 \begin{align}
-NWGM[p(y_t=k|a)] &amp; = \frac{\prod_i exp(n_{t,k,i})^{p(s_{t,i} = 1 | a)}}{\sum_j\prod_i exp(n_{t,j,i})^{p(s_{t,i} = 1 | a)}} \<br>
-&amp; = \frac{exp\left(\mathbb{E_{p(s_t) | a}[n_{t,k}]}\right)}{\sum_j exp\left(\mathbb{E_{p(s_t) | a}[n_{t,j}]}\right)}
+NWGM[p(y_t=k|a)] & = \frac{\prod_i exp(n_{t,k,i})^{p(s_{t,i} = 1 | a)}}{\sum_j\prod_i exp(n_{t,j,i})^{p(s_{t,i} = 1 | a)}} \\
+& = \frac{exp\left(\mathbb{E_{p(s_t) | a}[n_{t,k}]}\right)}{\sum_j exp\left(\mathbb{E_{p(s_t) | a}[n_{t,j}]}\right)}
 \end{align}
-$$</p>
+\)</span></p>
+
+<figure class="image">
+<center>
+  <img src="./attention_soft_and_hard_visualization.png" style="zoom:90%" />
+  <figcaption>
+  圖六(Image credit:[Paper 2])
+  </figcaption>
+</center>
+</figure>
+
 <h3 id="global-attention--local-attention">Global Attention &amp; Local Attention</h3>
+
 <p>總結來說：</p>
+
 <blockquote>
 <p>Attention 要實現的就是在 decoder 的不同時刻可以關注不同的圖像區域或是句子中的文字，進而可以生成更合理的詞。</p>
 </blockquote>
+
 <h2 id="refenece">Refenece</h2>
+
 <p>Paper:</p>
+
 <ol>
 <li><a href="https://arxiv.org/pdf/1409.0473.pdf">Dzmitry Bahdanau, KyungHyun Cho Yoshua Bengio, NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO ALIGN AND TRANSLATE(2015)</a></li>
 <li><a href="https://arxiv.org/pdf/1502.03044.pdf">Kelvin Xu, Jimmy Ba, Ryan Kiros, Kyunghyun Cho, Aaron Courville, Ruslan Salakhudinov, Rich Zemel, and Yoshua Bengio, Show, Attend and Tell: Neural Image Caption Generation with Visual Attention(2015)</a></li>
 <li><a href="https://arxiv.org/pdf/1508.04025.pdf">Thang Luong, Hieu Pham, Christopher D. Manning, Effective Approaches to Attention-based Neural Machine Translation(2015)</a></li>
 <li><a href="https://arxiv.org/abs/1904.02874">Sneha Chaudhari, Gungor Polatkan , Rohan Ramanath , Varun Mithal, An Attentive Survey of Attention Models(2019)</a></li>
 </ol>
+
 <p>Illustrate:</p>
+
 <ol>
 <li><a href="https://zhuanlan.zhihu.com/p/37601161h">https://zhuanlan.zhihu.com/p/37601161h</a></li>
 <li><a href="https://zhuanlan.zhihu.com/p/31547842">https://zhuanlan.zhihu.com/p/31547842</a></li>
@@ -811,13 +942,17 @@ $$</p>
 <li><a href="https://jhui.github.io/2017/03/15/Soft-and-hard-attention/">https://jhui.github.io/2017/03/15/Soft-and-hard-attention/</a></li>
 <li><a href="http://download.mpi-inf.mpg.de/d2/mmalinow-slides/attention_networks.pdf">http://download.mpi-inf.mpg.de/d2/mmalinow-slides/attention_networks.pdf</a></li>
 </ol>
+
 <p>Tutorial:</p>
+
 <ol>
 <li><a href="https://github.com/tensorflow/nmt#background-on-the-attention-mechanism">Neural Machine Translation (seq2seq) Tutorial</a></li>
 <li><a href="https://www.tensorflow.org/tutorials/text/transformerG">https://www.tensorflow.org/tutorials/text/transformerG</a></li>
 <li><a href="http://nlp.seas.harvard.edu/2018/04/03/attention.html">Guide annotating the paper with PyTorch implementation</a></li>
 </ol>
+
 <p>Visualization:</p>
+
 <ol>
 <li><a href="https://github.com/jessevig/bertviz">https://github.com/jessevig/bertviz</a></li>
 </ol>
