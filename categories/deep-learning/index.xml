@@ -255,7 +255,9 @@ a(s_{i-1}, h_j) = v_a^Ttanh(W_aS_{i-1} + U_ah_j) \tag8
   \end{align}
   \]&lt;/span&gt;&lt;/p&gt;
 
-&lt;p&gt;以及作者為了計算在 $t$ 時間下所關注的 context vector &lt;span  class=&#34;math&#34;&gt;\(\hat{Z_t}\)&lt;/span&gt; &lt;strong&gt;定義了 attention machansim $\phi$ 為在 $t$ 時間，對於每個區域 $i$ 計算出一個權重 &lt;span  class=&#34;math&#34;&gt;\(\alpha_{ti}\)&lt;/span&gt; 來表示產生字詞 $y_t$ 需要關注哪個圖像區域  annotation vectors $a_i, i=1, \dots, L$ 的訊息。&lt;/strong&gt;權重 &lt;span  class=&#34;math&#34;&gt;\(\alpha_i\)&lt;/span&gt; 的產生是透過輸入 annotation vector &lt;span  class=&#34;math&#34;&gt;\(a_i\)&lt;/span&gt; 與前一個時間的 hidden state  $h_{t-1}$ 經由 attention model $f_{att}$ 計算所產生。&lt;/p&gt;
+&lt;p&gt;以及作者為了計算在 $t$ 時間下所關注的 context vector &lt;span  class=&#34;math&#34;&gt;\(\hat{Z_t}\)&lt;/span&gt; &lt;strong&gt;定義了 attention machansim $\phi$ 為在 $t$ 時間，對於每個區域 $i$ 計算出一個權重 &lt;span  class=&#34;math&#34;&gt;\(\alpha_{ti}\)&lt;/span&gt; 來表示產生字詞 $y_t$ 需要關注哪個圖像區域  annotation vectors $a_i, i=1, \dots, L$ 的訊息。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;權重 &lt;span  class=&#34;math&#34;&gt;\(\alpha_i\)&lt;/span&gt; 的產生是透過輸入 annotation vector &lt;span  class=&#34;math&#34;&gt;\(a_i\)&lt;/span&gt; 與前一個時間的 hidden state  $h_{t-1}$ 經由 attention model $f_{att}$ 計算所產生。&lt;/p&gt;
 
 &lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
   \begin{align}
@@ -267,10 +269,11 @@ a(s_{i-1}, h_j) = v_a^Ttanh(W_aS_{i-1} + U_ah_j) \tag8
 
 &lt;p&gt;有了上述的資訊，在生成下一個 $t$ 時間的字詞機率可以定義為：&lt;/p&gt;
 
-&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\(
-p(y_t | a, y_1, y_2, \dots, y_{t-1}) \propto exp(L_o(Ey_{t-1} + L_hh_t + L_z\hat{Z_t})) \tag7
-  \)&lt;/span&gt;
-  其中 &lt;span  class=&#34;math&#34;&gt;\(L_o \in R^{K \times m}, L_h \in R^{m \times n}, L_z \in R^{m \times D}\)&lt;/span&gt;，m 與 n 分別為 embedding dimension 與 LSTM dimension。&lt;/p&gt;
+&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
+  p(y_t | a, y_1, y_2, \dots, y_{t-1}) \propto exp(L_o(Ey_{t-1} + L_hh_t + L_z\hat{Z_t})) \tag7
+  \]&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;其中 &lt;span  class=&#34;math&#34;&gt;\(L_o \in R^{K \times m}, L_h \in R^{m \times n}, L_z \in R^{m \times D}\)&lt;/span&gt;，m 與 n 分別為 embedding dimension 與 LSTM dimension。&lt;/p&gt;
 
 &lt;p&gt;對於函數 $\phi$ 作者提出了兩種 attention  machansim，對應於將權重附加到圖像區域的兩個不同策略。根據上述的講解，搭配下圖為 Xu et al. [Paper 2] 的模型架構解析，更能了解整篇論文模型的細節：&lt;/p&gt;
 
@@ -297,7 +300,7 @@ p(s_{t, i} = 1 | s_{j, t}, a) = \alpha_{t, i} \tag8
 \hat{Z_t} = \sum_{i} s_{t, i}a_i \tag9
 \]&lt;/span&gt;&lt;/p&gt;
 
-&lt;p&gt;定義新的 objective functipn $L_s$ 為 marginal log-likelihood $\text{log }p(y|a)$ 的下界(lower bound)&lt;/p&gt;
+&lt;p&gt;定義新的 objective function $L_s$ 為 marginal log-likelihood $\text{log }p(y|a)$ 的下界(lower bound)&lt;/p&gt;
 
 &lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
 \begin{align}
@@ -318,11 +321,13 @@ L_s &amp; = \sum_s p(s|a)\text{log }p(y|s,a) \\
 
 &lt;h4 id=&#34;soft-attention-deterministic-soft-attention&#34;&gt;Soft attention (Deterministic Soft Attention)&lt;/h4&gt;
 
-&lt;p&gt;Soft attention 所關注的圖像區域並不像 hard attention 在特定時間只關注特定的區域，在 soft attention 中則是每一個區域都關注，只是關注的程度不同。透過對每個圖像區域 $a_{i}$ 與對應的 weight $\alpha_{t,i}$ ，$\hat{Z}_t$ 就可以直接對權重做加總求和，從 hard attention  轉換到 soft attention 的 context vector：
-&lt;span  class=&#34;math&#34;&gt;\(
+&lt;p&gt;Soft attention 所關注的圖像區域並不像 hard attention 在特定時間只關注特定的區域，在 soft attention 中則是每一個區域都關注，只是關注的程度不同。透過對每個圖像區域 $a_{i}$ 與對應的 weight $\alpha_{t,i}$ ，$\hat{Z}_t$ 就可以直接對權重做加總求和，從 hard attention  轉換到 soft attention 的 context vector：&lt;/p&gt;
+
+&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
 \hat{Z_t} = \sum_{i} s_{t, i}a_i \implies \mathbb{E}{p(s_t|a)}[\hat{Z_t}] = \sum_{i=1}^L \alpha_{t,i}a_i
-\)&lt;/span&gt;
-這計算方式將 weight vector $\alpha_i$ 參數化，讓公式是可微的，可以透過 backpropagation 做到 end-to-end 的學習。其方法是參考前面所介紹的 Bahdanau attention 而來。&lt;/p&gt;
+\]&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;這計算方式將 weight vector $\alpha_i$ 參數化，讓公式是可微的，可以透過 backpropagation 做到 end-to-end 的學習。其方法是參考前面所介紹的 Bahdanau attention 而來。&lt;/p&gt;
 
 &lt;p&gt;作者在這邊提出三個理論：&lt;/p&gt;
 
@@ -332,13 +337,14 @@ L_s &amp; = \sum_s p(s|a)\text{log }p(y|s,a) \\
 &lt;li&gt;根據公式(7)定義 &lt;span  class=&#34;math&#34;&gt;\(n_t = L_o(Ey_{t-1} + L_hh_t + L_z\hat{Z_t})\)&lt;/span&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;所以 soft attention 在最後做文字的預測時作者定義了 softmax $k^{th}$ 的 normalized weighted geometric mean。
-&lt;span  class=&#34;math&#34;&gt;\(
+&lt;p&gt;所以 soft attention 在最後做文字的預測時作者定義了 softmax $k^{th}$ 的 normalized weighted geometric mean。&lt;/p&gt;
+
+&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
 \begin{align}
 NWGM[p(y_t=k|a)] &amp; = \frac{\prod_i exp(n_{t,k,i})^{p(s_{t,i} = 1 | a)}}{\sum_j\prod_i exp(n_{t,j,i})^{p(s_{t,i} = 1 | a)}} \\
 &amp; = \frac{exp\left(\mathbb{E_{p(s_t) | a}[n_{t,k}]}\right)}{\sum_j exp\left(\mathbb{E_{p(s_t) | a}[n_{t,j}]}\right)}
 \end{align}
-\)&lt;/span&gt;&lt;/p&gt;
+\]&lt;/span&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
 \mathbb{E}[n_t] =  L_o(Ey_{t-1} + L_h\mathbb{E}[h_t] + L_z\mathbb{E}[\hat{Z_t}])
