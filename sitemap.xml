@@ -33,6 +33,21 @@
   </url>
   
   <url>
+    <loc>https://roymondliao.github.io/tags/global-attention/</loc>
+    <lastmod>2020-02-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://roymondliao.github.io/tags/hard-attention/</loc>
+    <lastmod>2020-02-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://roymondliao.github.io/tags/local-attention/</loc>
+    <lastmod>2020-02-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://roymondliao.github.io/categories/nlp/</loc>
     <lastmod>2020-02-28T00:00:00+00:00</lastmod>
   </url>
@@ -49,6 +64,11 @@
   
   <url>
     <loc>https://roymondliao.github.io/</loc>
+    <lastmod>2020-02-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://roymondliao.github.io/tags/soft-attention/</loc>
     <lastmod>2020-02-28T00:00:00+00:00</lastmod>
   </url>
   
