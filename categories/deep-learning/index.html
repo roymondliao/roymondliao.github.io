@@ -152,7 +152,7 @@
   <meta property="og:description" content="Machine Learning Engineer / Deep Learning Engineer / Data Scientist"><meta property="og:image" content="https://roymondliao.github.io/img/icon-192.png">
   <meta property="twitter:image" content="https://roymondliao.github.io/img/icon-192.png"><meta property="og:locale" content="en-us">
   
-    <meta property="og:updated_time" content="2020-02-28T00:00:00&#43;00:00">
+    <meta property="og:updated_time" content="2020-09-25T00:00:00&#43;00:00">
   
 
   
@@ -411,6 +411,18 @@
   
 
   
+  
+  <div>
+    <h2><a href="/post/2019-12-16_transformer_part3/">Transformer Part 3 - Transformer</a></h2>
+    <div class="article-style">
+      
+      Transformer 拖延了很久，終於有時間拉把欠的部分補齊了，來講在 NLP 已經廣為人知的 Transformer。在開始介紹前先來附上 transformer 的結構，如下圖：
+  Image credit: Lil's Log    在這裡我會把 transformer 拆解如下面幾個主題來解說：  Embedding and Softmax Positional Encoding Scaled dot-product attention Multi-head attention Postition-wise Feed-Forward Networks Encoder &amp; Decoder Optimizeer   Embedding and Softmax Embedding and softmax 這個部分應該比較少看到有人在文章中提出，其實光看字面的意思應該不難理解主要要做些什麼事情，但在論文中提到的主要差異點是說，在模型中在 embedding layer 與 pre-softmax linear transformation layer 使用共享參數矩陣的方式，而在 embedding layer 乘上一個縮放權重 $\sqrt{d_{model}}$，共享參數矩陣的想法可以參考 Using the Output Embedding to Improve Language Models 篇所提出的概念
+ 補充說明：
+在 transformer 中借鏡了 Using the Output Embedding to Improve Language Models 的 weight tying 的想法，把 embedding and pre-softmax 的 weight 共享，因為在 input 的 sequence 經過 embedding 會得到 word vector，在經過 decoder 計算後，也得到一樣維度的 vector，而在要進入 softmax 前，再乗上一個 weight (在 paper 稱這樣的 weight 為 output embedding)，這樣的操作方式有效的提升 language models。
+      
+    </div>
+  </div>
   
   <div>
     <h2><a href="/post/2019-12-16_transformer_part2/">Transformer Part 2 - Attention</a></h2>
