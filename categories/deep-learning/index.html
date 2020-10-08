@@ -449,6 +449,22 @@
   </div>
   
   <div>
+    <h2><a href="/post/2019-10-03_lookahead/">Lookahead Optimizer: k steps forward, 1 step back</a></h2>
+    <div class="article-style">
+      
+      Introduction 在目前的 optimizer 分為兩個主要發展方向：
+ Adaptive learning rate, such as AdaGrad and Adam Accelerated schema (momentum), such as Polyak heavyball and Nesterov momentum  以上都是透過累積過往梯度下降所得到的結果來達到收斂，然而要獲得好的結果，都需要一些超參數的調整。
+Lookahead method：
+ 是一種新的優化方法，採用兩個不同的權重，分別為 fast weights 與 slow weights。fast weights 是使用一般常見的 optimizer 當作 inner optimizer 先進行 k 次的計算後得到的結果與預先保留的 slow weights 進行線性插值(linearly interpolating)來更新權重 ，更新後的 wieight 為新的 slow weights 並推動之前的 fast weights 往前探索，以這樣的方式進行迭代。
+ 在使用不同的 inner optimizer 下，像是 SGD 或是 Adam，減少了對超參數調整的需求，並且可以以最小的計算需求確保在不同的深度學習任務中加快收斂速度。
+  
+演算過程 :
+Step 1 : 先設定 $\phi$ 的初始值，以及選定 objective function $L$ Step 2 : 確定更新週期 $k$ 值、slow weight 的更新步伐 $\alpha $ 以及 optimizer $A$ Step 3 : 更新 fast weight $\theta$ ，$ \space \theta_{t,0} \leftarrow \phi_{t-1}, t=1,2,\dots $ Step 4 : 利用 optimizer $A$ 迭代 $k$ 次更新，由 $\theta_{t, i}$ 更新到 $\theta_{t, k}, i=1, 2, \dots, k$ Step 5 : 更新 slow weight $\phi_{k} \leftarrow \phi_{k-1} + \alpha\left(\theta_{t, k} - \phi_{t-1}\right)$ 重複 Step 3 - Step 5 直至收斂。
+      
+    </div>
+  </div>
+  
+  <div>
     <h2><a href="/post/2019-05-14_faster_rcnn/">Faster R-CNN</a></h2>
     <div class="article-style">
       
@@ -470,6 +486,16 @@
 Word embeddings 在將字詞轉換成向量的實作中，大家常用的方法肯定是 one-hot-encoding，但是 one-hot-encoding 在計算上卻是非常沒有效率的方式，如果一篇文章中總共有50,000的單詞，用 one-hot-encoding 來表示某個單詞的話，將會變成1與49999個0的向量表示。就如同下圖表示，如果要做 matrix multiplication 的話，那將會浪費許多的計算資源。
 透過 Word Embedding1 可以有效的解決上述的問題。 Embedding 可以想成與 full connected layer 一樣，將這個 layer 稱做為 embedding layer ， weight 則稱為 embedding weights。藉由這樣的概念，可以省略掉 multiplication 的過程，直接透過 hidden layer 的 weigth matrix 來當作輸入字詞的 word vector。之所以可以這樣來執行是因為在處理 one-hot-encoding 與 weight matrix 相乘的結果，其實就是 matrix 所對應&quot;詞&quot;的索引值所得到的結果。
 舉例來說： &quot;heart&quot; 的在 one-hot-encoding 的索引位置為958，我們直接拿取 heart 所對應 hidden layer 的值，也就是 embedding weights 的第958列(row)，這樣的過程叫做 embedding lookup，而 hidden layer 的神經元數量則為 embedding dimension。
+      
+    </div>
+  </div>
+  
+  <div>
+    <h2><a href="/post/2019-04-10_dropblock/">DropBlock</a></h2>
+    <div class="article-style">
+      
+      Dropout 相關方法：
+ Dropout: 完全隨機丟棄 neuron Sparital Dropout: 按 channel 隨機丟棄 Stochastic Depth: 按 res block 隨機丟棄 DropBlock: 每個 feature map 上按 spatial square 隨機丟棄 Cutout: 在 input layer 按 spatial square 隨機丟棄 DropConnect: 只在連接處丟，不丟 neuron DropBlock  Idea 一般的 Dropout 都是用在 fully connection layer，而在 convolutional network 上使用 dropout 的意義並不大，該文章則認為因為在每一個 feature maps 的位置都具有一個 receptive field，僅對單一像素位置進行 dropout 並不能降低 feature maps 學習特徵範圍，也就是說，network 能夠特過相鄰位置的特徵值去學習，也不會特別加強去學習保留下來的訊息。既然對於單獨的對每個位置進行 dropout 並無法提高 network 本身的泛化能力，那就以區塊的概念來進行 dropout，反而更能讓 network 去學習保留下來的訊息，而加重特徵的權重。 Method  不同 feature maps 共享相同的 dropblock mask，在相同的位置丟棄訊息 每一層的 feature maps 使用各自的 dropblock mask  Parameters block size: 控制要讓 value of feature maps 歸為 0 的區塊大小 $ \gamma $: 用來控制要丟棄特徵的數量 keep_prob: 與 dropout 的參數相同 Code implement https://github.
       
     </div>
   </div>

@@ -1023,6 +1023,102 @@ a_t(s) = align(h_t,\bar{h_s})exp\left(-\frac{(s-p_t)^2}{2\sigma^2}\right)
     </item>
     
     <item>
+      <title>Lookahead Optimizer: k steps forward, 1 step back</title>
+      <link>https://roymondliao.github.io/post/2019-10-03_lookahead/</link>
+      <pubDate>Thu, 03 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.github.io/post/2019-10-03_lookahead/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+
+&lt;p&gt;在目前的 optimizer 分為兩個主要發展方向：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Adaptive learning rate, such as AdaGrad and Adam&lt;/li&gt;
+&lt;li&gt;Accelerated schema (momentum), such as Polyak heavyball and Nesterov momentum&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;以上都是透過累積過往梯度下降所得到的結果來達到收斂，然而要獲得好的結果，都需要一些超參數的調整。&lt;/p&gt;
+
+&lt;p&gt;Lookahead method：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;是一種新的優化方法，採用兩個不同的權重，分別為 fast weights 與 slow weights。fast weights 是使用一般常見的 optimizer 當作 inner optimizer 先進行 &lt;code&gt;k&lt;/code&gt; 次的計算後得到的結果與預先保留的 slow weights 進行線性插值(linearly interpolating)來更新權重 ，更新後的 wieight 為新的 slow weights 並推動之前的 fast weights 往前探索，以這樣的方式進行迭代。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;在使用不同的 inner optimizer 下，像是 SGD 或是 Adam，減少了對超參數調整的需求，並且可以以最小的計算需求確保在不同的深度學習任務中加快收斂速度。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;lookahead_figure_1.png&#34; alt=&#34;lookahead_figure_1&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;演算過程 :&lt;/p&gt;
+
+&lt;p&gt;Step 1 : 先設定 $\phi$ 的初始值，以及選定 objective function $L$ &lt;br&gt;
+Step 2 : 確定更新週期 $k$ 值、slow weight 的更新步伐 $\alpha $ 以及 optimizer $A$ &lt;br&gt;
+Step 3 : 更新 fast weight $\theta$ ，$ \space \theta_{t,0} \leftarrow \phi_{t-1}, t=1,2,\dots $ &lt;br&gt;
+Step 4 : 利用 optimizer $A$ 迭代 $k$ 次更新，由 $\theta_{t, i}$ 更新到 $\theta_{t, k}, i=1, 2, \dots, k$ &lt;br&gt;
+Step 5 : 更新 slow weight $\phi_{k} \leftarrow \phi_{k-1} + \alpha\left(\theta_{t, k} - \phi_{t-1}\right)$ &lt;br&gt;
+重複 Step 3 - Step 5 直至收斂。&lt;/p&gt;
+
+&lt;p&gt;其可以想像身處在山脈的頂端，而周邊都是山頭林立，有高有低，其中一座山可通往山腳下，其他都只是在山中繞來繞去，無法走下山。如果親自探索是非常困難，因為在選定一條路線的同時，必須要放棄其他路線，直到最終找到正確的通路，但是如果我們在山頂留下一位夥伴，在其狀況看起來不妙時及時把我們叫回，這樣能幫助我們在尋找出路的時候得到快速的進展，因此全部地形的探索速度將更快，而發生迷路的狀況也更低。&lt;/p&gt;
+
+&lt;h2 id=&#34;method&#34;&gt;Method&lt;/h2&gt;
+
+&lt;p&gt;如同 Algorithm 1 所表示的內循環(inner loop)的 optimizer A 在迭代 $k$ 次後，在 weight space 中，slow weights 的更新為與 fast weights k的線性插值(linearly interpolating)，$\theta - \phi$. 我們將 slow weights learning rate 表示為 $\alpha$, 在 slow weights 更新後，fast weights 會重新設定為 slow weights 的位置。&lt;/p&gt;
+
+&lt;p&gt;Standard optimization method typically require carefully tuned learning rate to prevent &lt;strong&gt;oscillation&lt;/strong&gt; and &lt;strong&gt;slow converagence&lt;/strong&gt;. However, lookahead benefits from a larger learning rate in the inner loop. When oscillation in  the high curvature direction, the fast weights updates make rapid progress along the low curvature direction. The slow weights help smooth out the oscillation throught the parameter interpolation.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Slow weights trajectory&lt;/strong&gt; We can characterize the trajectory of the slow weights as an exponential moving average (EMA) of the final fast weights within each inner-loop, regardless of the inner optimizer. After k inner-loop steps we have:&lt;/p&gt;
+
+&lt;p&gt;&lt;span  class=&#34;math&#34;&gt;\[
+\begin{align}
+\phi_{t+1} &amp;= \phi_{t} + \alpha\left(\theta_{t, k} - \phi_{t}\right) \\
+&amp;= \left(1-\alpha\right)\phi_{t} + \alpha\theta_{t, k} \\
+&amp;= \left(1-\alpha\right)\left(\phi_{t-1} + \alpha\left(\theta_{t-1, k} - \phi_{t-1}\right) \right) +  \alpha\theta_{t, k} \\
+&amp; \vdots \\
+&amp;= \alpha\left[\theta_{t, k} + (1 - \alpha)\theta_{t-1, k} + \dots + (1 - \alpha)^{t-1}\theta_{0, k} \right]  + (1- \alpha)^{t}\theta_{0}
+\end{align}
+\]&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Fast weights trajectory&lt;/strong&gt; Within each inner-loop, the trajectory of the fast weight depends on the choice of underlying optimizer. Given an optimization algorithm A that takes in an objective function $L$ and the current mini-batch training examples $d$, we have the update rule for the fast weights:
+&lt;span  class=&#34;math&#34;&gt;\(
+\theta_{t, i+1} = \theta_{t, i} + A\left(L, \theta_{t, i-1}, d\right)
+\)&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;We have the choice of maintaining, interpolating, or resetting the internal state (e.g. momentum) of the inner optimizer. Every choice improves convergence of the inner optimizer.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Computational complexity&lt;/strong&gt; Lookahead has a constant computational overhead due to parameter copying and basic arithmetic operations that is amortized across the k inner loop updates. The number of operations is $O\left(\frac{k+1}{k}\right)$ times that of the inner optimizer. Lookahead maintains a single additional copy of the number of learnable parameters in the model.&lt;/p&gt;
+
+&lt;h2 id=&#34;empirical-analysis&#34;&gt;Empirical Analysis&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;Robustness to inner optimization algorithm $k$ and $\alpha$&lt;/strong&gt; 在論文中使用 &lt;strong&gt;CIFAR&lt;/strong&gt; 的資料測試，Lookahead 能夠在不同的超參數設定下保有快速收斂的結果。在實驗中固定 slow weight step size $\alpha = 0.5$ 與 $k=5$，inner optimizer 選擇使用 SGD optimizer，測試不同的 learning rate 與 momentum 參數，結果顯示如下:&lt;/p&gt;
+
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;lookahead_figure_8.png&#34; alt=&#34;lookahead_figure_8&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;同時實驗了在超參數固定的狀況下，inner optimizer 的 fast weights 在歷經不同 $k$ 與 $\alpha$ 的設定，結果如下圖:&lt;/p&gt;
+
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;lookahead_figure_9.png&#34; alt=&#34;lookahead_figure_9&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Inner loop and outer loop evalation&lt;/strong&gt; 為了更了解 Lookahead 的在 fast weights 與 slow weights 的更新狀況，透過 test accuracy 的結果來了解 weights 變化的趨勢。如下圖，在每次 inner loop 更新 fast weights 的情況下，對 test accuracy 造成大幅的下降，反映了在每次 inner loop 的更新都具有 high variance 的情況產生。然而，在 slow weights 的更新階段，降低了 variance 的影響，並且慢慢調整 test accuracy 的準確度。&lt;/p&gt;
+
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;lookahead_figure_10.png&#34; alt=&#34;lookahead_figure_10&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;code-implement&#34;&gt;Code implement&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://github.com/bojone/keras_lookahead&#34;&gt;https://github.com/bojone/keras_lookahead&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://github.com/lifeiteng/Optimizers&#34;&gt;https://github.com/lifeiteng/Optimizers&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;reference&#34;&gt;Reference&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://arxiv.org/pdf/1907.08610v1.pdf&#34;&gt;Lookahead Optimizer: k steps forward, 1 step back&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.infoq.cn/article/Q7gBMEHNrd2rkjqV6CM3?utm_source=rss&amp;amp;utm_medium=article&#34;&gt;https://www.infoq.cn/article/Q7gBMEHNrd2rkjqV6CM3?utm_source=rss&amp;amp;utm_medium=article&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.infoq.cn/article/Q7gBMEHNrd2rkjqV6CM3&#34;&gt;https://www.infoq.cn/article/Q7gBMEHNrd2rkjqV6CM3&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Faster R-CNN</title>
       <link>https://roymondliao.github.io/post/2019-05-14_faster_rcnn/</link>
       <pubDate>Tue, 14 May 2019 00:00:00 +0000</pubDate>
@@ -1350,6 +1446,149 @@ P\left( w_{i} \right) = \left( \sqrt{\frac{Z(w_{i})}{0.001} + 1} \right) \cdot \
  &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:1&#34;&gt;&lt;sup&gt;^&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>DropBlock</title>
+      <link>https://roymondliao.github.io/post/2019-04-10_dropblock/</link>
+      <pubDate>Wed, 10 Apr 2019 00:00:00 +0000</pubDate>
+      <guid>https://roymondliao.github.io/post/2019-04-10_dropblock/</guid>
+      <description>&lt;p&gt;Dropout 相關方法：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Dropout: 完全隨機丟棄 neuron&lt;/li&gt;
+&lt;li&gt;Sparital Dropout: 按 channel 隨機丟棄&lt;/li&gt;
+&lt;li&gt;Stochastic Depth: 按 res block 隨機丟棄&lt;/li&gt;
+&lt;li&gt;DropBlock: 每個 feature map 上按 spatial square 隨機丟棄&lt;/li&gt;
+&lt;li&gt;Cutout: 在 input layer 按 spatial square 隨機丟棄&lt;/li&gt;
+&lt;li&gt;DropConnect: 只在連接處丟，不丟 neuron&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://mp.weixin.qq.com/s?__biz=MzA3MzI4MjgzMw==&amp;amp;mid=2650751601&amp;amp;idx=5&amp;amp;sn=6ba09bea3acb116eb9f4902af5261e72&amp;amp;chksm=871a860fb06d0f194c4c0452e53d21cc6c537b4e33a5aea4e3c0a067db0c46d41168afabcc0c&amp;amp;scene=21#wechat_redirect&#34;&gt;DropBlock&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Idea&lt;/li&gt;
+&lt;li&gt;一般的 Dropout 都是用在 fully connection layer，而在 convolutional network 上使用 dropout 的意義並不大，該文章則認為因為在每一個 feature maps 的位置都具有一個 &lt;a href=&#34;https://zhuanlan.zhihu.com/p/28492837&#34;&gt;receptive field&lt;/a&gt;，僅對單一像素位置進行 dropout 並不能降低 feature maps 學習特徵範圍，也就是說，network 能夠特過&lt;strong&gt;相鄰位置&lt;/strong&gt;的特徵值去學習，也不會特別加強去學習保留下來的訊息。既然對於單獨的對每個位置進行 dropout 並無法提高 network 本身的泛化能力，那就以區塊的概念來進行 dropout，反而更能讓 network 去學習保留下來的訊息，而加重特徵的權重。&lt;/li&gt;
+&lt;li&gt;Method
+
+&lt;ul&gt;
+&lt;li&gt;不同 feature maps 共享相同的 dropblock mask，在相同的位置丟棄訊息&lt;/li&gt;
+&lt;li&gt;每一層的 feature maps 使用各自的 dropblock mask&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Parameters&lt;/li&gt;
+&lt;li&gt;block size: 控制要讓 value of feature maps 歸為 0 的區塊大小&lt;/li&gt;
+&lt;li&gt;$ \gamma $: 用來控制要丟棄特徵的數量&lt;/li&gt;
+&lt;li&gt;keep_prob: 與 dropout 的參數相同&lt;/li&gt;
+&lt;li&gt;Code implement&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/DHZS/tf-dropblock/blob/master/nets/dropblock.py&#34;&gt;https://github.com/DHZS/tf-dropblock/blob/master/nets/dropblock.py&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/shenmbsw/tensorflow-dropblock/blob/master/dropblock.py&#34;&gt;https://github.com/shenmbsw/tensorflow-dropblock/blob/master/dropblock.py&lt;/a&gt;&lt;br&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Bernoulli distrubtion:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; tensorflow &lt;span style=&#34;color:#f92672&#34;&gt;as&lt;/span&gt; tf
+tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;reset_default_graph()
+&lt;span style=&#34;color:#66d9ef&#34;&gt;with&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Graph()&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;as_default() &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; g: 
+    mean &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;placeholder(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;float32, [None])
+    input_shape &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;placeholder(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;float32, [None, &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;])
+    shape &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;stack(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;shape(input_shape))
+    &lt;span style=&#34;color:#75715e&#34;&gt;# method 1&lt;/span&gt;
+    &lt;span style=&#34;color:#75715e&#34;&gt;# 用 uniform distributions 產生值，再透過 sign 轉為 [-1, 1], 最後透過 relu 將 -1 轉換為 0&lt;/span&gt;
+    uniform_dist &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;random_uniform(shape, minval&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, maxval&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, dtype&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;float32)
+    sign_dist &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sign(mean &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; uniform_dist)
+    bernoulli &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;nn&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;relu(sign_dist)
+    &lt;span style=&#34;color:#75715e&#34;&gt;# method 2&lt;/span&gt;
+    &lt;span style=&#34;color:#75715e&#34;&gt;# probs 可以為多個 p, 對應 shape, 產生 n of p 的 bernoulli distributions&lt;/span&gt;
+    noise_dist &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;distributions&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Bernoulli(probs&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;0.1&lt;/span&gt;])
+    mask &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; noise_dist&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sample(shape)
+&lt;span style=&#34;color:#66d9ef&#34;&gt;with&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Session(graph&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;g) &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; sess:
+    tmp_array &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; np&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;zeros([&lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;], dtype&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;np&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;uint8) 
+    tmp_array[:,:&lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [&lt;span style=&#34;color:#ae81ff&#34;&gt;255&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;] &lt;span style=&#34;color:#75715e&#34;&gt;#Orange left side array[:,100:] = [0, 0, 255] #Blue right side&lt;/span&gt;
+    batch_array &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; np&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;array([tmp_array]&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;)
+    uniform, sign, bern &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; sess&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;run([uniform_dist, sign_dist, bernoulli], feed_dict&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;{mean: [&lt;span style=&#34;color:#ae81ff&#34;&gt;1.&lt;/span&gt;], input_shape:batch_array})    &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;DropBlock implement:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; tensorflow &lt;span style=&#34;color:#f92672&#34;&gt;as&lt;/span&gt; tf
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; tensorflow.python.keras &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; backend &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; K
+&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;DropBlock&lt;/span&gt;(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;keras&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;layers&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Layer) :
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, keep_prob, block_size, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kwargs):
+        super(DropBlock, self)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;__init__(&lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kwargs)
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;keep_prob &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; float(keep_prob) &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; isinstance(keep_prob, int) &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; keep_prob
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; int(block_size)
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;compute_output_shape&lt;/span&gt;(self, input_shape):
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; input_shape
+    
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;build&lt;/span&gt;(self, input_shape):
+        _, self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;h, self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;w, self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;channel &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; input_shape&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;as_list()
+        &lt;span style=&#34;color:#75715e&#34;&gt;# pad the mask&lt;/span&gt;
+        bottom &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; right &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;//&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+        top &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; left &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; bottom
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;padding &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;], [top, bottom], [left, right], [&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;]]
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;set_keep_prob()
+        super(DropBlock, self)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;build(input_shape)
+        
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;set_keep_prob&lt;/span&gt;(self, keep_prob&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None):
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34;This method only support Eager Execution&amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; keep_prob &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;not&lt;/span&gt; None:
+            self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;keep_prob &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; keep_prob
+        w, h &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;to_float(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;w), tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;to_float(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;h)
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;gamma &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (&lt;span style=&#34;color:#ae81ff&#34;&gt;1.&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;keep_prob) &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; (w &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; h) &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt; (self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt; ((w &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; (h &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;))
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;_create_mask&lt;/span&gt;(self, input_shape):
+        sampling_mask_shape &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;stack([input_shape[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;], 
+                                        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;h &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, 
+                                        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;w &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;,
+                                        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;channel])
+        mask &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; DropBlock&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_bernoulli(sampling_mask_shape, self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;gamma)
+        &lt;span style=&#34;color:#75715e&#34;&gt;# 擴充行列，並給予0值，依據 paddings 參數給予的上下左右值來做擴充，mode有三種模式可選，可參考 document&lt;/span&gt;
+        mask &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;pad(tensor&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;mask, paddings&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;padding, mode&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;CONSTANT&amp;#39;&lt;/span&gt;) 
+        mask &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;nn&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;max_pool(value&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;mask, 
+                              ksize&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size, self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;block_size, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;], 
+                              strides&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;], 
+                              padding&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;SAME&amp;#39;&lt;/span&gt;)
+        mask &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; mask
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; mask
+        
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;@staticmethod&lt;/span&gt;    
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;_bernoulli&lt;/span&gt;(shape, mean):
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;nn&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;relu(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sign(mean &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;random_uniform(shape, minval&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, maxval&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, dtype&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;float32)))
+    
+    &lt;span style=&#34;color:#75715e&#34;&gt;# The call function is a built-in function in &amp;#39;tf.keras&amp;#39;.&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;call&lt;/span&gt;(self, inputs, training&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None, scale&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kwargs):
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;drop&lt;/span&gt;():
+            mask &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_create_mask(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;shape(inputs))
+            output &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; inputs &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; mask
+            output &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;cond(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;constant(scale, dtype&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;bool) &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; isinstance(scale, bool) &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; scale,
+                             true_fn&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;lambda&lt;/span&gt;: output &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;to_float(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;size(mask)) &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;reduce_sum(mask),
+                             false_fn&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;lambda&lt;/span&gt;: output)
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; output
+        
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; training &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; None:
+            training &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; K&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;learning_phase()
+        output &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;cond(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;logical_or(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;logical_not(training), tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;equal(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;keep_prob, &lt;span style=&#34;color:#ae81ff&#34;&gt;1.0&lt;/span&gt;)),
+                         true_fn&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;lambda&lt;/span&gt;: inputs,
+                         false_fn&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;drop)
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; output&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Testing&lt;/span&gt;
+a &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;placeholder(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;float32, [None, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;])
+keep_prob &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;placeholder(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;float32)
+training &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;placeholder(tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;bool)
+
+drop_block &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; DropBlock(keep_prob&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;keep_prob, block_size&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;)
+b &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; drop_block(inputs&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;a, training&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;training)
+
+sess &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Session()
+feed_dict &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {a: np&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;ones([&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;]), keep_prob: &lt;span style=&#34;color:#ae81ff&#34;&gt;0.8&lt;/span&gt;, training: True}
+c &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; sess&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;run(b, feed_dict&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;feed_dict)
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(c[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, :, :, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;])&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://mp.weixin.qq.com/s?__biz=MzA3MzI4MjgzMw==&amp;amp;mid=2650752571&amp;amp;idx=1&amp;amp;sn=8417645148afd8eebdb79c91b37a7409&amp;amp;chksm=871a8245b06d0b53115d79f1ce42bc5a03aad5d038fe51c2f237c5848c41c51c5b756aaa8937&amp;amp;scene=21#wechat_redirect&#34;&gt;Targeted Dropout&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Reference:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://cloud.tencent.com/developer/article/1367373&#34;&gt;https://cloud.tencent.com/developer/article/1367373&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
 </description>
     </item>
     
