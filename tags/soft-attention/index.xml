@@ -14,9 +14,9 @@
     
     <item>
       <title>Transformer Part 2 - Attention</title>
-      <link>https://roymondliao.github.io/post/2019-12-16_transformer_part2/</link>
+      <link>https://roymondliao.github.io/post/transformer_part2/</link>
       <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/post/2019-12-16_transformer_part2/</guid>
+      <guid>https://roymondliao.github.io/post/transformer_part2/</guid>
       <description>&lt;h1 id=&#34;attention-mechanism&#34;&gt;Attention Mechanism&lt;/h1&gt;
 
 &lt;p&gt;&lt;strong&gt;Attention&lt;/strong&gt; 的概念在 2014 年被 Bahdanau et al. [Paper 1] 所提出，解決了 encoder-decoder 架構的模型在 decoder 必須依賴一個固定向量長度的 context vector 的問題。實際上 attention mechanism 也符合人類在生活上的應用，例如：當你在閱讀一篇文章時，會從上下文的關鍵字詞來推論句子所以表達的意思，又或者像是在聆聽演講時，會捕捉講者的關鍵字，來了解講者所要描述的內容，這都是人類在注意力上的行為表現。&lt;/p&gt;

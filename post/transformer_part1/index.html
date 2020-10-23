@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.5.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Roymond Liao">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="一開始接觸 Attention Is All You Need 這篇論文是從 Kaggle Reading Group 這個 channel 開始，非常推薦可以跟著一起讀!!
+主持人 Rachael Atman 本身是 Kaggle 的 Data Scientist，她的導讀我覺得是流暢的，但她自己本身有說過並非是 NLP 領域的專家，所以在 kaggle reading group 裡閱讀的論文也有可能是她完全沒接觸過的，整個 channel 帶給你的就是一個啟發，讓你覺得有人跟你一起閱讀的感覺，然後過程中也些人會在 channel 的 chat room 提出一些看法或是連結，Rachael 本身也會提出自己的見解，可以多方面參考。
+在跟完整個 Attention Is All You Need 的影片後，還是有太多細節是不清楚的，因為自己本身也不是這個領域的，所以開始追論文中所提到的一些關鍵名詞，就開始從 $seq2seq \rightarrow attention \rightarrow self-attention$。這中間 有太多知識需要記錄下來，所以將論文的內容分成三部曲，來記錄閱讀下來的點點滴滴:
+ Part 1: Sequence to sequence model 起源 Part 2: Attention 與 Self-attention 的理解 Part 3: Transformer 的架構探討與深入理解  要談論 Attention Is All You Need 這篇 paper 就必須從 seq2seq 講起，seq2seq 全名為 Sequence to Sequence[1]，是一個 Encoder - Decoder 架構的模型，在 2014 年被提出，被廣泛的應用於 Machine Translation, Text Summarization, Conversational Modeling, Image Captioning, and more.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://roymondliao.github.io/post/transformer_part1/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#007D8C">
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/github.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+      
+    
+
+    
+
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter:400,700%7COpen+Sans:400,400italic,700%7CRaleway&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-151909728-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           document.location = url;
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target);  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-151909728-1', {});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon-32.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="https://roymondliao.github.io/post/transformer_part1/">
+
+  
+  
+  
+  
+    
+  
+  
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="og:site_name" content="Roymond Liao">
+  <meta property="og:url" content="https://roymondliao.github.io/post/transformer_part1/">
+  <meta property="og:title" content="Transformer Part 1 - Seq2Seq | Roymond Liao">
+  <meta property="og:description" content="一開始接觸 Attention Is All You Need 這篇論文是從 Kaggle Reading Group 這個 channel 開始，非常推薦可以跟著一起讀!!
+主持人 Rachael Atman 本身是 Kaggle 的 Data Scientist，她的導讀我覺得是流暢的，但她自己本身有說過並非是 NLP 領域的專家，所以在 kaggle reading group 裡閱讀的論文也有可能是她完全沒接觸過的，整個 channel 帶給你的就是一個啟發，讓你覺得有人跟你一起閱讀的感覺，然後過程中也些人會在 channel 的 chat room 提出一些看法或是連結，Rachael 本身也會提出自己的見解，可以多方面參考。
+在跟完整個 Attention Is All You Need 的影片後，還是有太多細節是不清楚的，因為自己本身也不是這個領域的，所以開始追論文中所提到的一些關鍵名詞，就開始從 $seq2seq \rightarrow attention \rightarrow self-attention$。這中間 有太多知識需要記錄下來，所以將論文的內容分成三部曲，來記錄閱讀下來的點點滴滴:
+ Part 1: Sequence to sequence model 起源 Part 2: Attention 與 Self-attention 的理解 Part 3: Transformer 的架構探討與深入理解  要談論 Attention Is All You Need 這篇 paper 就必須從 seq2seq 講起，seq2seq 全名為 Sequence to Sequence[1]，是一個 Encoder - Decoder 架構的模型，在 2014 年被提出，被廣泛的應用於 Machine Translation, Text Summarization, Conversational Modeling, Image Captioning, and more."><meta property="og:image" content="https://roymondliao.github.io/post/transformer_part1/featured.jpg">
+  <meta property="twitter:image" content="https://roymondliao.github.io/post/transformer_part1/featured.jpg"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2019-12-16T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2020-01-02T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://roymondliao.github.io/post/transformer_part1/"
+  },
+  "headline": "Transformer Part 1 - Seq2Seq",
+  
+  "image": [
+    "https://roymondliao.github.io/post/transformer_part1/featured.jpg"
+  ],
+  
+  "datePublished": "2019-12-16T00:00:00Z",
+  "dateModified": "2020-01-02T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Roymond Liao"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Roymond Liao",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://roymondliao.github.io/img/icon-512.png"
+    }
+  },
+  "description": "一開始接觸 Attention Is All You Need 這篇論文是從 Kaggle Reading Group 這個 channel 開始，非常推薦可以跟著一起讀!!\n主持人 Rachael Atman 本身是 Kaggle 的 Data Scientist，她的導讀我覺得是流暢的，但她自己本身有說過並非是 NLP 領域的專家，所以在 kaggle reading group 裡閱讀的論文也有可能是她完全沒接觸過的，整個 channel 帶給你的就是一個啟發，讓你覺得有人跟你一起閱讀的感覺，然後過程中也些人會在 channel 的 chat room 提出一些看法或是連結，Rachael 本身也會提出自己的見解，可以多方面參考。\n在跟完整個 Attention Is All You Need 的影片後，還是有太多細節是不清楚的，因為自己本身也不是這個領域的，所以開始追論文中所提到的一些關鍵名詞，就開始從 $seq2seq \\rightarrow attention \\rightarrow self-attention$。這中間 有太多知識需要記錄下來，所以將論文的內容分成三部曲，來記錄閱讀下來的點點滴滴:\n Part 1: Sequence to sequence model 起源 Part 2: Attention 與 Self-attention 的理解 Part 3: Transformer 的架構探討與深入理解  要談論 Attention Is All You Need 這篇 paper 就必須從 seq2seq 講起，seq2seq 全名為 Sequence to Sequence[1]，是一個 Encoder - Decoder 架構的模型，在 2014 年被提出，被廣泛的應用於 Machine Translation, Text Summarization, Conversational Modeling, Image Captioning, and more."
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Transformer Part 1 - Seq2Seq | Roymond Liao</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+<nav class="navbar navbar-light fixed-top navbar-expand-lg py-0 compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+      <a class="navbar-brand" href="/">Roymond Liao</a>
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+    
+    <div class="collapse navbar-collapse" id="navbar">
+
+      
+      
+      <ul class="navbar-nav ml-auto">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/courses/"><span>Courses</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/sharing/"><span>Sharing</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/files/cv.pdf"><span>CV</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+
+        
+        <li class="nav-item">
+          <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+        </li>
+        
+
+        
+
+        
+        <li class="nav-item">
+          <a class="nav-link js-dark-toggle" href="#"><i class="fas fa-moon" aria-hidden="true"></i></a>
+        </li>
+        
+
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+
+<div class="article-container pt-3">
+  <h1>Transformer Part 1 - Seq2Seq</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+  
+  
+  <div>
+    
+
+
+
+  
+  <span><a href="/authors/roymond-liao/">Roymond Liao</a></span>
+
+  </div>
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+          Last updated on
+      
+    
+    Jan 2, 2020
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    4 min read
+  </span>
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <a href="/post/transformer_part1/#disqus_thread"></a>
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/nlp/">NLP</a>, <a href="/categories/deep-learning/">Deep Learning</a></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+<div class="article-header container featured-image-wrapper mt-4 mb-4" style="max-width: 1200px; max-height: 800px;">
+  <div style="position: relative">
+    <img src="/post/transformer_part1/featured_hu3d03a01dcc18bc5be0e67db3d8d209a6_4805051_1200x0_resize_q90_lanczos.jpg" alt="" class="featured-image">
+    <span class="article-header-caption">Photo by Vincent van Zalinge on Unsplash</span>
+  </div>
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      <p>一開始接觸 <code>Attention Is All You Need</code> 這篇論文是從 <a href="https://www.youtube.com/playlist?list=PLqFaTIg4myu8t5ycqvp7I07jTjol3RCl9">Kaggle Reading Group</a> 這個 channel 開始，非常推薦可以跟著一起讀!!</p>
+
+<p>主持人 <a href="https://www.kaggle.com/rtatman">Rachael Atman</a> 本身是 Kaggle 的 Data Scientist，她的導讀我覺得是流暢的，但她自己本身有說過並非是 NLP 領域的專家，所以在 kaggle reading group 裡閱讀的論文也有可能是她完全沒接觸過的，整個 channel 帶給你的就是一個啟發，讓你覺得有人跟你一起閱讀的感覺，然後過程中也些人會在 channel 的 chat room 提出一些看法或是連結，Rachael 本身也會提出自己的見解，可以多方面參考。</p>
+
+<p>在跟完整個 <code>Attention Is All You Need</code> 的影片後，還是有太多細節是不清楚的，因為自己本身也不是這個領域的，所以開始追論文中所提到的一些關鍵名詞，就開始從 $seq2seq \rightarrow attention \rightarrow self-attention$。這中間 有太多知識需要記錄下來，所以將論文的內容分成三部曲，來記錄閱讀下來的點點滴滴:</p>
+
+<ul>
+<li>Part 1: Sequence to sequence model 起源</li>
+<li>Part 2: Attention 與 Self-attention 的理解</li>
+<li>Part 3: Transformer 的架構探討與深入理解</li>
+</ul>
+
+<p>要談論 <code>Attention Is All You Need</code> 這篇 paper 就必須從 seq2seq 講起，seq2seq 全名為 Sequence to Sequence[1]，是一個 Encoder - Decoder 架構的模型，在 2014 年被提出，被廣泛的應用於 Machine Translation, Text Summarization, Conversational Modeling, Image Captioning, and more.</p>
+
+<h3 id="sequence-to-sequence-model">Sequence to sequence model</h3>
+
+<h4 id="introduction">Introduction</h4>
+
+<p>簡單來說，期望輸入一串序列(source)，輸出一串序列(target)，而這個 source 與 target 可以是什麼呢？</p>
+
+<ul>
+<li><p>如果以 machine translation 來說，任務是中翻英，輸入是一句中文，而輸出則會是一句英文。</p></li>
+
+<li><p>如果是 text summarization，輸入則會是一段文章，而輸出則會是一段摘要</p></li>
+</ul>
+
+<p>這就是 seq2seq model 所要解決的問題，在輸入一些資訊後，經過 encoder-decoder 的訓練，可以得到相對應的回答或是其他資訊。</p>
+
+<h4 id="model">Model</h4>
+
+<p>模型的架構也非常簡單，就如下圖所示：</p>
+
+<figure class="image">
+<center>
+  <img src="./seq2seq.png" style="zoom:100%" />
+  <figcaption>圖一</figcaption>
+</center>
+</figure>
+
+<p>假設今天我們執行中翻英的任務，輸入(source: X)是一句中文，可以是 &quot;我愛機器學習&quot;，而輸出(target: Y)則會是 &quot;I love machine learning&quot;，所以整個訓練的步驟如下：</p>
+
+<ol>
+<li><p>Input sequence $(x_1, x_2, x_3, \dots, x_s)$  經過 embedding layer 的轉換，得到每個 word 的 embedding vector</p></li>
+
+<li><p>Encoder 把所有輸入序列 embedding vector 消化後，將資訊壓縮轉換為一個向量 $C$，稱之為 context vector</p></li>
+</ol>
+
+<p><span  class="math">\[
+   \begin{align}
+   h_s^{e} & = f_{enc}\left(h_{s-1}^{e}, e_{x_{s-1}}, W_{enc}\right) \\
+   C & = h_s^e \text {，最後一步的 hidden state} \\
+   C & = q(h_s^e) \text {，最後一步的 hidden state 做 transform } \\
+   C & = q\left(h_1^e, h_2^e, \dots, h_s^e\right) \text {，每一步的 hidden state 做 transform }
+   \end{align}
+   \]</span></p>
+
+<p>其中 $f_{enc}(\cdot)$ 表示 Encoder 中的 RNN function，參數為 $W_{enc}$。$e_{x_s}$ 表示 $x_s$ 的 embedding vector，$h_s^e$ 表示在時間 $s$ 的 hidden state，$C$ 可以表示為 Encoder 最後的 hidden state 或是經過函數 $q(\cdot)$ 的轉換。</p>
+
+<ol start="3">
+<li>Decoder 則根據 context vector 的資訊來生成文字，output sequence $(y_1, y_2, y_3, \dots, y_t)$</li>
+</ol>
+
+<p><span  class="math">\[
+   \begin{align}
+   h_0^{d} & = C \\
+   h_{t}^{d} & = f_{dec}\left(h_{t-1}^{d}, e_{y_{t-1}}, W_{dec}\right) \\
+   O_{t} & = g\left(h_t^d\right)
+   \end{align}
+   \]</span></p>
+
+<p>其中 $h_{0}^{d}$ 為 context vector 傳進來當作 Decoder 的初始 hidden state，$f_{dec}(\cdot)$ 表示 Decoder 中的 RNN function，參數為 $W_{dec}$。$h_{t}^{d}$ 表示 Decoder在時間 $t$ 的 hidden state，$e_{y_{t}}$ 表示前一步的所得到的 $y_{t-1}$ 結果當作輸入，$y_0$ 都是以特殊索引 &lt;BOS&gt; 當作輸入。
+   $g(\cdot)$ 為 output layer，一般都是 softmax function。</p>
+
+<p>過程就只是簡單的三個步驟，雖然看起來簡單，但當中有些細節是需要注意的。</p>
+
+<h4 id="training">Training</h4>
+
+<ul>
+<li><p>特殊索引</p>
+
+<p>在每個句子做 one-hot-encoder 的轉換時，會在句子的前後加上 &lt;BOS&gt; 與 &lt;EOS&gt;</p>
+
+<ul>
+<li>BOS: Begin of sequence，在預測的時候我們並沒有對應的答案，所以會先以 &lt;BOS&gt; 當作 $Y_0$ 的 target input</li>
+<li>EOS: End of sequence，用意是要告訴 model 當出現這個詞的時候就是停止生成文字，如果沒有這個詞，模型會無限迴圈的一直生成下去</li>
+</ul>
+
+<p>除了上述的 &lt;BOS&gt; 與 &lt;EOS&gt; 外，還有 &lt;PAD&gt; 與 &lt;UNK&gt;</p>
+
+<ul>
+<li>PAD: 由於 RNN 的 parameters 是共享的，所以在 input 的維度就需要保持相同，但並不是每個句子的長度都是同樣的，有的可能長度是 3 ，有的長度可能是 5，所以為了處理不同 input sequence 長度不同的狀況，增加了 &lt;PAD&gt; 的字詞，來讓每次 <strong>batch</strong> 的 input sequence 的長度都是相同的</li>
+<li>UNK: 如果輸入的字詞在 corpus 是沒有出現過的，就會用 &lt;UNK&gt; 索引來代替</li>
+</ul></li>
+
+<li><p>Encoder layer 與 Decoder layer 的選擇</p>
+
+<p>Encoder 與 Decoder 中的 RNN function 可以是 simple RNN / LSTM / GRU，又或者是一個 bidirectional LSTM 的架構在裡面，也可以是一個 multi layer LSTM</p></li>
+
+<li><p>Teacher forcing</p>
+
+<p>在 training model 時 ，為了提高 model 的準確度與訓練速度，採用了 <a href="https://machinelearningmastery.com/teacher-forcing-for-recurrent-neural-networks/">Teacher forcing training</a> 方法，圖二就是 teacher foring 的概念，在 training 的時候直接告訴 model 實際的答案，省去 model 自己去尋找到正確的答案。另外也有提出 <a href="https://arxiv.org/abs/1610.09038">Professor Forcing</a> 的做法，尚未理解這方法的概念，提供當作參考。</p></li>
+</ul>
+
+<figure class="image">
+<center>
+  <img src="./teacher_forcing.png" style="zoom:80%" />
+  <figcaption>
+  圖二 (Image credit: <a href="https://towardsdatascience.com/what-is-teacher-forcing-3da6217fed1c">LINK</a>)
+  </figcaption>
+</center>
+</figure>
+
+<h4 id="prediction">Prediction</h4>
+
+<ul>
+<li><p>Beam search</p>
+
+<p>在 prediction  model 時，每一步的 output 都是要計算出在 corpus 中生成最可能的那個字詞</p>
+
+<p><span  class="math">\[
+\begin{align}
+\hat{y_t} = argmax\space p_{\theta}(y | \hat{y}_{1:(t-1)}) 
+\end{align}
+\]</span></p>
+
+<p>其中 <span  class="math">\(\hat{y}_{1:(t-1)} = \hat{y}_1,\dots,\hat{y}_{t-1}\)</span> 為前面 $t-1$ 步所生成的字詞。以一個簡單的概念來思考，每一步的 output 都是該步所得到的最大條件機率，那這樣的 greedy search 所得到的結果對於我們的目標並非是最優的，得到的是每個字詞的最大條件機率，而並非是整個句子的最大條件機率，所以這樣的狀況下你所得的的翻譯可能不會是最適合的。</p>
+
+<p>Beam search 就是為了解決這樣的問題而提出的，在每一步的生成過程中，生成 $B$ 的最可能的文字序列作為約束，其中 $B$ 的大小為 beam width，是一個 hyperparamter。$B$ 值越大可以得到更好的結果，但相對的計算量也增加。</p>
+
+<p>過程就如同圖三所示:</p>
+
+<ol>
+<li>建立一個 search tree，該 root 為一個開始符號 (非序列的第一個詞)</li>
+<li>由序列的左到右開始，順序生成目標語言序列，同時成長對應的搜尋樹</li>
+<li>在生成序列的每一步，對  search tree 的每個 leaf node，選取 $B$ 個擁有最高條件機率的生成單詞，並生成 B 個子節點。</li>
+<li>在成長搜尋樹後，進行剪枝的工作，只留下 B 個最高條件機率的葉節點後，再進行下一個位置的序列生成。
+<br></li>
+</ol>
+
+<p>Beam search 的實作可以參考 Blog:[4]。</p></li>
+</ul>
+
+<figure class="image">
+<center>
+  <img src="./beam_search.png" style="zoom:80%" />
+  <figcaption>圖三 (Image credit: <a href="https://distill.pub/2017/ctc/"> LINK</a>)
+  </figcaption>
+</center>
+</figure>
+
+<p>另外要注意在使用 beam search 所謂遇到的問題，在 Andrew Ng 大師的<a href="https://www.coursera.org/specializations/deep-learning">課程</a>中提到</p>
+
+<ul>
+<li>消除長度對計算機率影響（Length Normalization）</li>
+<li>如何選擇 Beam Width 參數（The Choice of Beam Width）</li>
+</ul>
+
+<p>詳細的解說可以參考<a href="https://www.coursera.org/specializations/deep-learning">課程</a>或是 Blog:[3]。</p>
+
+<h4 id="problems">Problems</h4>
+
+<ol>
+<li>所有資訊只壓縮成一個 context vector，input sequence 的資訊很難全部保存在一個固定維度的向量裡</li>
+<li>當 sequence 的長度很長時，在 decoder 解碼時，由於 Recurrent neural network 的依賴問題，容易丟失 input sequence 的訊息</li>
+</ol>
+
+<hr>
+
+<p>在理解完 Seq2Seq model 後，所遇到的問題該如何解決? 那就是要靠 <code>Attention Is All You Need</code> 這篇 paper 的主要重點之一 <code>Attention mechanism(注意力機制)</code>，
+這部分將會在 part 2 的時候介紹。</p>
+
+<h1 id="reference">Reference</h1>
+
+<p><strong>Paper:</strong></p>
+
+<p>[1] <a href="https://papers.nips.cc/paper/5346-sequence-to-sequence-learning-with-neural-networks.pdf">Ilya Sutskever, Oriol Vinyals, and Quoc V. Le, Sequence to Sequence Learning with Neural Networks(2015)</a></p>
+
+<p>[2] <a href="https://arxiv.org/pdf/1610.09038.pdf">Alex Lamb, Anirudh Goyal, Ying Zhang, Saizheng Zhang, Aaron Courville, Yoshua Bengio, Professor Forcing: A New Algorithm for Training Recurrent Networks(2016)</a></p>
+
+<p>[3] <a href="https://arxiv.org/abs/1409.0473">Dzmitry Bahdanau, KyungHyun Cho, Yoshua Bengio, NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO ALIGN AND TRANSLATE(2014)</a></p>
+
+<p>[4] <a href="https://arxiv.org/abs/1508.04025">Minh-Thang Luong, Hieu Pham, Christopher D. Manning, Effective Approaches to Attention-based Neural Machine Translation(2015)</a></p>
+
+<p><strong>Blog:</strong></p>
+
+<p>[1] <a href="https://machinelearningmastery.com/teacher-forcing-for-recurrent-neural-networks/">https://machinelearningmastery.com/teacher-forcing-for-recurrent-neural-networks/</a></p>
+
+<p>[2] <a href="https://web.stanford.edu/class/cs224n/slides/cs224n-2019-lecture08-nmt.pdfh">https://web.stanford.edu/class/cs224n/slides/cs224n-2019-lecture08-nmt.pdfh</a></p>
+
+<p>[3] <a href="https://ithelp.ithome.com.tw/articles/10208587">https://ithelp.ithome.com.tw/articles/10208587</a></p>
+
+<p>[4] <a href="https://machinelearningmastery.com/beam-search-decoder-natural-language-processing/">https://machinelearningmastery.com/beam-search-decoder-natural-language-processing/</a></p>
+
+<p>[5] <a href="https://medium.com/@bgg/seq2seq-pay-attention-to-self-attention-part-1-%E4%B8%AD%E6%96%87%E7%89%88-2714bbd92727">Seq2seq pay Attention to Self Attention: Part 1</a></p>
+
+<p>[6] <a href="https://medium.com/@bgg/seq2seq-pay-attention-to-self-attention-part-2-%E4%B8%AD%E6%96%87%E7%89%88-ef2ddf8597a4">Seq2seq pay Attention to Self Attention: Part 2</a></p>
+
+<p>[7] <a href="https://jalammar.github.io/visualizing-neural-machine-translation-mechanics-of-seq2seq-models-with-attention/">Visualizing A Neural Machine Translation Model (Mechanics of Seq2seq Models With Attention)</a></p>
+
+<p>[8] <a href="http://zake7749.github.io/2017/09/28/Sequence-to-Sequence-tutorial/">http://zake7749.github.io/2017/09/28/Sequence-to-Sequence-tutorial/</a></p>
+
+<p>[9] <a href="https://www.zhihu.com/question/54356960">https://www.zhihu.com/question/54356960</a></p>
+
+    </div>
+
+    
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tags/seq2seq/">Seq2Seq</a>
+  
+  <a class="badge badge-light" href="/tags/teacher-forcing/">Teacher forcing</a>
+  
+  <a class="badge badge-light" href="/tags/beam-search/">Beam search</a>
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+  
+
+
+
+
+
+
+  
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="/authors/roymond-liao/"></a></h5>
+      
+      
+      <ul class="network-icon" aria-hidden="true">
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+<section id="comments">
+  
+    
+<div id="disqus_thread"></div>
+<script>
+  let disqus_config = function () {
+    
+    
+    
+  };
+  (function() {
+    if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+      document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+      return;
+    }
+    var d = document, s = d.createElement('script'); s.async = true;
+    s.src = 'https://' + "roymondliao" + '.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  
+</section>
+
+
+
+
+
+
+  
+  
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+    <script src="/js/mathjax-config.js"></script>
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.3.1/mermaid.min.js" integrity="sha256-vOIuDSYDirTfyr+S2MjFnhOz6Rgiz4ODFAHATG0rFxw=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js" integrity="sha256-1zu+3BnLYV9LdiY85uXMzii3bdrkelyp37e0ZyTAQh0=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/languages/python.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/languages/r.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/languages/markdown.min.js"></script>
+        
+      
+
+      
+      
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+
+    
+    
+
+    
+    
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"No results found","placeholder":"Search...","results":"results found"};
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    <script id="dsq-count-scr" src="https://roymondliao.disqus.com/count.js" async></script>
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.d6bd04fdad2ad213aa8111c5a3b72fc5.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © 2019 - © 2020 &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

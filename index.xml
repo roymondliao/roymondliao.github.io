@@ -14,11 +14,11 @@
     
     <item>
       <title>[Paper-NLP] Is Word Segmentation Necessary for Deep Learning of Chinese Representations?</title>
-      <link>https://roymondliao.github.io/post/2020-09-25_word_segmentation_in_chinese/</link>
+      <link>https://roymondliao.github.io/post/word_segmentation_in_chinese/</link>
       <pubDate>Fri, 25 Sep 2020 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/post/2020-09-25_word_segmentation_in_chinese/</guid>
+      <guid>https://roymondliao.github.io/post/word_segmentation_in_chinese/</guid>
       <description>&lt;h1 id=&#34;chinese-word-segmentation-cws&#34;&gt;Chinese word segmentation (CWS)&lt;/h1&gt;
-&lt;p&gt;NLP 領域在近年的突破性發展，各項研究應用與相關論文不斷的推層出新，對於如何讓機器能更了解文章、句子所表達的內容，進而解決各項在 NLP 領域上的問題，在 &lt;a href=&#34;https://openai.com/&#34;&gt;OpenA&lt;/a&gt;I 近期推出的 &lt;a href=&#34;https://github.com/openai/gpt-3&#34;&gt;GPT-3&lt;/a&gt; 已經將 NLP 研究推向高峰，但當中還是有一些 NLP 的相關議題是比較少被拿來討論的，尤其是對於&lt;strong&gt;中文&lt;/strong&gt;的處理，大部分的 NLP 都還是環繞在英文為主，畢竟大部分的新方法都是由歐美的學者所提出。&lt;/p&gt;
+&lt;p&gt;NLP 領域在近年的突破性發展，各項研究應用與相關論文不斷的推層出新，對於如何讓機器能更了解文章、句子所表達的內容，進而解決各項在 NLP 領域上的問題，在 &lt;a href=&#34;https://openai.com/&#34;&gt;OpenAI&lt;/a&gt; 近期推出的 &lt;a href=&#34;https://github.com/openai/gpt-3&#34;&gt;GPT-3&lt;/a&gt; 已經將 NLP 研究推向高峰，但當中還是有一些 NLP 的相關議題是比較少被拿來討論的，尤其是對於&lt;strong&gt;中文&lt;/strong&gt;的處理，大部分的 NLP 都還是環繞在英文為主，畢竟大部分的新方法都是由歐美的學者所提出。&lt;/p&gt;
 &lt;p&gt;字詞的&lt;strong&gt;斷詞方法&lt;/strong&gt;一直都是 NLP 相關任務的重點，尤其是目前為主流的 pretrain model 研究發展走向，好的斷詞可讓機器理解整句話所要表達的意思也可以推論語句的結構，反之不好的斷詞可能會讓機器理解錯誤也連帶影響後續的下游任務表現。&lt;/p&gt;
 &lt;p&gt;在本次要節錄的論文是由&lt;a href=&#34;https://www.shannonai.com/&#34;&gt;香儂科技(Shannon AI)&lt;/a&gt; 發表在ACL上的一篇論文，主要是探討基於深度學習的中文 NLP 任務中對於中文字斷詞的處理方式，是要以&lt;strong&gt;詞(word-base)&lt;/strong&gt; 還是&lt;strong&gt;字(char-base)&lt;/strong&gt; 的處理方式比較。&lt;/p&gt;
 &lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
@@ -337,9 +337,9 @@
     
     <item>
       <title>Transformer Part 3 - Transformer</title>
-      <link>https://roymondliao.github.io/post/2019-12-16_transformer_part3/</link>
+      <link>https://roymondliao.github.io/post/transformer_part3/</link>
       <pubDate>Fri, 25 Sep 2020 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/post/2019-12-16_transformer_part3/</guid>
+      <guid>https://roymondliao.github.io/post/transformer_part3/</guid>
       <description>&lt;h1 id=&#34;transformer&#34;&gt;Transformer&lt;/h1&gt;
 &lt;p&gt;拖延了很久，終於有時間拉把欠的部分補齊了，來講在 NLP 已經廣為人知的 Transformer。在開始介紹前先來附上 transformer 的結構，如下圖：&lt;/p&gt;
 &lt;figure class=&#34;image&#34;&gt; 
@@ -533,9 +533,9 @@ $$This corresponds to increasing the learning rate linearly for the first $warmu
     
     <item>
       <title>Transformer Part 2 - Attention</title>
-      <link>https://roymondliao.github.io/post/2019-12-16_transformer_part2/</link>
+      <link>https://roymondliao.github.io/post/transformer_part2/</link>
       <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/post/2019-12-16_transformer_part2/</guid>
+      <guid>https://roymondliao.github.io/post/transformer_part2/</guid>
       <description>&lt;h1 id=&#34;attention-mechanism&#34;&gt;Attention Mechanism&lt;/h1&gt;
 
 &lt;p&gt;&lt;strong&gt;Attention&lt;/strong&gt; 的概念在 2014 年被 Bahdanau et al. [Paper 1] 所提出，解決了 encoder-decoder 架構的模型在 decoder 必須依賴一個固定向量長度的 context vector 的問題。實際上 attention mechanism 也符合人類在生活上的應用，例如：當你在閱讀一篇文章時，會從上下文的關鍵字詞來推論句子所以表達的意思，又或者像是在聆聽演講時，會捕捉講者的關鍵字，來了解講者所要描述的內容，這都是人類在注意力上的行為表現。&lt;/p&gt;
@@ -1137,9 +1137,9 @@ a_t(s) = align(h_t,\bar{h_s})exp\left(-\frac{(s-p_t)^2}{2\sigma^2}\right)
     
     <item>
       <title>Transformer Part 1 - Seq2Seq</title>
-      <link>https://roymondliao.github.io/post/2019-12-16_transformer_part1/</link>
+      <link>https://roymondliao.github.io/post/transformer_part1/</link>
       <pubDate>Mon, 16 Dec 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/post/2019-12-16_transformer_part1/</guid>
+      <guid>https://roymondliao.github.io/post/transformer_part1/</guid>
       <description>&lt;p&gt;一開始接觸 &lt;code&gt;Attention Is All You Need&lt;/code&gt; 這篇論文是從 &lt;a href=&#34;https://www.youtube.com/playlist?list=PLqFaTIg4myu8t5ycqvp7I07jTjol3RCl9&#34;&gt;Kaggle Reading Group&lt;/a&gt; 這個 channel 開始，非常推薦可以跟著一起讀!!&lt;/p&gt;
 
 &lt;p&gt;主持人 &lt;a href=&#34;https://www.kaggle.com/rtatman&#34;&gt;Rachael Atman&lt;/a&gt; 本身是 Kaggle 的 Data Scientist，她的導讀我覺得是流暢的，但她自己本身有說過並非是 NLP 領域的專家，所以在 kaggle reading group 裡閱讀的論文也有可能是她完全沒接觸過的，整個 channel 帶給你的就是一個啟發，讓你覺得有人跟你一起閱讀的感覺，然後過程中也些人會在 channel 的 chat room 提出一些看法或是連結，Rachael 本身也會提出自己的見解，可以多方面參考。&lt;/p&gt;
@@ -1347,9 +1347,9 @@ a_t(s) = align(h_t,\bar{h_s})exp\left(-\frac{(s-p_t)^2}{2\sigma^2}\right)
     
     <item>
       <title>Adversarial validation</title>
-      <link>https://roymondliao.github.io/post/2019-11-18_adversarial_validation/</link>
+      <link>https://roymondliao.github.io/post/adversarial_validation/</link>
       <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/post/2019-11-18_adversarial_validation/</guid>
+      <guid>https://roymondliao.github.io/post/adversarial_validation/</guid>
       <description>&lt;p&gt;在重新回顧 Kaggle 近期的 IEEE-CIS Fraud Detection 的比賽中，發現有人提到一個 Features selection 的方法 &lt;strong&gt;Adversarial validation&lt;/strong&gt;。&lt;/p&gt;
 
 &lt;h1 id=&#34;problem&#34;&gt;Problem&lt;/h1&gt;
@@ -1451,9 +1451,9 @@ auc_val &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; np&lt;span styl
     
     <item>
       <title>Lookahead Optimizer: k steps forward, 1 step back</title>
-      <link>https://roymondliao.github.io/post/2019-10-03_lookahead/</link>
+      <link>https://roymondliao.github.io/post/lookahead/</link>
       <pubDate>Thu, 03 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/post/2019-10-03_lookahead/</guid>
+      <guid>https://roymondliao.github.io/post/lookahead/</guid>
       <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
 
 &lt;p&gt;在目前的 optimizer 分為兩個主要發展方向：&lt;/p&gt;
@@ -1547,9 +1547,9 @@ Step 5 : 更新 slow weight $\phi_{k} \leftarrow \phi_{k-1} + \alpha\left(\theta
     
     <item>
       <title>Faster R-CNN</title>
-      <link>https://roymondliao.github.io/post/2019-05-14_faster_rcnn/</link>
+      <link>https://roymondliao.github.io/post/faster_rcnn/</link>
       <pubDate>Tue, 14 May 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/post/2019-05-14_faster_rcnn/</guid>
+      <guid>https://roymondliao.github.io/post/faster_rcnn/</guid>
       <description>&lt;p&gt;Faster R-CNN 是由 object detection 的大神 &lt;a href=&#34;https://www.rossgirshick.info/&#34;&gt;&lt;strong&gt;&lt;em&gt;Ross Girshick&lt;/em&gt;&lt;/strong&gt;&lt;/a&gt; 於 2015 年所提出的一個非常經典的目標檢測(object detection)的方法，當中提出了 &lt;strong&gt;Region Proposal Networks&lt;/strong&gt; 的方法應用在提取候選區域(reigon proposals) 取代了傳統的 Selective Search 的方式，大幅提升了目標檢測的精準度，也提升了整體計算的速度，另外 &lt;a href=&#34;http://kaiminghe.com/&#34;&gt;&lt;strong&gt;&lt;em&gt;Kaiming He&lt;/em&gt;&lt;/strong&gt;&lt;/a&gt; 博士也是共同作者。&lt;/p&gt;
 
 &lt;p&gt;在介紹 Faster R-CNN 之前需要先了解何為 one stage 與 two stage，目前 object detection 的主流都是以 one stage 為基礎的演算法，建議可以參考下列兩篇很棒的文章:&lt;/p&gt;
@@ -1675,9 +1675,9 @@ Step 5 : 更新 slow weight $\phi_{k} \leftarrow \phi_{k-1} + \alpha\left(\theta
     
     <item>
       <title>Word2Vec</title>
-      <link>https://roymondliao.github.io/post/2019-05-02_word2vec/</link>
+      <link>https://roymondliao.github.io/post/word2vec/</link>
       <pubDate>Thu, 02 May 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/post/2019-05-02_word2vec/</guid>
+      <guid>https://roymondliao.github.io/post/word2vec/</guid>
       <description>&lt;p&gt;最近剛好看到一篇關於 &lt;a href=&#34;https://github.com/priya-dwivedi/Deep-Learning/blob/master/word2vec_skipgram/Skip-Grams-Solution.ipynb&#34;&gt;Skip-gram word2vec&lt;/a&gt;的介紹，內文寫的淺顯易懂，衍生的閱讀也十分詳細，決定動手寫篇記錄下來。&lt;/p&gt;
 
 &lt;p&gt;人對於文字的理解，可以很簡單的就能了解字面的意義，但是對於機器來說，要如何理解文字是一個很困難的問題。
@@ -1878,9 +1878,9 @@ P\left( w_{i} \right) = \left( \sqrt{\frac{Z(w_{i})}{0.001} + 1} \right) \cdot \
     
     <item>
       <title>DropBlock</title>
-      <link>https://roymondliao.github.io/post/2019-04-10_dropblock/</link>
+      <link>https://roymondliao.github.io/post/dropblock/</link>
       <pubDate>Wed, 10 Apr 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/post/2019-04-10_dropblock/</guid>
+      <guid>https://roymondliao.github.io/post/dropblock/</guid>
       <description>&lt;p&gt;Dropout 相關方法：&lt;/p&gt;
 
 &lt;ul&gt;
@@ -2021,9 +2021,9 @@ c &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; sess&lt;span style=&#
     
     <item>
       <title>XGBoost</title>
-      <link>https://roymondliao.github.io/post/2019-03-02_xgboost/</link>
+      <link>https://roymondliao.github.io/post/xgboost/</link>
       <pubDate>Sat, 02 Mar 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/post/2019-03-02_xgboost/</guid>
+      <guid>https://roymondliao.github.io/post/xgboost/</guid>
       <description>&lt;h2 id=&#34;review-note&#34;&gt;Review note&lt;/h2&gt;
 
 &lt;p&gt;Bagging&lt;/p&gt;

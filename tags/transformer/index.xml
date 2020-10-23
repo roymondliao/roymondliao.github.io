@@ -14,9 +14,9 @@
     
     <item>
       <title>Transformer Part 3 - Transformer</title>
-      <link>https://roymondliao.github.io/post/2019-12-16_transformer_part3/</link>
+      <link>https://roymondliao.github.io/post/transformer_part3/</link>
       <pubDate>Fri, 25 Sep 2020 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/post/2019-12-16_transformer_part3/</guid>
+      <guid>https://roymondliao.github.io/post/transformer_part3/</guid>
       <description>&lt;h1 id=&#34;transformer&#34;&gt;Transformer&lt;/h1&gt;
 &lt;p&gt;拖延了很久，終於有時間拉把欠的部分補齊了，來講在 NLP 已經廣為人知的 Transformer。在開始介紹前先來附上 transformer 的結構，如下圖：&lt;/p&gt;
 &lt;figure class=&#34;image&#34;&gt; 

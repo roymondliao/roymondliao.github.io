@@ -14,9 +14,9 @@
     
     <item>
       <title>Word2Vec</title>
-      <link>https://roymondliao.github.io/post/2019-05-02_word2vec/</link>
+      <link>https://roymondliao.github.io/post/word2vec/</link>
       <pubDate>Thu, 02 May 2019 00:00:00 +0000</pubDate>
-      <guid>https://roymondliao.github.io/post/2019-05-02_word2vec/</guid>
+      <guid>https://roymondliao.github.io/post/word2vec/</guid>
       <description>&lt;p&gt;最近剛好看到一篇關於 &lt;a href=&#34;https://github.com/priya-dwivedi/Deep-Learning/blob/master/word2vec_skipgram/Skip-Grams-Solution.ipynb&#34;&gt;Skip-gram word2vec&lt;/a&gt;的介紹，內文寫的淺顯易懂，衍生的閱讀也十分詳細，決定動手寫篇記錄下來。&lt;/p&gt;
 
 &lt;p&gt;人對於文字的理解，可以很簡單的就能了解字面的意義，但是對於機器來說，要如何理解文字是一個很困難的問題。
