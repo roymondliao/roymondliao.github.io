@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.5.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Roymond Liao">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="ALBERT 在 2017 年 Transformer 的誕生，突破了 RNN、LSTM、GRU &hellip; 等在計算上的限制，也帶來新的觀點，爾後再 2018 年底 Google 發表了 BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding 開啟了通往偉大到航道的路線，也帶起了 pre-training model 的各種應用，不用再辛苦的從頭開始訓練，為了資料問題所苦惱。在 BERT 之後，湧出各種基於 BERT 的架構下進行優化改進，例如： GPT-2、XLNet、RoBERTa、ERNIE &hellip; 等這些耳熟能詳的模型，而這次將是為大家介紹也是基於 BERT 的架構下 Google 在 2019 年推出的輕量化版本的 BERT，ALBERT: A Lite BERT for Self-supervised Learning of Language Representations。
+Introduction 如前言所述，在 BERT 後的時代透過大量的資料進行自監督(self-supervised1)的訓練，提高模型參數與更深層的結構，讓模型取得更好的表現，但也因為硬體上的限制，要訓練參數量大的模型就可能需要做到平行化處理以及記憶體內存的管控，但這樣的方式並沒有解決成本上的問題。基於這樣的情況，作者提出了下列問題：
+ Is haveing better NLP models as easy as hvaing larger models?  也因為這個問題的討論，造就了 A Lite BERT(ALBERT) 的模型架構出來。">
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://roymondliao.github.io/post/albert/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#007D8C">
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/github.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+      
+    
+
+    
+
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter:400,700%7COpen+Sans:400,400italic,700%7CRaleway&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-151909728-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           document.location = url;
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target);  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-151909728-1', {});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon-32.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="https://roymondliao.github.io/post/albert/">
+
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Roymond Liao">
+  <meta property="og:url" content="https://roymondliao.github.io/post/albert/">
+  <meta property="og:title" content="[Paper-NLP] ALBERT: A Lite BERT for Self-supervised Learning of Language Representations | Roymond Liao">
+  <meta property="og:description" content="ALBERT 在 2017 年 Transformer 的誕生，突破了 RNN、LSTM、GRU &hellip; 等在計算上的限制，也帶來新的觀點，爾後再 2018 年底 Google 發表了 BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding 開啟了通往偉大到航道的路線，也帶起了 pre-training model 的各種應用，不用再辛苦的從頭開始訓練，為了資料問題所苦惱。在 BERT 之後，湧出各種基於 BERT 的架構下進行優化改進，例如： GPT-2、XLNet、RoBERTa、ERNIE &hellip; 等這些耳熟能詳的模型，而這次將是為大家介紹也是基於 BERT 的架構下 Google 在 2019 年推出的輕量化版本的 BERT，ALBERT: A Lite BERT for Self-supervised Learning of Language Representations。
+Introduction 如前言所述，在 BERT 後的時代透過大量的資料進行自監督(self-supervised1)的訓練，提高模型參數與更深層的結構，讓模型取得更好的表現，但也因為硬體上的限制，要訓練參數量大的模型就可能需要做到平行化處理以及記憶體內存的管控，但這樣的方式並沒有解決成本上的問題。基於這樣的情況，作者提出了下列問題：
+ Is haveing better NLP models as easy as hvaing larger models?  也因為這個問題的討論，造就了 A Lite BERT(ALBERT) 的模型架構出來。"><meta property="og:image" content="https://roymondliao.github.io/img/icon-192.png">
+  <meta property="twitter:image" content="https://roymondliao.github.io/img/icon-192.png"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2020-10-08T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2020-10-27T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://roymondliao.github.io/post/albert/"
+  },
+  "headline": "[Paper-NLP] ALBERT: A Lite BERT for Self-supervised Learning of Language Representations",
+  
+  "datePublished": "2020-10-08T00:00:00Z",
+  "dateModified": "2020-10-27T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Roymond Liao"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Roymond Liao",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://roymondliao.github.io/img/icon-512.png"
+    }
+  },
+  "description": "ALBERT 在 2017 年 Transformer 的誕生，突破了 RNN、LSTM、GRU \u0026hellip; 等在計算上的限制，也帶來新的觀點，爾後再 2018 年底 Google 發表了 BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding 開啟了通往偉大到航道的路線，也帶起了 pre-training model 的各種應用，不用再辛苦的從頭開始訓練，為了資料問題所苦惱。在 BERT 之後，湧出各種基於 BERT 的架構下進行優化改進，例如： GPT-2、XLNet、RoBERTa、ERNIE \u0026hellip; 等這些耳熟能詳的模型，而這次將是為大家介紹也是基於 BERT 的架構下 Google 在 2019 年推出的輕量化版本的 BERT，ALBERT: A Lite BERT for Self-supervised Learning of Language Representations。\nIntroduction 如前言所述，在 BERT 後的時代透過大量的資料進行自監督(self-supervised1)的訓練，提高模型參數與更深層的結構，讓模型取得更好的表現，但也因為硬體上的限制，要訓練參數量大的模型就可能需要做到平行化處理以及記憶體內存的管控，但這樣的方式並沒有解決成本上的問題。基於這樣的情況，作者提出了下列問題：\n Is haveing better NLP models as easy as hvaing larger models?  也因為這個問題的討論，造就了 A Lite BERT(ALBERT) 的模型架構出來。"
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>[Paper-NLP] ALBERT: A Lite BERT for Self-supervised Learning of Language Representations | Roymond Liao</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+<nav class="navbar navbar-light fixed-top navbar-expand-lg py-0 compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+      <a class="navbar-brand" href="/">Roymond Liao</a>
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+    
+    <div class="collapse navbar-collapse" id="navbar">
+
+      
+      
+      <ul class="navbar-nav ml-auto">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/courses/"><span>Courses</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/sharing/"><span>Sharing</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/files/cv.pdf"><span>CV</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+
+        
+        <li class="nav-item">
+          <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+        </li>
+        
+
+        
+
+        
+        <li class="nav-item">
+          <a class="nav-link js-dark-toggle" href="#"><i class="fas fa-moon" aria-hidden="true"></i></a>
+        </li>
+        
+
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>[Paper-NLP] ALBERT: A Lite BERT for Self-supervised Learning of Language Representations</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+  
+  
+  <div>
+    
+
+
+
+  
+  <span><a href="/authors/roymond-liao/">Roymond Liao</a></span>
+
+  </div>
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+          Last updated on
+      
+    
+    Oct 27, 2020
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    6 min read
+  </span>
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <a href="/post/albert/#disqus_thread"></a>
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/nlp/">NLP</a>, <a href="/categories/deep-learning/">Deep Learning</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      <h1 id="albert">ALBERT</h1>
+<p>在 2017 年 Transformer 的誕生，突破了 RNN、LSTM、GRU &hellip; 等在計算上的限制，也帶來新的觀點，爾後再 2018 年底 <strong>Google</strong> 發表了 <strong>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</strong> 開啟了通往偉大到航道的路線，也帶起了 pre-training model 的各種應用，不用再辛苦的從頭開始訓練，為了資料問題所苦惱。在 BERT 之後，湧出各種基於 BERT 的架構下進行優化改進，例如： GPT-2、XLNet、RoBERTa、ERNIE &hellip; 等這些耳熟能詳的模型，而這次將是為大家介紹也是基於 BERT 的架構下 Google 在 2019 年推出的輕量化版本的 BERT，<strong>ALBERT: A Lite BERT for Self-supervised Learning of Language Representations</strong>。</p>
+<h2 id="introduction">Introduction</h2>
+<p>如前言所述，在 BERT 後的時代透過大量的資料進行自監督(self-supervised<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>)的訓練，提高模型參數與更深層的結構，讓模型取得更好的表現，但也因為硬體上的限制，要訓練參數量大的模型就可能需要做到平行化處理以及記憶體內存的管控，但這樣的方式並沒有解決成本上的問題。基於這樣的情況，作者提出了下列問題：</p>
+<div align="center"><b> Is haveing better NLP models as easy as hvaing larger models?  </b></div>
+<p>也因為這個問題的討論，造就了 <strong>A Lite BERT(ALBERT)</strong> 的模型架構出來。</p>
+<h2 id="model-architecture">Model architecture</h2>
+<p>ALBERT 的模型架構與 BERT 相似，都是使用 transformer encoder 搭配 GELU nonlinearities 為主軸，但為了降低模型的參數並且獲得更好的表現，採用了兩種降低模型參數的方法與更換不同的預訓練任務，接下來將會一一介紹。</p>
+<h3 id="reduction-techniques">Reduction techniques</h3>
+<p>ALBERT 採用了兩種減少參數的方法，解決在預訓練時模型擴展的問題，以下分別來解說採用的方法。</p>
+<h4 id="1-factorized-embedding-parameterization">1. Factorized embedding parameterization</h4>
+<p>在 BERT、XLNet、RoBERTa 中，都採用了 <strong>WordPiece</strong> 的方法，其 WordPiece embedding size $E$ 與 hidden layer size $H$ 是綁定在一起的，也就是說 size  大小一模一樣。這樣的方式對於模型來說是次優的辦法，而非最好的選擇，原因在於：</p>
+<ul>
+<li>WordPiece embedding 學習的是語句上下文相互獨立的表示方式</li>
+<li>Hidden-layer embedding 學習的是語句上下文有相關的表示方式</li>
+</ul>
+<p>由於各別 embedding 在學習語句上的概念不同，所以作者在這邊進行了拆解，將原本 $E$ 與 $H$ 的 size 個別獨立，從 $ E \equiv H \rightarrow H \gg E $，這樣的拆解可以更有效優化模型的參數，也大幅降低了總參數量。因為如果採用原本的方式，綁定在一起，那麼當中提高 $H$ 的 size，那根據 vocabulary size $V$ 的大小(通常在一般的情況下 $V$ 是很大的，而在 BERT 中 $V$ 大約為 30,000)，WordPiece embedding  將會是 $V \times E$ 的矩陣大小，這樣是很容易得到一個有十億級別的模型參數，而且大部分的 embedding 在訓練期間都很少量的更新。</p>
+<p>因此 ALBERT 對 WordPiece embedding 將行因式分解(factorization)，將其拆解成兩個小矩陣。先將 One-hot vector 投影到大小為 $E$ 的低維度空間中，然後再從低維度空間投影回 Hidden-layer embedding。模型在 embedding parameters 從原本的 $O\left(V \times H \right) \rightarrow O\left( V \times E + E \times H \right)$，大幅的降低模型的參數。</p>
+<h4 id="2-cross-layer-parameter-sharing">2. Cross-layer parameter sharing</h4>
+<p>參數共享的這個想法，作者指出在 Transformer<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> 時就有被拿來討論過，並使用在 encoder-decoder 的任務上而非是針對 pretraining/finetuning 的訓練上(這邊作者指的部分我認為應該是說 Embedding layer 與 pre-softmax linear transformation layer 的參數共享部分)。在 Dehghani et al. (2018)<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> 所提出的 <strong>Universal Transformer</strong> 就展現了cross-layer parameter sharing 的方法在語言模型上得到更好的結果，在近年 Bai et al. (2019)<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup> 所提出的 <strong>Deep Equilibrium Model (DQE)</strong> 發現某一些層的 input embedding 與 output embedding 會達到一個平衡點(這邊平衡的解釋，需要去閱讀該篇 paper 才能比較了解，對此初步的了解認為在較深的 layer 時參數會達到一個平穩的狀態，不再震盪，達到收斂)。</p>
+<p>參數共享的方法有很多種，比如說 only sharing  feed-forward network parameters、only sharing attention parameters 或是 sharing all parameters across layers &hellip;等，在 ALBERT 中採用的是 sharing all parameters across layers。作者藉由計算向量相c似度的方法 L2 distances 與 cosine similarity 來衡量 input embedding 與 output embedding 在深層網路中是收斂還是震盪，如下圖：</p>
+<figure class="image"> 
+<center>
+  <img src="./figure_1.png" style="zoom:100%" />
+  <figcaption>
+  Image credit: <a href="https://arxiv.org/abs/1909.11942">Paper</a>
+  </figcaption>
+</center>
+</figure>
+<p>透過圖的顯示，作者在這邊觀察到 embedding 在 BERT 中是呈現震盪變化，而採用 cross-layer parameter sharing 的 ALBERT 在深層網路中是逐漸平滑的趨勢，這樣的現象也告訴我們 weight-sharing 的方法對於穩定網路的參數有著顯著的影響。</p>
+<p>在這部分作者也提到說，僅管的 BERT 相比，有明顯的下降震盪的狀況，但即使經過了 24 層，也不會收斂到 0 (也就是 input embedding 與 output embedding 完全相似)，對比前面提到得 DQE 所找到的解決方案有很大的不同。(這 DQE 感覺很神奇啊！需要好好來閱讀一番)</p>
+<h3 id="task-change">Task change</h3>
+<p>BERT 的預訓練有兩個項目，一個是 masked language modeling (MLM)，另一項是 Next-sentence prediction (NSP)，在 ALBERT 的預訓練任務也參考了 BERT 的任務，採用了MLM 作為訓練任務之一，但另一項任務並非使用 NSP，而是採用了新的預訓練任務稱為 Sentence ordering objectives (SOP)，接下來將會解說兩者的差異，為什麼 ALBERT 要更換預訓練任務。</p>
+<h4 id="sentence-ordering-objectives">Sentence ordering objectives</h4>
+<ul>
+<li>
+<p>Next-sentence prediction (NSP)</p>
+<ul>
+<li>目的：學習語句之間的關係，預測第二個句子是否為上一個句的下一句，為一個二分類的訓練</li>
+<li>Targets 產生的方式:
+<ul>
+<li>是下一句(positive) $\rightarrow$ 同一文檔內的連續句子</li>
+<li>不是下一句(negative) $\rightarrow$ 不同文檔的句子組合</li>
+</ul>
+</li>
+<li>Positive 與 Negative 資料比例各站 50 %</li>
+</ul>
+</li>
+<li>
+<p>Sentence ordering objectives (SOP)</p>
+<ul>
+<li>目的：與 NSP 一樣，都是學習語句之間的關係，預測第二句子是否為上一句的下一句</li>
+<li>Targets 產生的方式:
+<ul>
+<li>是下一句(positive) $\rightarrow$ 同一文檔內的連續句子</li>
+<li>不是下一句(negative) $\rightarrow$ <strong>同一文檔內的連續句子，但是順序對調</strong></li>
+</ul>
+</li>
+<li>Positive 與 Negative 資料比例各站 50 %</li>
+</ul>
+</li>
+</ul>
+<p>從上面的介紹可以明顯地發現兩個任務的差異在於 negative 樣本的創造方式，而為什麼要這樣去修改呢？</p>
+<p>其實在 Liu et al., 2019<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup> 中就有提到 NSP 對於 downstream tasks 的表現會有影響，所以在 RoBERTa 的預訓練任務中將其剔除(這部分值得深讀一下 RoBERTa)。而作者在這邊認為在學習句子之間的關係是很注重 <code>語句的連貫性(coherence)與銜接性(cohesion)</code> ，假設說前一句與後一句所要描述的東西大不相同，那麼別說是機器，人類也很難理解想要表達的意思。</p>
+<p>此外，NSP 的學習融合了兩個主軸，一個是 <strong>topic prediction</strong>，一個是 <strong>coherence prediction</strong>，由上述的 NSP 資料，其實可以了解到，在不同文檔的句子主組合會很容易學習到 topic prediction，因為所講的東西完全不同，但卻很難學習到 coherence prediction，而這樣的情況其實與 MLM 的學習有同疊到，所以作者認為語句組合的建構是語言理解中很重要的一部分，所以採用了 SOP，避免產生 topic prediction 的問題，專注於學習 inter-sentence coherence，並且也提出了基於 coherence 的 loss，<strong>Inter-sentence coherence loss</strong>。</p>
+<h2 id="experimental-results">Experimental Results</h2>
+<p>講解完 ALBERT 的主要優化與改變的地方後，接下來看看作者對於 ALBERT 與其他模型的各種實驗比較。</p>
+<h3 id="model-setup">Model Setup</h3>
+<p>Tabel 1 列出 ALBERT 與 BERT 的對於模型框架不同的參數設定，在 paper 中的實驗結果大多以 12 層的網路架構為主，因為在相同配置下採用 24 層的網路架構所獲得的結果是相似的，但計算成本卻比較高。</p>
+<figure class="image"> 
+<center>
+  <img src="./table_1.png" style="zoom:100%" />
+  <figcaption>
+  Image credit: <a href="https://arxiv.org/abs/1909.11942">Paper</a>
+  </figcaption>
+</center>
+</figure>
+<h3 id="experimental-setup">Experimental Setup</h3>
+<p>實驗設定方面，為了確保比較結果是具有可參考性的，這邊作者的設定是依據 BERT 所採用的 BOOK CORPUS (Zhu et al., 2015)8 與 English Wikipedia (Devlin et al., 2019)9 來作為預訓練任務資料集，總共大約 16 GB 的資料量。Input length 最大長度限制為 512， 並以 10% 的機率隨機產生長度小於 512 的語句，也與 BERT 依樣， vocabulary size 也是 30,000 個字詞，並且使用 SentencePiece (Kudo &amp; Richardson, 2018)<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup>作為斷詞的方法，XLNet 也有同樣有採用這個斷詞方法。</p>
+<p>對於 MLM 任務的輸入，BERT 採用的是 random masking 的方式，對 15% 的<strong>詞</strong>作 mask，而 ALBET 採用 n-gram masking (Joshi et al., 2019)<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup>的方式，$n$ 最大取 3，相對的比較保有語意的訊息。n- gram  masking 的機率如下：</p>
+<p>$$
+p\left(n\right) = \frac{1/n}{\sum_{k=1}^{N} 1/k}
+$$</p>
+<p>當 n 越大，被選擇 mask 的機率就相對較低，例如：1-gram 的機率為  6/11，2-gram 的機率 3/11，3-gram 的機率  2/11 這樣。</p>
+<p>其他參數設定：</p>
+<ul>
+<li>
+<p>Batch size: 4096</p>
+</li>
+<li>
+<p>Optimizer: LAMB with learning rate 0.00176</p>
+</li>
+<li>
+<p>Train steps: 125,000 steps</p>
+</li>
+<li>
+<p>Device: Gloud TPU V3</p>
+</li>
+</ul>
+<p>以上的設定都是用於實驗中的所有模型。</p>
+<h3 id="comparison-between-bert-and-albert">Comparison between BERT and ALBERT</h3>
+<p>底下展示 BERT 與 ALBERT 在不同參數下的模型表現，作者在文中將 BERT-large 當作比較的 baseline，ALBERT-xxlarge 在參數量上只有 BERT-large 的 70%，而且各項向下游任務都表現得較好，雖然訓練速度上慢了有約 3 倍，但仍顯示出 ALBERT 的設計方式對模型的表現有很大的改善。不過這邊有一點要注意的是這邊比較是訓練的時間，如果是在推論的狀況下，速度上應該是不會有太大的差異。</p>
+<figure class="image"> 
+<center>
+  <img src="./table_2.png" style="zoom:100%" />
+  <figcaption>
+  Image credit: <a href="https://arxiv.org/abs/1909.11942">Paper</a>
+  </figcaption>
+</center>
+</figure>
+<h3 id="factorized-embedding-parameterization">Factorized Embedding Parameterization</h3>
+<p>Table 3 進行了不同 vocabulary embedding size 的設定對模型的節果影響，採用的模型為 ALBERT-base，其 configurations 的設定如 Table 1 所提的一樣，實驗的設定採用 not-shared parameters(BERT-style) 與 all-shared parameters(ALBERT-style) 的比較，從結果可以看得出 $E$  的大小對於實驗結果並不一定帶來正相關的反應，因為在後續模型在使用 shared parameters 的條件下 $E$ 都是設為 128，因為在 shared parameters 的條件下 $E = 128$  表現最好 。</p>
+<figure class="image"> 
+<center>
+  <img src="./table_3.png" style="zoom:100%" />
+  <figcaption>
+  Image credit: <a href="https://arxiv.org/abs/1909.11942">Paper</a>
+  </figcaption>
+</center>
+</figure>
+<h3 id="cross-layer-parameter-sharing">Cross-layer parameter sharing</h3>
+<p>在這一部分的實驗，採用幾個不同的參數分享策略：</p>
+<ul>
+<li>All-shared</li>
+<li>Not-shared</li>
+<li>Only the attention parameters arr shared</li>
+<li>Only the FFN parameters arr shared</li>
+</ul>
+<figure class="image"> 
+<center>
+  <img src="./table_4.png" style="zoom:100%" />
+  <figcaption>
+  Image credit: <a href="https://arxiv.org/abs/1909.11942">Paper</a>
+  </figcaption>
+</center>
+</figure>
+在 paper 中作者還有提及另外一種參數分享策略，就是將模型的堆疊層數區分為 $N$ 組，每一組的大小為 $M$ 層做參數共享，實驗結果顯示當 $M$ 越小，其表現越好，但相對的較低 $M$ 的大小，也提升了整體參數的數量。
+<h3 id="sentence-order-prediction-sop">Sentence Order Prediction (SOP)</h3>
+<p>Table 5 展示了在 <code>sentence-prediction loss</code> 的影響下，對於固有任務(Intrinsic Tasks)與下游任務(Downstream Tasks)的模型表現：</p>
+<figure class="image"> 
+<center>
+  <img src="./table_5.png" style="zoom:100%" />
+  <figcaption>
+  Image credit: <a href="https://arxiv.org/abs/1909.11942">Paper</a>
+  </figcaption>
+</center>
+</figure>
+由上表可以看到在固有任務的表現，NSP 的訓練效果在 SOP 的預測上與隨機預測沒什麼差異，可以說是完全預測不出來，相反 SOP 的訓練下，在 NSP 的表現依然非常好(78.9% 的準確度)，由此可以確認 NSP 的任務學習只有對於 topic prediction 的部分有效。另外對於下游任務的表現也是基於 SOP 的訓練模型表現較好。
+<h3 id="train-with-same-amount-of-time">Train with same amount of time</h3>
+<p>前面 Table 2 比較了在相同的訓練下 steps 下的模型表現差異，作者還比較了在同樣的訓練時間下模型的表現情況，如 Table 6 的結果，雖然 ALBERT-xxlarge 在差不多的同樣訓練時間內走的步數不如 BERT-large，但是在表現上卻優於  BERT-large，所以並非是訓練的步數越多或是訓練的時間越久就能夠得到更好的結果。</p>
+<figure class="image"> 
+<center>
+  <img src="./table_6.png" style="zoom:100%" />
+  <figcaption>
+  Image credit: <a href="https://arxiv.org/abs/1909.11942">Paper</a>
+  </figcaption>
+</center>
+</figure>
+<h3 id="additional-training-data-and-dropout-effects">Additional training data and dropout effects</h3>
+<p>借鏡 XLNet (Yang et al., 2019)<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup> 與 RoBERTa (Liu et al., 2019)<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup> 都有透過增加而外的資料來提升模型的表現，作者也比較了增加額外的資料的結果。如下表 Table 7 結果，看起來並非全部的下游任務都有改善，除了 SQuAD 以外的任務都有提升。</p>
+<figure class="image"> 
+<center>
+  <img src="./table_7.png" style="zoom:100%" />
+  <figcaption>
+  Image credit: <a href="https://arxiv.org/abs/1909.11942">Paper</a>
+  </figcaption>
+</center>
+</figure>
+<p>下圖展示了在採用額外資料與否的條件下，對於 MLM 任務有明顯的差異。此外也比較了 dropout 的效用，在訓練超過 1M 步後，模型仍然沒有發生 overfitting 的問題，所以直接刪除掉 dropout，比較結果於 Table 8。其實在 Szegedy et al., 2017<sup id="fnref:9"><a href="#fn:9" class="footnote-ref" role="doc-noteref">9</a></sup> 的實驗與 Li et al., 2019<sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup> 就已經證明結合 batch normalization 與 dropout 會有害 Convolutional Neural Networks 的結果表現。</p>
+<figure class="image"> 
+<center>
+  <img src="./figure_2.png" style="zoom:100%" />
+  <figcaption>
+  Image credit: <a href="https://arxiv.org/abs/1909.11942">Paper</a>
+  </figcaption>
+</center>
+</figure>
+<figure class="image"> 
+<center>
+  <img src="./table_8.png" style="zoom:100%" />
+  <figcaption>
+  Image credit: <a href="https://arxiv.org/abs/1909.11942">Paper</a>
+  </figcaption>
+</center>
+</figure>
+<p>實驗的部分，作者還有測試了不同的 NLU tasks 的比較，這邊就留給讀者自己去看看，不再贅述。個人覺得在 Appenidx 的部分，值得好好看一下。</p>
+<h3 id="effect-on-network-depth-and-width">Effect on network depth and width</h3>
+<p>在 Appenidx 的部分，作者對於網路的寬度與深度進行了實驗，模型採用的是 ALBERT-large。實驗採用的方法是在前 2 層做 trained，而當超過 3 層(包含第 3 層)的深度網路則採用 fine-tuning 的方式來訓練，底下 Table 11 可以得知，在相同的參數下，當層數的堆疊從 $1 \rightarrow 3$ 層時，模型的表現相對提升；但是當層數堆疊持續增加時，模型的提升效益就開始減緩，可以看當層數從 $12 \rightarrow 24 \rightarrow 48$ 的模型表現，24 與 48 的表現已經差不多了，所以再堆疊上去對模型而言並不會有太多的提升。</p>
+<figure class="image"> 
+<center>
+  <img src="./table_11.png" style="zoom:100%" />
+  <figcaption>
+  Image credit: <a href="https://arxiv.org/abs/1909.11942">Paper</a>
+  </figcaption>
+</center>
+</figure>
+比較玩深度的狀況，來比較寬度的狀況，模型採用的是 3 層堆疊的 ALBERT-large。當增加 hidden size 的時候，也發生與深度堆疊的狀況，當增加到一定的程度後，效果開始減緩，寬度網路甚至還下降。
+<figure class="image"> 
+<center>
+  <img src="./table_12.png" style="zoom:100%" />
+  <figcaption>
+  Image credit: <a href="https://arxiv.org/abs/1909.11942">Paper</a>
+  </figcaption>
+</center>
+</figure>
+<p>在 Tabel 11 比較了深度的影響，但是在 ALBERT-large 的 hidden size 為 1024，如果是更寬更深的堆疊網路層，是否能夠得到更好的效果。作者對此提出了疑問</p>
+<blockquote>
+<p>Do very wide ALBERT models need to be deep(er) too?</p>
+</blockquote>
+<p>採用 hidden size 為 4096 的 ALBERT-xxlarge 來進行實驗，在 Table 13 可以發現效果其實差不多，因此認為對於 ALBERT 來說不需要太深層的網路，只需要 12層就足夠了。</p>
+<figure class="image"> 
+<center>
+  <img src="./table_13.png" style="zoom:100%" />
+  <figcaption>
+  Image credit: <a href="https://arxiv.org/abs/1909.11942">Paper</a>
+  </figcaption>
+</center>
+</figure>
+<h2 id="conclusion">Conclusion</h2>
+<p>這篇 paper 其實讀起來不難，只要有了解過 BERT 再來閱讀後，可以很快速地了解優化的部分，而且其優化的方法也並非創新，在其他的 paper 都有被討論過，比較新的部分，應該是預訓練任務的替換，SOP 的訓練確實帶來很大的改善，此外在 ERNIE 推出一個新的預訓練任務叫說 Sentence Reordering Task (SRT)，是對於學習句子的關聯性更加強的預訓練任務，可以好好看一下。另外，paper 中也不斷地提及 XLNet 與 RoBERTa 對於 ALBERT 的啟發與影響，所以這兩邊也值得好好閱讀一翻，有時間再來寫一下。</p>
+<p>題外話，在大幅減少參數的情況下，其實不只是訓練速度加快，另外來為平行運算的方式帶來很大的優化就是傳輸量的減少，我們都知道在做 multi-gpu 運算所採用到策略有 Central Storage Strategy 與 Parameter Server Startegy 兩種，前者需要將 gradient 的結果回傳到 Master 做全局的 gradient update，而後者則是各個 worker 之間互相溝通傳遞參數，直到所有 worker 都 update 完畢，所以減少了參數量，相對的在傳輸部分也縮短了時間。</p>
+<h2 id="reference">Reference</h2>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>Self Supervised Representation Learning in NLP, Amit Chaudhary, <a href="https://amitness.com/2020/05/self-supervised-learning-nlp/">https://amitness.com/2020/05/self-supervised-learning-nlp/</a> <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017 <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p>Mostafa Dehghani, Stephan Gouws, Oriol Vinyals, Jakob Uszkoreit, and Łukasz Kaiser. Universal transformers. arXiv preprint arXiv:1807.03819, 2018. <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p>Shaojie Bai, J. Zico Kolter, and Vladlen Koltun. Deep equilibrium models. In Neural Information Processing Systems (NeurIPS), 2019. <a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p>Yinhan Liu, Myle Ott, Naman Goyal, Jingfei Du, Mandar Joshi, Danqi Chen, Omer Levy, Mike Lewis, Luke Zettlemoyer, and Veselin Stoyanov. RoBERTa: A robustly optimized BERT pretraining approach. arXiv preprint arXiv:1907.11692, 2019. <a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p>Taku Kudo and John Richardson. SentencePiece: A simple and language independent subword tokenizer and detokenizer for neural text processing. In Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing: System Demonstrations, pp. 66–71, Brussels, Belgium, November 2018. Association for Computational Linguistics. doi: 10.18653/v1/D18-2012. URL <a href="https://www.aclweb.org/anthology/D18-2012">https://www.aclweb.org/anthology/D18-2012</a>. <a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7" role="doc-endnote">
+<p>Mandar Joshi, Danqi Chen, Yinhan Liu, Daniel S Weld, Luke Zettlemoyer, and Omer Levy. SpanBERT: Improving pre-training by representing and predicting spans. arXiv preprint arXiv:1907.10529, 2019. <a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:8" role="doc-endnote">
+<p>Zhilin Yang, Zihang Dai, Yiming Yang, Jaime Carbonell, Ruslan Salakhutdinov, and Quoc V Le. XLNet: Generalized autoregressive pretraining for language understanding. arXiv preprint arXiv:1906.08237, 2019. <a href="#fnref:8" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:9" role="doc-endnote">
+<p>Christian Szegedy, Sergey Ioffe, Vincent Vanhoucke, and Alexander A Alemi. Inception-v4, inception-resnet and the impact of residual connections on learning. In Thirty-First AAAI Conference on Artiﬁcial Intelligence, 2017. <a href="#fnref:9" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:10" role="doc-endnote">
+<p>Xiang Li, Shuo Chen, Xiaolin Hu, and Jian Yang. Understanding the disharmony between dropout and batch normalization by variance shift. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pp. 2682–2690, 2019. <a href="#fnref:10" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+
+    </div>
+
+    
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tags/albert/">ALBERT</a>
+  
+  <a class="badge badge-light" href="/tags/bert-series/">BERT Series</a>
+  
+  <a class="badge badge-light" href="/tags/nlp/">NLP</a>
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+  
+
+
+
+
+
+
+  
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="/authors/roymond-liao/"></a></h5>
+      
+      
+      <ul class="network-icon" aria-hidden="true">
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+<section id="comments">
+  
+    
+<div id="disqus_thread"></div>
+<script>
+  let disqus_config = function () {
+    
+    
+    
+  };
+  (function() {
+    if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+      document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+      return;
+    }
+    var d = document, s = d.createElement('script'); s.async = true;
+    s.src = 'https://' + "roymondliao" + '.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  
+</section>
+
+
+
+
+
+
+  
+  
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+    <script src="/js/mathjax-config.js"></script>
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.3.1/mermaid.min.js" integrity="sha256-vOIuDSYDirTfyr+S2MjFnhOz6Rgiz4ODFAHATG0rFxw=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js" integrity="sha256-1zu+3BnLYV9LdiY85uXMzii3bdrkelyp37e0ZyTAQh0=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/languages/python.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/languages/r.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/languages/markdown.min.js"></script>
+        
+      
+
+      
+      
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+
+    
+    
+
+    
+    
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"No results found","placeholder":"Search...","results":"results found"};
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    <script id="dsq-count-scr" src="https://roymondliao.disqus.com/count.js" async></script>
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.d6bd04fdad2ad213aa8111c5a3b72fc5.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © 2019 - © 2020 &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

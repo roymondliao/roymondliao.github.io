@@ -31,7 +31,7 @@
   <meta name="description" content="Machine Learning Engineer / Deep Learning Engineer / Data Scientist">
 
   
-  <link rel="alternate" hreflang="en-us" href="https://roymondliao.github.io/authors/roymond-liao/">
+  <link rel="alternate" hreflang="en-us" href="https://roymondliao.github.io/tags/albert/">
 
   
 
@@ -127,14 +127,14 @@
 
 
   
-  <link rel="alternate" href="/authors/roymond-liao/index.xml" type="application/rss+xml" title="Roymond Liao">
+  <link rel="alternate" href="/tags/albert/index.xml" type="application/rss+xml" title="Roymond Liao">
   
 
   <link rel="manifest" href="/index.webmanifest">
   <link rel="icon" type="image/png" href="/img/icon-32.png">
   <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
 
-  <link rel="canonical" href="https://roymondliao.github.io/authors/roymond-liao/">
+  <link rel="canonical" href="https://roymondliao.github.io/tags/albert/">
 
   
   
@@ -147,8 +147,8 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Roymond Liao">
-  <meta property="og:url" content="https://roymondliao.github.io/authors/roymond-liao/">
-  <meta property="og:title" content="Roymond Liao | Roymond Liao">
+  <meta property="og:url" content="https://roymondliao.github.io/tags/albert/">
+  <meta property="og:title" content="ALBERT | Roymond Liao">
   <meta property="og:description" content="Machine Learning Engineer / Deep Learning Engineer / Data Scientist"><meta property="og:image" content="https://roymondliao.github.io/img/icon-192.png">
   <meta property="twitter:image" content="https://roymondliao.github.io/img/icon-192.png"><meta property="og:locale" content="en-us">
   
@@ -169,7 +169,7 @@
 
 
 
-  <title>Roymond Liao | Roymond Liao</title>
+  <title>ALBERT | Roymond Liao</title>
 
 </head>
 
@@ -379,72 +379,54 @@
 
   
 
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+    
+  
 <div class="universal-wrapper pt-3">
-  <h1>Roymond Liao</h1>
+  <h1>ALBERT</h1>
+
+  
+
+  
 </div>
 
 
-<section id="profile-page" class="pt-5">
-  <div class="container">
-    
-    
 
-    
-    
-    
-    <div class="article-widget content-widget-hr">
-      <h3>Latest</h3>
-      <ul>
-        
-        <li>
-          <a href="/post/albert/">[Paper-NLP] ALBERT: A Lite BERT for Self-supervised Learning of Language Representations</a>
-        </li>
-        
-        <li>
-          <a href="/post/word_segmentation_in_chinese/">[Paper-NLP] Is Word Segmentation Necessary for Deep Learning of Chinese Representations?</a>
-        </li>
-        
-        <li>
-          <a href="/post/transformer_part3/">Transformer Part 3 - Transformer</a>
-        </li>
-        
-        <li>
-          <a href="/post/transformer_part2/">Transformer Part 2 - Attention</a>
-        </li>
-        
-        <li>
-          <a href="/post/transformer_part1/">Transformer Part 1 - Seq2Seq</a>
-        </li>
-        
-        <li>
-          <a href="/post/adversarial_validation/">Adversarial validation</a>
-        </li>
-        
-        <li>
-          <a href="/post/lookahead/">Lookahead Optimizer: k steps forward, 1 step back</a>
-        </li>
-        
-        <li>
-          <a href="/post/faster_rcnn/">Faster R-CNN</a>
-        </li>
-        
-        <li>
-          <a href="/post/word2vec/">Word2Vec</a>
-        </li>
-        
-        <li>
-          <a href="/post/dropblock/">DropBlock</a>
-        </li>
-        
-        <li>
-          <a href="/post/xgboost/">XGBoost</a>
-        </li>
-        
-      </ul>
+<div class="universal-wrapper">
+  
+
+  
+  
+  <div>
+    <h2><a href="/post/albert/">[Paper-NLP] ALBERT: A Lite BERT for Self-supervised Learning of Language Representations</a></h2>
+    <div class="article-style">
+      
+      ALBERT 在 2017 年 Transformer 的誕生，突破了 RNN、LSTM、GRU &hellip; 等在計算上的限制，也帶來新的觀點，爾後再 2018 年底 Google 發表了 BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding 開啟了通往偉大到航道的路線，也帶起了 pre-training model 的各種應用，不用再辛苦的從頭開始訓練，為了資料問題所苦惱。在 BERT 之後，湧出各種基於 BERT 的架構下進行優化改進，例如： GPT-2、XLNet、RoBERTa、ERNIE &hellip; 等這些耳熟能詳的模型，而這次將是為大家介紹也是基於 BERT 的架構下 Google 在 2019 年推出的輕量化版本的 BERT，ALBERT: A Lite BERT for Self-supervised Learning of Language Representations。
+Introduction 如前言所述，在 BERT 後的時代透過大量的資料進行自監督(self-supervised1)的訓練，提高模型參數與更深層的結構，讓模型取得更好的表現，但也因為硬體上的限制，要訓練參數量大的模型就可能需要做到平行化處理以及記憶體內存的管控，但這樣的方式並沒有解決成本上的問題。基於這樣的情況，作者提出了下列問題：
+ Is haveing better NLP models as easy as hvaing larger models?  也因為這個問題的討論，造就了 A Lite BERT(ALBERT) 的模型架構出來。
+      
     </div>
-    
   </div>
-</section>
+  
+
+  
+
+</div>
 
       
 
